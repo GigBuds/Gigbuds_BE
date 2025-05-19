@@ -3,6 +3,15 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+# Add migrations folder to gitignore
+Gigbuds_BE.Infrastructure/Migrations
+# Ignore appsetttings.json
+Gigbuds_BE.API/appsettings.json
+Gigbuds_BE.API/appsettings.Development.json
+Gigbuds_BE.API/Properties/launchSettings.json
+# Ignore Docker-compose
+/docker-compose.yml
+
 # User-specific files
 *.rsuser
 *.suo
