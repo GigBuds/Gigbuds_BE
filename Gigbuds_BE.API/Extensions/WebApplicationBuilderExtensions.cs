@@ -86,7 +86,6 @@ namespace Gigbuds_BE.API.Extensions
                 configuration.ReadFrom.Configuration(context.Configuration);
             });
 
-            // Add API Versioning
             builder.Services.AddApiVersioning(options =>
             {
                 options.AssumeDefaultVersionWhenUnspecified = true;
