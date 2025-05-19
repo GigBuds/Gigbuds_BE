@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using Serilog.Formatting.Compact;
 using System.Text;
 using Wolverine;
 
@@ -80,7 +81,6 @@ namespace Gigbuds_BE.API.Extensions
             // Add Custom middlewares
             builder.Services.AddScoped<ErrorHandlingMiddleware>();
 
-            // Add Serilogs
             builder.Host.UseSerilog((context, configuration) =>
             {
                 configuration.ReadFrom.Configuration(context.Configuration);
