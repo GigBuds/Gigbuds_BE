@@ -8,54 +8,56 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
 using StackExchange.Redis;
-using System;
 
-public static partial class ServiceCollectionExtensions
+namespace Gigbuds_BE.Infrastructure.Extensions
 {
-    public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    public static partial class ServiceCollectionExtensions
     {
-        // Add sql server
-        services.AddDbContextPool<GigbudsDbContext>(options =>
-            options
-                .UseSqlServer(configuration.GetConnectionString("GigbudsDb"))
-                .EnableSensitiveDataLogging());
-
-        // Add Redis
-        services.AddSingleton<IConnectionMultiplexer>(config =>
+        public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            var connectionString = configuration.GetConnectionString("RedisDb")
-                ?? throw new Exception("Redis connection string not found.");
-            return ConnectionMultiplexer.Connect(connectionString);
-        });
+            // Add sql server
+            services.AddDbContextPool<GigbudsDbContext>(options =>
+                options
+                    .UseNpgsql(configuration.GetConnectionString("GigbudsDb"))
+                    .EnableSensitiveDataLogging());
 
-        // Add Quartz
-        services.AddQuartz(q =>
-        {
-            q.UseSimpleTypeLoader();
-            q.UseDefaultThreadPool(tp =>
+            // Add Redis
+            services.AddSingleton<IConnectionMultiplexer>(config =>
             {
-                tp.MaxConcurrency = 10;
+                ArgumentException.ThrowIfNullOrEmpty(configuration.GetConnectionString("RedisDb"));
+                var connectionString = configuration.GetConnectionString("RedisDb")!;
+                return ConnectionMultiplexer.Connect(connectionString);
             });
 
-            q.UsePersistentStore(store =>
+            // Add Quartz
+            services.AddQuartz(q =>
             {
-                store.UseProperties = true;
-                store.UseSqlServer(sqlServer =>
+                q.UseSimpleTypeLoader();
+                q.UseDefaultThreadPool(tp =>
                 {
-                    sqlServer.ConnectionString = configuration.GetConnectionString("GigbudsDb")
-                        ?? throw new Exception("Db connection string not provided");
-                    sqlServer.TablePrefix = "dbo.QRTZ_";
+                    tp.MaxConcurrency = 10;
                 });
-                store.UseSystemTextJsonSerializer();
+
+                q.UsePersistentStore(store =>
+                {
+                    store.UseProperties = true;
+                    store.UsePostgres(postgres =>
+                    {
+                        ArgumentException.ThrowIfNullOrEmpty(configuration.GetConnectionString("GigbudsDb"));
+                        postgres.ConnectionString = configuration.GetConnectionString("GigbudsDb")!;
+                        postgres.TablePrefix = "public.qrtz_";
+                    });
+                    store.UseSystemTextJsonSerializer();
+                });
             });
-        });
-        services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
+            services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
-        // Add UOW
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
+            // Add UOW
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-        // Add ApplicationUser service
-        services.AddScoped(typeof(UserManager<>));
-        services.AddScoped(typeof(IApplicationUserService<>), typeof(ApplicationUserService<>));
+            // Add ApplicationUser service
+            services.AddScoped(typeof(UserManager<>));
+            services.AddScoped(typeof(IApplicationUserService<>), typeof(ApplicationUserService<>));
+        }
     }
 }

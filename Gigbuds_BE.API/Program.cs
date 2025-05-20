@@ -1,6 +1,7 @@
 using Gigbuds_BE.API.Extensions;
 using Gigbuds_BE.API.Middlewares;
 using Gigbuds_BE.Application.Extensions;
+using Gigbuds_BE.Infrastructure.Extensions;
 using Gigbuds_BE.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
