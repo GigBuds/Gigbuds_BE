@@ -8,7 +8,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
 using StackExchange.Redis;
-using System;
 
 public static partial class ServiceCollectionExtensions
 {
