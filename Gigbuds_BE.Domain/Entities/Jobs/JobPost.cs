@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Gigbuds_BE.Domain.Entities.Accounts;
+using Gigbuds_BE.Domain.Entities.Notifications;
 using Gigbuds_BE.Domain.Entities.Schedule;
 
 namespace Gigbuds_BE.Domain.Entities.Jobs;
@@ -26,6 +27,8 @@ public class JobPost : BaseEntity
     public virtual Account Account { get; set; }
     public virtual ICollection<JobApplication> JobApplications { get; set; }
     public virtual ICollection<JobHistory> JobHistories { get; set; }
+    public virtual ICollection<Notification> Notifications { get; set; }
+    public virtual JobPostSchedule JobPostSchedule { get; set; }
 }
 
 public enum SalaryUnit

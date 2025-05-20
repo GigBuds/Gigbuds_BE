@@ -76,5 +76,6 @@ internal class JobPostConfiguration : IEntityTypeConfiguration<JobPost>
             .WithOne()
             .HasForeignKey(ja => ja.JobPostId)
             .OnDelete(DeleteBehavior.Cascade);
+            
     }
 } 

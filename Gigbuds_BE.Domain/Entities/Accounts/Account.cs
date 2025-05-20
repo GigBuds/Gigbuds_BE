@@ -1,5 +1,6 @@
 using Gigbuds_BE.Domain.Entities.Chats;
 using Gigbuds_BE.Domain.Entities.Jobs;
+using Gigbuds_BE.Domain.Entities.Notifications;
 
 namespace Gigbuds_BE.Domain.Entities.Accounts;
 
@@ -19,4 +20,5 @@ public class Account : BaseEntity
     public virtual ICollection<Follower> Following { get; set; }
     public virtual ICollection<JobApplication> JobApplications { get; set; }
     public virtual ICollection<JobHistory> JobHistories { get; set; }
+    public virtual ICollection<Notification> Notifications { get; set; }
 }
