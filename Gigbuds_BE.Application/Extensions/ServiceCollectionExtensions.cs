@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using Gigbuds_BE.Application.Commons.Helpers;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,6 +13,10 @@ namespace Gigbuds_BE.Application.Extensions
         {
             // Application assembly
             var applicationAssembly = typeof(ServiceCollectionExtensions).Assembly;
+
+            // Add Helpers
+            services.AddScoped<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddScoped<IUserContext, UserContext>();
 
             // Add AutoMapper
             services.AddAutoMapper(applicationAssembly);
