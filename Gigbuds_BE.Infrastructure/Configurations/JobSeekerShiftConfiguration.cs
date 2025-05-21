@@ -20,5 +20,10 @@ internal class JobSeekerShiftConfiguration : IEntityTypeConfiguration<JobSeekerS
 
         builder.Property(j => j.EndTime)
             .IsRequired();
+
+        //Relationships
+        builder.HasOne(j => j.JobSeekerSchedule)
+            .WithMany(j => j.JobShifts)
+            .HasForeignKey(j => j.JobSeekerScheduleId);
     }
 }

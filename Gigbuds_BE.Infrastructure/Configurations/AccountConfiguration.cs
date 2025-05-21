@@ -39,9 +39,6 @@ internal class AccountConfiguration : IEntityTypeConfiguration<Account>
         builder.Property(a => a.IsMale)
             .HasDefaultValue(true);
 
-        builder.Property(a => a.Dob)
-            .IsRequired(false);
-
         builder.Property(a => a.AvailableJobApplication)
             .HasDefaultValue(ProjectConstant.Free_Tier_Job_Application);
 

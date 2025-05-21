@@ -5,12 +5,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gigbuds_BE.Infrastructure.Configurations;
 
-internal class NotificationTemplateConfiguration : IEntityTypeConfiguration<NotificationTemplate>
+internal class TemplateConfiguration : IEntityTypeConfiguration<Template>
 {
-    public void Configure(EntityTypeBuilder<NotificationTemplate> builder)
+    public void Configure(EntityTypeBuilder<Template> builder)
     {
         // Table name
-        builder.ToTable("NotificationTemplates", "dbo");
+        builder.ToTable("Templates", "dbo");
         
         // Properties
         builder.Property(nt => nt.Name)

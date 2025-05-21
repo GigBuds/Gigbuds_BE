@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Gigbuds_BE.Domain.Entities.Notifications;
 
-public class NotificationTemplate : BaseEntity
+public class Template : BaseEntity
 {
     public string Name { get; set; }
     public string Description { get; set; }

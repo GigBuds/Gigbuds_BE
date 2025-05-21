@@ -53,7 +53,6 @@ internal class JobPostConfiguration : IEntityTypeConfiguration<JobPost>
             .IsRequired(false);
             
         builder.Property(jp => jp.JobPostStatus)
-            .IsRequired()
             .HasConversion(
                 convertToProviderExpression: s => s.ToString(),
                 convertFromProviderExpression: s => Enum.Parse<JobPostStatus>(s))
@@ -68,12 +67,12 @@ internal class JobPostConfiguration : IEntityTypeConfiguration<JobPost>
             
         // Relationships
         builder.HasOne(jp => jp.Account)
-            .WithMany()
+            .WithMany(a => a.JobPosts)
             .HasForeignKey(jp => jp.AccountId)
             .OnDelete(DeleteBehavior.Restrict);
             
         builder.HasMany(jp => jp.JobApplications)
-            .WithOne()
+            .WithOne(ja => ja.JobPost)
             .HasForeignKey(ja => ja.JobPostId)
             .OnDelete(DeleteBehavior.Cascade);
             

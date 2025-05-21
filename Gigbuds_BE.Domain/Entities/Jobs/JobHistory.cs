@@ -1,5 +1,6 @@
 using System;
 using Gigbuds_BE.Domain.Entities.Accounts;
+using Gigbuds_BE.Domain.Entities.Feedbacks;
 
 namespace Gigbuds_BE.Domain.Entities.Jobs;
 
@@ -12,4 +13,5 @@ public class JobHistory : BaseEntity
     // Navigation properties
     public virtual Account Account { get; set; }
     public virtual JobPost JobPost { get; set; }
+    public virtual ICollection<Feedback> Feedbacks { get; set; }
 }

@@ -38,7 +38,7 @@ internal class EducationalLevelConfiguration : IEntityTypeConfiguration<Educatio
 
         // Foreign key relationship with Account
         builder.HasOne(e => e.Account)
-            .WithMany()
+            .WithMany(a => a.EducationalLevels)
             .HasForeignKey(e => e.AccountId)
             .OnDelete(DeleteBehavior.Cascade);
     }

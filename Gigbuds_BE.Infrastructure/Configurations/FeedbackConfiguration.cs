@@ -1,5 +1,6 @@
 using System;
 using Gigbuds_BE.Domain.Entities.Feedbacks;
+using Microsoft.Build.Execution;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -11,25 +12,22 @@ internal class FeedbackConfiguration : IEntityTypeConfiguration<Feedback>
     {
         // Table name
         builder.ToTable("Feedbacks", "dbo");
-        
+
         // Properties
-        builder.Property(f => f.Id)
-            .HasColumnName("feedback_id");
-        
         builder.Property(f => f.AccountId)
             .IsRequired();
             
         builder.Property(f => f.EmployerId)
             .IsRequired();
             
-        builder.Property(f => f.JobPostId)
+        builder.Property(f => f.JobHistoryId)
             .IsRequired();
             
         builder.Property(f => f.FeedbackType)
             .IsRequired()
             .HasConversion(
-                convertToProviderExpression: s => (int)s,
-                convertFromProviderExpression: s => (FeedbackType)s);
+                convertToProviderExpression: s => s.ToString(),
+                convertFromProviderExpression: s => Enum.Parse<FeedbackType>(s));
             
         builder.Property(f => f.CreatedAt)
             .IsRequired();
@@ -43,7 +41,7 @@ internal class FeedbackConfiguration : IEntityTypeConfiguration<Feedback>
             
         // Relationships
         builder.HasOne(f => f.Account)
-            .WithMany()
+            .WithMany(a => a.Feedbacks)
             .HasForeignKey(f => f.AccountId)
             .OnDelete(DeleteBehavior.Restrict);
             
@@ -52,9 +50,9 @@ internal class FeedbackConfiguration : IEntityTypeConfiguration<Feedback>
             .HasForeignKey(f => f.EmployerId)
             .OnDelete(DeleteBehavior.Restrict);
             
-        builder.HasOne(f => f.JobPost)
-            .WithMany()
-            .HasForeignKey(f => f.JobPostId)
+        builder.HasOne(f => f.JobHistory)
+            .WithMany(j => j.Feedbacks)
+            .HasForeignKey(f => f.JobHistoryId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 } 
