@@ -19,6 +19,12 @@ Gigbuds_BE.API/Properties/launchSettings.json
 *.userosscache
 *.sln.docstates
 
+# Cursor specific files
+.cursor/
+.cursor-*
+.cursor.*
+*.cursor-*
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 

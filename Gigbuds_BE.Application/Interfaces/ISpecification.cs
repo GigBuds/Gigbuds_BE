@@ -1,12 +1,11 @@
-﻿using Gigbuds_BE.Domain.Entities;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace Gigbuds_BE.Application.Interfaces
 {
     public interface ISpecification<T> where T : class
     {
-        Expression<Func<T, bool>>? Criteria { get;  } // WHERE
-        Expression<Func<T, object>>? OrderBy { get; } 
+        Expression<Func<T, bool>>? Criteria { get; } // WHERE
+        Expression<Func<T, object>>? OrderBy { get; }
         Expression<Func<T, object>>? OrderByDescending { get; }
         Expression<Func<T, object>>? GroupBy { get; }
         Expression<Func<IGrouping<object, T>, bool>>? Having { get; }

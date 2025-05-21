@@ -3,7 +3,7 @@ using Gigbuds_BE.Domain.Entities;
 
 namespace Gigbuds_BE.Application.Interfaces.Repositories
 {
-    public interface IGenericRepository<T> where T: BaseEntity
+    public interface IGenericRepository<T> where T : BaseEntity
     {
         // GET
         Task<IReadOnlyList<T>> GetAllWithSpecificationAsync(ISpecification<T> specification, bool asNoTracking = true);

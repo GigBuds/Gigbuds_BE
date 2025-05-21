@@ -1,7 +1,5 @@
 ﻿using Gigbuds_BE.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using System.Linq;
 
 namespace Gigbuds_BE.Application.Specifications
 {
@@ -25,7 +23,7 @@ namespace Gigbuds_BE.Application.Specifications
             {
                 query = query.OrderByDescending(specification.OrderByDescending);
             }
-            
+
             if (specification.Includes.Count > 0)
             {
                 query = specification.Includes.Aggregate(query, (current, include) => current.Include(include));
@@ -101,7 +99,7 @@ namespace Gigbuds_BE.Application.Specifications
 
                 if (specification.IsPagingEnabled)
                 {
-                    resultQuery = resultQuery.Skip(specification.Skip).Take(specification.Take); 
+                    resultQuery = resultQuery.Skip(specification.Skip).Take(specification.Take);
                 }
 
                 return resultQuery;

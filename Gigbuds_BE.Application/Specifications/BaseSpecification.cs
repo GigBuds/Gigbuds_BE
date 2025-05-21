@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace Gigbuds_BE.Application.Specifications
 {
-    internal class BaseSpecification<T> : ISpecification<T> where T: class
+    internal class BaseSpecification<T> : ISpecification<T> where T : class
     {
         // =====================================
         // === Fields & Props
@@ -83,9 +83,9 @@ namespace Gigbuds_BE.Application.Specifications
         /// <summary>
         /// Apply Distinct to the query
         /// </summary>
-        protected void AddDistinct() 
-        { 
-            IsDistinct = true; 
+        protected void AddDistinct()
+        {
+            IsDistinct = true;
         }
 
         /// <summary>
