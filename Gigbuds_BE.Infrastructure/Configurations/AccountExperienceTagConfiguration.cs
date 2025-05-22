@@ -8,7 +8,7 @@ internal class AccountExperienceTagConfiguration : IEntityTypeConfiguration<Acco
 {
     public void Configure(EntityTypeBuilder<AccountExperienceTag> builder)
     {
-        builder.ToTable("AccountExperienceTags", "dbo");
+        builder.ToTable("AccountExperienceTags", "public");
 
         // The Id from BaseEntity is already the primary key
         builder.Property(e => e.Id)

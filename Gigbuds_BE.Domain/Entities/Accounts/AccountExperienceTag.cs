@@ -1,3 +1,5 @@
+using Gigbuds_BE.Domain.Entities.Identity;
+
 namespace Gigbuds_BE.Domain.Entities.Accounts;
 
 public class AccountExperienceTag : BaseEntity
@@ -9,5 +11,5 @@ public class AccountExperienceTag : BaseEntity
     public DateTime? EndTime { get; set; }
 
     // Navigation properties
-    public Account Account { get; set; }
+    public ApplicationUser Account { get; set; }
 }

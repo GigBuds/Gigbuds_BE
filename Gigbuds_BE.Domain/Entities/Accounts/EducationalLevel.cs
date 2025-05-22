@@ -1,3 +1,5 @@
+using Gigbuds_BE.Domain.Entities.Identity;
+
 namespace Gigbuds_BE.Domain.Entities.Accounts;
 
 public class EducationalLevel : BaseEntity
@@ -10,7 +12,7 @@ public class EducationalLevel : BaseEntity
     public string SchoolName { get; set; }
 
     // Navigation properties
-    public Account Account { get; set; }
+    public ApplicationUser Account { get; set; }
 }
 public enum EducationalLevelType
 {

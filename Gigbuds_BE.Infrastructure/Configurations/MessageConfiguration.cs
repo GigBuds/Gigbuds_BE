@@ -10,7 +10,7 @@ internal class MessageConfiguration : IEntityTypeConfiguration<Message>
     public void Configure(EntityTypeBuilder<Message> builder)
     {
         // Table name
-        builder.ToTable("Messages", "dbo");
+        builder.ToTable("Messages", "public");
 
         // Properties
         builder.Property(m => m.Content)

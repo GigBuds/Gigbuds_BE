@@ -1,4 +1,5 @@
 using Gigbuds_BE.Domain.Entities.Accounts;
+using Gigbuds_BE.Domain.Entities.Identity;
 using Gigbuds_BE.Domain.Entities.Memberships;
 
 namespace Gigbuds_BE.Domain.Entities.Transactions;
@@ -10,14 +11,12 @@ public class TransactionRecord : BaseEntity
     public string Content { get; set; }
     public string Gateway { get; set; }
     public string ReferenceCode { get; set; }
-    public DateTime CreateDate { get; set; }
-    public DateTime UpdateDate { get; set; }
     public int? MembershipId { get; set; }
     public int AccountId { get; set; }
 
     // Navigation properties
     public virtual Membership Membership { get; set; }
-    public virtual Account Account { get; set; }
+    public virtual ApplicationUser Account { get; set; }
 }
 
 public enum TransactionStatus

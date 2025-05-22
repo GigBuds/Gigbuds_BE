@@ -10,7 +10,7 @@ internal class JobPostConfiguration : IEntityTypeConfiguration<JobPost>
     public void Configure(EntityTypeBuilder<JobPost> builder)
     {
         // Table name
-        builder.ToTable("JobPosts", "dbo");
+        builder.ToTable("JobPosts", "public");
         
         // Properties
         builder.Property(jp => jp.AccountId)

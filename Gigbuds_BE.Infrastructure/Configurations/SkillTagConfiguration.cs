@@ -9,7 +9,7 @@ internal class SkillTagConfiguration : IEntityTypeConfiguration<SkillTag>
     public void Configure(EntityTypeBuilder<SkillTag> builder)
     {
         //Table name
-        builder.ToTable("SkillTags", "dbo");
+        builder.ToTable("SkillTags", "public");
 
         //Properties
         builder.Property(s => s.SkillName)

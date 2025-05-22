@@ -9,7 +9,7 @@ internal class JobSeekerShiftConfiguration : IEntityTypeConfiguration<JobSeekerS
     public void Configure(EntityTypeBuilder<JobSeekerShift> builder)
     {
         //Table name
-        builder.ToTable("JobSeekerShifts", "dbo");
+        builder.ToTable("JobSeekerShifts", "public");
 
         //Properties
         builder.Property(j => j.DayOfWeek)

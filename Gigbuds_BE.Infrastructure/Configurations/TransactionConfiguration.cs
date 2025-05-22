@@ -9,7 +9,7 @@ internal class TransactionConfiguration : IEntityTypeConfiguration<TransactionRe
     public void Configure(EntityTypeBuilder<TransactionRecord> builder)
     {
         // Table name
-        builder.ToTable("TransactionRecords", "dbo");
+        builder.ToTable("TransactionRecords", "public");
 
         // Properties
         builder.Property(t => t.Revenue)

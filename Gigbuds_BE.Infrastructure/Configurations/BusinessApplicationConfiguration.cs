@@ -1,5 +1,6 @@
 using System;
 using Gigbuds_BE.Domain.Entities.Accounts;
+using Gigbuds_BE.Domain.Entities.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,7 +11,7 @@ internal class BusinessApplicationConfiguration : IEntityTypeConfiguration<Busin
     public void Configure(EntityTypeBuilder<BusinessApplication> builder)
     {
         // Table name
-        builder.ToTable("BusinessApplications", "dbo");
+        builder.ToTable("BusinessApplications", "public");
         
         // Properties
         builder.Property(ba => ba.Id)
@@ -19,7 +20,8 @@ internal class BusinessApplicationConfiguration : IEntityTypeConfiguration<Busin
         builder.Property(ba => ba.EmployerId)
             .IsRequired();
             
-        builder.Property(ba => ba.ApplyDate)
+        builder.Property(ba => ba.CreatedAt)
+            .HasColumnName("AppliedAt")
             .IsRequired();
             
         builder.Property(ba => ba.ApplicationStatus)

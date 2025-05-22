@@ -10,7 +10,7 @@ internal class JobShiftConfiguration : IEntityTypeConfiguration<JobShift>
     public void Configure(EntityTypeBuilder<JobShift> builder)
     {
         // Table name
-        builder.ToTable("JobShifts", "dbo");
+        builder.ToTable("JobShifts", "public");
             
         // Properties
         builder.Property(js => js.JobPostScheduleId)

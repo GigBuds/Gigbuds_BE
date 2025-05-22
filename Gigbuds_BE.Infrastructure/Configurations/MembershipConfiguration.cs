@@ -8,7 +8,7 @@ internal class MembershipConfiguration : IEntityTypeConfiguration<Membership>
 {
     public void Configure(EntityTypeBuilder<Membership> builder)
     {
-        builder.ToTable("Memberships", "dbo");
+        builder.ToTable("Memberships", "public");
 
         builder.Property(m => m.Title)
             .HasMaxLength(255)

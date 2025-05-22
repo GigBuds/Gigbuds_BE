@@ -1,4 +1,4 @@
-using Gigbuds_BE.Domain.Entities.Accounts;
+using Gigbuds_BE.Domain.Entities.Identity;
 
 namespace Gigbuds_BE.Domain.Entities.Memberships;
 
@@ -11,7 +11,7 @@ public class AccountMembership : BaseEntity
     public AccountMembershipStatus Status { get; set; } = AccountMembershipStatus.Active;
     
     // Navigation properties
-    public virtual Account Account { get; set; }
+    public virtual ApplicationUser Account { get; set; }
     public virtual Membership Membership { get; set; }
 }
 

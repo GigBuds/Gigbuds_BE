@@ -15,11 +15,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Gigbuds_BE.Infrastructure.Persistence
 {
-    public class GigbudsDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>, int>
+    public class GigbudsDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, int>
     {
         // Account entities
-        public DbSet<Account> Accounts { get; set; }
-        public DbSet<Role> Roles { get; set; }
         public DbSet<SkillTag> SkillTags { get; set; }
         public DbSet<EmployerProfile> EmployerProfiles { get; set; }
         public DbSet<EducationalLevel> EducationalLevels { get; set; }

@@ -1,11 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Gigbuds_BE.Domain.Entities.Identity;
 
 namespace Gigbuds_BE.Domain.Entities.Accounts;
 
 public class EmployerProfile : BaseEntity
 {
-    public int EmployerId { get; set; }
     public string CompanyEmail { get; set; }
     public string CompanyAddress { get; set; }
     public string TaxNumber { get; set; }
@@ -17,6 +17,6 @@ public class EmployerProfile : BaseEntity
     public bool IsUnlimitedPost { get; set; } = false;
     
     // Navigation property
-    public virtual Account Account { get; set; }
+    public virtual ApplicationUser Account { get; set; }
     public virtual ICollection<BusinessApplication> BusinessApplications { get; set; }
 }
