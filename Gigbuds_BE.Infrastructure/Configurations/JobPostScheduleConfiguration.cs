@@ -11,14 +11,9 @@ internal class JobPostScheduleConfiguration : IEntityTypeConfiguration<JobPostSc
     {
         // Table name
         builder.ToTable("JobPostSchedules", "public");
-        //Ignore
-        builder.Ignore(jps => jps.Id);
-
-        // Set JobPostId as primary key
-        builder.HasKey(jps => jps.JobPostId);
         
         // Properties
-        builder.Property(jps => jps.JobPostId)
+        builder.Property(jps => jps.Id)
             .HasColumnName("JobPostScheduleId")
             .IsRequired();
             
@@ -31,7 +26,7 @@ internal class JobPostScheduleConfiguration : IEntityTypeConfiguration<JobPostSc
         // Relationships - One-to-One with JobPost
         builder.HasOne(jps => jps.JobPost)
             .WithOne(jp => jp.JobPostSchedule)
-            .HasForeignKey<JobPostSchedule>(jps => jps.JobPostId)
+            .HasForeignKey<JobPostSchedule>(jps => jps.Id)
             .OnDelete(DeleteBehavior.Cascade);
             
         // Relationship with JobShift is defined in JobShiftConfiguration
