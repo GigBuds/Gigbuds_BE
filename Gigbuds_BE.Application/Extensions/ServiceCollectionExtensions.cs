@@ -15,7 +15,7 @@ namespace Gigbuds_BE.Application.Extensions
             var applicationAssembly = typeof(ServiceCollectionExtensions).Assembly;
 
             // Add Helpers
-            services.AddScoped<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddHttpContextAccessor();
             services.AddScoped<IUserContext, UserContext>();
 
             // Add AutoMapper
