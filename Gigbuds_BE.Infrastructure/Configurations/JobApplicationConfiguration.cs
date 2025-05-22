@@ -11,12 +11,12 @@ internal class JobApplicationConfiguration : IEntityTypeConfiguration<JobApplica
     public void Configure(EntityTypeBuilder<JobApplication> builder)
     {
         // Table name
-        builder.ToTable("JobApplications", "dbo");
-
-        //Ignore
-        builder.Ignore(ja => ja.CreatedAt);
+        builder.ToTable("JobApplications", "public");
 
         // Properties
+        builder.Property(ja => ja.CreatedAt)
+               .HasColumnName("AppliedAt");
+               
         builder.Property(ja => ja.JobPostId)
             .IsRequired();
             
@@ -28,9 +28,6 @@ internal class JobApplicationConfiguration : IEntityTypeConfiguration<JobApplica
             .IsRequired(false);
             
         builder.Property(ja => ja.ApplicationStatus)
-            .IsRequired();
-            
-        builder.Property(ja => ja.AppliedAt)
             .IsRequired();
 
         builder.Property(ja => ja.ApplicationStatus)

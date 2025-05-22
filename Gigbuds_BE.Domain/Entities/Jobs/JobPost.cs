@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Gigbuds_BE.Domain.Entities.Accounts;
+using Gigbuds_BE.Domain.Entities.Identity;
 using Gigbuds_BE.Domain.Entities.Notifications;
 using Gigbuds_BE.Domain.Entities.Schedule;
 
@@ -24,7 +24,7 @@ public class JobPost : BaseEntity
     public bool IsOutstandingPost { get; set; }
     
     // Navigation properties
-    public virtual Account Account { get; set; }
+    public virtual ApplicationUser Account { get; set; }
     public virtual ICollection<JobApplication> JobApplications { get; set; }
     public virtual ICollection<JobHistory> JobHistories { get; set; }
     public virtual ICollection<Notification> Notifications { get; set; }

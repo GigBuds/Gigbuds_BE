@@ -10,7 +10,7 @@ internal class JobHistoryConfiguration : IEntityTypeConfiguration<JobHistory>
     public void Configure(EntityTypeBuilder<JobHistory> builder)
     {
         // Table name
-        builder.ToTable("JobHistories", "dbo");
+        builder.ToTable("JobHistories", "public");
         
         // Properties
         builder.Property(jh => jh.AccountId)

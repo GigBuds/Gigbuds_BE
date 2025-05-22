@@ -10,7 +10,7 @@ internal class ConversationConfiguration : IEntityTypeConfiguration<Conversation
     public void Configure(EntityTypeBuilder<Conversation> builder)
     {
         // Table name
-        builder.ToTable("Conversations", "dbo");
+        builder.ToTable("Conversations", "public");
 
         // Properties
         builder.Property(c => c.ConversationName)

@@ -1,16 +1,16 @@
 using Gigbuds_BE.Application.Commons.Constants;
-using Gigbuds_BE.Domain.Entities.Accounts;
+using Gigbuds_BE.Domain.Entities.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gigbuds_BE.Infrastructure.Configurations;
 
-internal class AccountConfiguration : IEntityTypeConfiguration<Account>
+internal class ApplicationUserConfiguration : IEntityTypeConfiguration<ApplicationUser>
 {
-    public void Configure(EntityTypeBuilder<Account> builder)
+    public void Configure(EntityTypeBuilder<ApplicationUser> builder)
     {
         //Table name
-        builder.ToTable("Accounts", "dbo");
+        builder.ToTable("AspNetUsers", "public");
 
         //Unique index
         builder.HasIndex(a => a.Email)
@@ -35,15 +35,21 @@ internal class AccountConfiguration : IEntityTypeConfiguration<Account>
             .HasMaxLength(255)
             .IsRequired();
 
-
         builder.Property(a => a.IsMale)
             .HasDefaultValue(true);
 
         builder.Property(a => a.AvailableJobApplication)
             .HasDefaultValue(ProjectConstant.Free_Tier_Job_Application);
 
-        // Relationships with Roles
-        builder.HasMany(a => a.Roles)
-            .WithMany(r => r.Accounts);
+        builder.Property(a => a.IsEnabled)
+            .HasDefaultValue(true);
+
+        builder.Property(a => a.CreatedAt)
+            .HasDefaultValueSql("NOW()");
+
+        builder.Property(a => a.UpdatedAt)
+            .HasDefaultValueSql("NOW()");
+
+        // Relationships with Roles handled by Identity framework
     }
-}
+} 

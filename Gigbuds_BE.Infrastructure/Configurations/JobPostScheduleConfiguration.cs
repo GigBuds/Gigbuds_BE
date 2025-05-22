@@ -10,7 +10,7 @@ internal class JobPostScheduleConfiguration : IEntityTypeConfiguration<JobPostSc
     public void Configure(EntityTypeBuilder<JobPostSchedule> builder)
     {
         // Table name
-        builder.ToTable("JobPostSchedules", "dbo");
+        builder.ToTable("JobPostSchedules", "public");
         //Ignore
         builder.Ignore(jps => jps.Id);
 

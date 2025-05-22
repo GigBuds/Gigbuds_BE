@@ -10,7 +10,7 @@ internal class TemplateConfiguration : IEntityTypeConfiguration<Template>
     public void Configure(EntityTypeBuilder<Template> builder)
     {
         // Table name
-        builder.ToTable("Templates", "dbo");
+        builder.ToTable("Templates", "public");
         
         // Properties
         builder.Property(nt => nt.Name)

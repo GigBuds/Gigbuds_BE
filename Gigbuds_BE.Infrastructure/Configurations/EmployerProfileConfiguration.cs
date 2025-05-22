@@ -1,5 +1,6 @@
 using System;
 using Gigbuds_BE.Domain.Entities.Accounts;
+using Gigbuds_BE.Domain.Entities.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,10 +11,7 @@ internal class EmployerProfileConfiguration : IEntityTypeConfiguration<EmployerP
     public void Configure(EntityTypeBuilder<EmployerProfile> builder)
     {
         // Table name
-        builder.ToTable("EmployerProfiles", "dbo");
-        
-        // Set AccountId as the primary key
-        builder.HasKey(ep => ep.EmployerId);
+        builder.ToTable("EmployerProfiles", "public");
         
         //Ignore
         builder.Ignore(ep => ep.Id);
@@ -42,10 +40,10 @@ internal class EmployerProfileConfiguration : IEntityTypeConfiguration<EmployerP
             .IsRequired()
             .HasDefaultValue(false);
             
-        // Relationship with Account - One-to-One
+        // Relationship with ApplicationUser - One-to-One
         builder.HasOne(ep => ep.Account)
             .WithOne(a => a.EmployerProfile)
-            .HasForeignKey<EmployerProfile>(ep => ep.EmployerId)
+            .HasForeignKey<EmployerProfile>(ep => ep.Id)
             .OnDelete(DeleteBehavior.Cascade);
     }
 } 

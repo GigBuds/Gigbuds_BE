@@ -10,7 +10,7 @@ internal class NotificationConfiguration : IEntityTypeConfiguration<Notification
     public void Configure(EntityTypeBuilder<Notification> builder)
     {
         // Table name
-        builder.ToTable("Notifications", "dbo");
+        builder.ToTable("Notifications", "public");
         
         // Properties
         builder.Property(n => n.Message)

@@ -10,7 +10,7 @@ internal class FollowerConfiguration : IEntityTypeConfiguration<Follower>
     public void Configure(EntityTypeBuilder<Follower> builder)
     {
         //Table name
-        builder.ToTable("Followers", "dbo");
+        builder.ToTable("Followers", "public");
 
         //Composite key
         builder.HasKey(f => new { f.FollowerAccountId, f.FollowedAccountId });

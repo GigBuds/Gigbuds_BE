@@ -9,7 +9,7 @@ internal class EducationalLevelConfiguration : IEntityTypeConfiguration<Educatio
     public void Configure(EntityTypeBuilder<EducationalLevel> builder)
     {
         //Table name
-        builder.ToTable("EducationalLevels", "dbo");
+        builder.ToTable("EducationalLevels", "public");
 
         // Properties
         builder.Property(e => e.AccountId)

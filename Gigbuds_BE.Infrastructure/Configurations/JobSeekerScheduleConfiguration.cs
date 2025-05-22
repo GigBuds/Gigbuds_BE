@@ -9,17 +9,11 @@ internal class JobSeekerScheduleConfiguration : IEntityTypeConfiguration<JobSeek
     public void Configure(EntityTypeBuilder<JobSeekerSchedule> builder)
     {
         //Table name
-        builder.ToTable("JobSeekerSchedules", "dbo");
-
-        //Ignore
-        builder.Ignore(js => js.Id);
-
-        //Properties
-        builder.HasKey(js => js.AccountId);
+        builder.ToTable("JobSeekerSchedules", "public");
 
         //Relationships
         builder.HasOne(js => js.Account)
             .WithOne(a => a.JobSeekerSchedule)
-            .HasForeignKey<JobSeekerSchedule>(js => js.AccountId);
+            .HasForeignKey<JobSeekerSchedule>(js => js.Id);
     }
 }

@@ -10,7 +10,7 @@ internal class AccountMembershipConfiguration : IEntityTypeConfiguration<Account
     public void Configure(EntityTypeBuilder<AccountMembership> builder)
     {
         //Table name
-        builder.ToTable("AccountMemberships", "dbo");
+        builder.ToTable("AccountMemberships", "public");
 
         //Ignore
         builder.Ignore(am => am.Id);

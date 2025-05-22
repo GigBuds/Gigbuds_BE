@@ -10,7 +10,7 @@ internal class ConversationMemberConfiguration : IEntityTypeConfiguration<Conver
     public void Configure(EntityTypeBuilder<ConversationMember> builder)
     {
         // Table name
-        builder.ToTable("ConversationMembers", "dbo");
+        builder.ToTable("ConversationMembers", "public");
         
         // Configure composite primary key
         builder.HasKey(cm => new { cm.ConversationId, cm.AccountId });

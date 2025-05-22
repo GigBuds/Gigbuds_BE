@@ -11,7 +11,7 @@ internal class FeedbackConfiguration : IEntityTypeConfiguration<Feedback>
     public void Configure(EntityTypeBuilder<Feedback> builder)
     {
         // Table name
-        builder.ToTable("Feedbacks", "dbo");
+        builder.ToTable("Feedbacks", "public");
 
         // Properties
         builder.Property(f => f.AccountId)
