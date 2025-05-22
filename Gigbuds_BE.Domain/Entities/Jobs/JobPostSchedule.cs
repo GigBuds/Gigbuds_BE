@@ -5,7 +5,6 @@ namespace Gigbuds_BE.Domain.Entities.Jobs;
 
 public class JobPostSchedule : BaseEntity
 {
-    public int JobPostId { get; set; }
     public int ShiftCount { get; set; }
     public int MinimumShift { get; set; }
     // Navigation properties
