@@ -16,7 +16,7 @@ namespace Gigbuds_BE.Infrastructure.Persistence
 
         private readonly ILoggerFactory _loggerFactory;
 
-        private ConcurrentDictionary<string, object> _repositoryDictionary;
+        private readonly ConcurrentDictionary<string, object> _repositoryDictionary;
 
         // ===================================
         // === Constructors

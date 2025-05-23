@@ -9,7 +9,6 @@ namespace Gigbuds_BE.Domain.Entities.Jobs;
 public class JobPost : BaseEntity
 {
     public int AccountId { get; set; }
-    public int ScheduleId { get; set; }
     public string JobTitle { get; set; }
     public string JobDescription { get; set; }
     public string JobRequirement { get; set; }
@@ -22,7 +21,7 @@ public class JobPost : BaseEntity
     public JobPostStatus JobPostStatus { get; set; }
     public int VacancyCount { get; set; }
     public bool IsOutstandingPost { get; set; }
-    
+
     // Navigation properties
     public virtual ApplicationUser Account { get; set; }
     public virtual ICollection<JobApplication> JobApplications { get; set; }

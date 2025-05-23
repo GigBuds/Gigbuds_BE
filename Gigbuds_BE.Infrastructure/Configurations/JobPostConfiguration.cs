@@ -16,9 +16,6 @@ internal class JobPostConfiguration : IEntityTypeConfiguration<JobPost>
         builder.Property(jp => jp.AccountId)
             .IsRequired();
             
-        builder.Property(jp => jp.ScheduleId)
-            .IsRequired();
-            
         builder.Property(jp => jp.JobTitle)
             .HasMaxLength(50)
             .IsRequired();

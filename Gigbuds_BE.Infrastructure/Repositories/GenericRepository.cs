@@ -30,7 +30,7 @@ namespace Gigbuds_BE.Infrastructure.Repositories
         // === INSERT, UPDATE, DELETE
         // ===========================
 
-        public T? Insert(T entity)
+        public T Insert(T entity)
         {
             var addedEntity = _dbContext.Set<T>().Add(entity).Entity;
             return addedEntity;

@@ -1,13 +1,14 @@
 ﻿using Asp.Versioning;
 using Gigbuds_BE.API.RequestHelpers;
 using Microsoft.AspNetCore.Mvc;
+using Wolverine;
 
 namespace Gigbuds_BE.API.Controllers
 {
     [ApiVersion(1)]
     [ApiController]
-    [Route("api/v{version:apiVersion}/[controller")]
-    internal abstract class BaseApiController : ControllerBase
+    [Route("api/v{version:apiVersion}/[controller]")]
+    public abstract class BaseApiController() : ControllerBase
     {
         /// <summary>
         /// Returns an <see cref="ActionResult"/> containing paginated data and pagination metadata.

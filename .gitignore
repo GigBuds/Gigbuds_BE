@@ -4,6 +4,8 @@
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
 # Add migrations folder to gitignore
+PROTOCOL.md
+PROJECT_STRUCTURE.md
 Gigbuds_BE.Infrastructure/Migrations
 # Ignore appsetttings.json
 Gigbuds_BE.API/appsettings.json
@@ -414,3 +416,4 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+PROJECT_STRUCTURE.md
