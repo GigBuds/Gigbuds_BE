@@ -1,3 +1,4 @@
+using Gigbuds_BE.Application.Features.Schedules.Commands.CreateJobPostSchedule;
 using Gigbuds_BE.Application.Interfaces.Repositories;
 using Gigbuds_BE.Domain.Entities.Jobs;
 using Gigbuds_BE.Domain.Exceptions;
@@ -13,8 +14,8 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
     public class CreateJobPostCommandHandler
     {
         public async Task<int> Handle(
-            CreateJobPostCommand command, 
-            ILogger<CreateJobPostCommandHandler> logger, 
+            CreateJobPostCommand command,
+            ILogger<CreateJobPostCommandHandler> logger,
             IMessageBus messageBus,
             IUnitOfWork unitOfWork)
         {
@@ -30,7 +31,7 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
                 ExpireTime = command.ExpireTime,
                 Benefit = command.Benefit,
                 VacancyCount = command.VacancyCount,
-                IsOutstandingPost = command.IsOutstandingPost
+                IsOutstandingPost = command.IsOutstandingPost,
             };
 
             logger.LogInformation("New job post: {JobPost}", newJobPost);
@@ -39,6 +40,8 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
             try
             {
                 await unitOfWork.CompleteAsync();
+                logger.LogInformation("New job post created with id: {Id}", newJobPost.Id);
+                return newJobPost.Id;
             }
             catch (Exception ex)
             {
@@ -46,8 +49,6 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
                 throw new CreateFailedException(nameof(JobPost));
             }
 
-            logger.LogInformation("New job post created with id: {Id}", newJobPost.Id);
-            return newJobPost.Id;
         }
     }
 }

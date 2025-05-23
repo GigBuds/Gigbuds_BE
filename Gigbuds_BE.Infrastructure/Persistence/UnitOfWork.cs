@@ -53,9 +53,10 @@ namespace Gigbuds_BE.Infrastructure.Persistence
                 valueFactory: _ =>
                 {
                     var repoType = typeof(GenericRepository<T>);
-                    var repoLogger = _loggerFactory.CreateLogger<GenericRepository<T>>();
+                    //var repoLogger = _loggerFactory.CreateLogger<GenericRepository<T>>();
 
-                    var repoInstance = Activator.CreateInstance(repoType, _dbContext, repoLogger);
+                    //var repoInstance = Activator.CreateInstance(repoType, _dbContext, repoLogger);
+                    var repoInstance = Activator.CreateInstance(repoType, _dbContext);
 
                     return repoInstance!;
                 });

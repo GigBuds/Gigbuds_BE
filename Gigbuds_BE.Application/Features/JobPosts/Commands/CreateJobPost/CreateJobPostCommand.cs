@@ -1,10 +1,10 @@
 ﻿using Gigbuds_BE.Application.Features.Schedules.Commands.CreateJobPostSchedule;
+using System.Text.Json.Serialization;
 
 namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
 {
     public class CreateJobPostCommand
     {
-        public required int ScheduleId { get; set; }
         public required string JobTitle { get; set; } = string.Empty;
 
         public required string JobDescription { get; set; } = string.Empty;
@@ -17,6 +17,7 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
         public required string Benefit { get; set; } = string.Empty;
         public required int VacancyCount { get; set; }
         public required bool IsOutstandingPost { get; set; }
+        [JsonPropertyName("JobSchedule")]
         public required CreateJobPostScheduleCommand ScheduleCommand { get; set; }
     }
 }

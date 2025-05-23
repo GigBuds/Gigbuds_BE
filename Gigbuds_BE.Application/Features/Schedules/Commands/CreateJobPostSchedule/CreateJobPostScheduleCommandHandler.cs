@@ -4,10 +4,11 @@ using Microsoft.Extensions.Logging;
 using Wolverine;
 using Gigbuds_BE.Application.Features.Schedules.JobShifts.Commands.CreateJobShift;
 using Gigbuds_BE.Domain.Entities.Jobs;
+using Gigbuds_BE.Domain.Exceptions;
 
 namespace Gigbuds_BE.Application.Features.Schedules.Commands.CreateJobPostSchedule
 {
-    internal class CreateJobPostScheduleCommandHandler
+    public class CreateJobPostScheduleCommandHandler
     {
         public async Task<JobPostSchedule> Handle(
             CreateJobPostScheduleCommand command,
@@ -15,22 +16,33 @@ namespace Gigbuds_BE.Application.Features.Schedules.Commands.CreateJobPostSchedu
             IUnitOfWork unitOfWork,
             IMessageBus messageBus)
         {
-            return null;
-            //IReadOnlyList<DomainJobShift.JobShift> jobShifts =
-            //await messageBus.SendAsync<IReadOnlyList<DomainJobShift.JobShift>>(
-            //    new CreateJobShiftsCommand
-            //    {
-            //        JobShifts = command.JobShifts;
-            //    });
-            //JobPostSchedule newJobPostSchedule = new()
-            //{
-            //    ShiftCount = command.ShiftCount,
-            //    MinimumShift = command.MinimumShift
-            //};
+            IReadOnlyList<DomainJobShift.JobShift> jobShifts =
+            await messageBus.InvokeAsync<IReadOnlyList<DomainJobShift.JobShift>>(
+                new CreateJobShiftsCommand
+                {
+                    JobShifts = command.JobShifts
+                });
 
-            //unitOfWork.Repository<JobPostSchedule>().Insert(newJobPostSchedule);
-            //await unitOfWork.CompleteAsync();
-            //return newJobPostSchedule;
+            JobPostSchedule newJobPostSchedule = new()
+            {
+                ShiftCount = command.ShiftCount,
+                MinimumShift = command.MinimumShift,
+                JobShifts = [.. jobShifts],
+            };
+
+            unitOfWork.Repository<JobPostSchedule>().Insert(newJobPostSchedule);
+
+            try
+            {
+                int rowsAdded = await unitOfWork.CompleteAsync();
+                logger.LogInformation("Added {RowsAdded} rows to the database, from {RowsProvided} rows provided", rowsAdded, command.JobShifts.Count);
+                return newJobPostSchedule;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "An error occurred while creating a new job post schedule.");
+                throw new CreateFailedException(nameof(JobPostSchedule));
+            }
         }
     }
 }

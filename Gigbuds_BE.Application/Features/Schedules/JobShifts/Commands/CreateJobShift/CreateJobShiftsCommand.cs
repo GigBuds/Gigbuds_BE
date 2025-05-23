@@ -1,4 +1,5 @@
-﻿using Gigbuds_BE.Domain.Entities.Jobs;
+﻿
+using Gigbuds_BE.Application.Features.Schedules.Commands.CreateJobPostSchedule;
 
 namespace Gigbuds_BE.Application.Features.Schedules.JobShifts.Commands.CreateJobShift
 {
