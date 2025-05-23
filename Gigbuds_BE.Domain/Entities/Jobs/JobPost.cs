@@ -9,7 +9,6 @@ namespace Gigbuds_BE.Domain.Entities.Jobs;
 public class JobPost : BaseEntity
 {
     public int AccountId { get; set; }
-    public int ScheduleId { get; set; }
     public string JobTitle { get; set; }
     public string JobDescription { get; set; }
     public string JobRequirement { get; set; }
