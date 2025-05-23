@@ -15,8 +15,6 @@ internal class ApplicationUserConfiguration : IEntityTypeConfiguration<Applicati
         //Unique index
         builder.HasIndex(a => a.Email)
             .IsUnique();
-        builder.HasIndex(a => a.SocialSecurityNumber)
-            .IsUnique();
 
         //Properties
         builder.Property(a => a.Email)
@@ -32,9 +30,8 @@ internal class ApplicationUserConfiguration : IEntityTypeConfiguration<Applicati
             .IsRequired();
 
         builder.Property(a => a.SocialSecurityNumber)
-            .HasMaxLength(255)
-            .IsRequired();
-
+            .HasMaxLength(255);
+            
         builder.Property(a => a.IsMale)
             .HasDefaultValue(true);
 
