@@ -1,6 +1,8 @@
 ﻿using Gigbuds_BE.Application.Interfaces.Repositories;
 using Gigbuds_BE.Application.Interfaces.Services;
+using Gigbuds_BE.Domain.Entities.Identity;
 using Gigbuds_BE.Infrastructure.Persistence;
+using Gigbuds_BE.Infrastructure.Seeder;
 using Gigbuds_BE.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +21,8 @@ namespace Gigbuds_BE.Infrastructure.Extensions
             services.AddDbContextPool<GigbudsDbContext>(options =>
                 options
                     .UseNpgsql(configuration.GetConnectionString("GigbudsDb"))
-                    .EnableSensitiveDataLogging());
+                    .EnableSensitiveDataLogging()
+                    .EnableDetailedErrors());
 
             // Add Redis
             services.AddSingleton<IConnectionMultiplexer>(config =>
@@ -51,6 +54,13 @@ namespace Gigbuds_BE.Infrastructure.Extensions
                 });
             });
             services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
+
+            services.AddIdentityApiEndpoints<ApplicationUser>()
+                .AddRoles<ApplicationRole>()
+                .AddEntityFrameworkStores<GigbudsDbContext>();
+
+            // Add seed identity
+            services.AddScoped<IIdentitySeeder, IdentitySeeder>();
 
             // Add UOW
             services.AddScoped<IUnitOfWork, UnitOfWork>();

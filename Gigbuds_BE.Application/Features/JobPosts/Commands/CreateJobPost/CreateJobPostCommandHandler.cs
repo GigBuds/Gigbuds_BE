@@ -21,6 +21,7 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
         {
             JobPost newJobPost = new()
             {
+                AccountId = command.AccountId,
                 JobTitle = command.JobTitle,
                 JobDescription = command.JobDescription,
                 JobRequirement = command.JobRequirement,
@@ -41,6 +42,9 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
             {
                 await unitOfWork.CompleteAsync();
                 logger.LogInformation("New job post created with id: {Id}", newJobPost.Id);
+
+                command.ScheduleCommand.JobPostId = newJobPost.Id;
+                await messageBus.InvokeAsync(command.ScheduleCommand);
                 return newJobPost.Id;
             }
             catch (Exception ex)

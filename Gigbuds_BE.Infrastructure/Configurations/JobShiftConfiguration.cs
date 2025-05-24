@@ -13,8 +13,6 @@ internal class JobShiftConfiguration : IEntityTypeConfiguration<JobShift>
         builder.ToTable("JobShifts", "public");
             
         // Properties
-        builder.Property(js => js.JobPostScheduleId)
-            .IsRequired();
             
         builder.Property(js => js.DayOfWeek)
             .IsRequired();

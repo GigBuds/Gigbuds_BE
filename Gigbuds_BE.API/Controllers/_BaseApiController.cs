@@ -1,7 +1,6 @@
 ﻿using Asp.Versioning;
-using Gigbuds_BE.API.RequestHelpers;
+using Gigbuds_BE.API.Helpers.RequestHelpers;
 using Microsoft.AspNetCore.Mvc;
-using Wolverine;
 
 namespace Gigbuds_BE.API.Controllers
 {
@@ -25,4 +24,5 @@ namespace Gigbuds_BE.API.Controllers
             return Ok(pagination);
         }
     }
+
 }

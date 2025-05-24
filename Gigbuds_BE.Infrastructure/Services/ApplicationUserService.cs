@@ -15,12 +15,12 @@ namespace Gigbuds_BE.Infrastructure.Services
         // ================================
 
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole<int>> _roleManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
 
         // ================================
         // === Constructors
         // ================================
-        public ApplicationUserService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole<int>> roleManager)
+        public ApplicationUserService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;

@@ -4,6 +4,8 @@ namespace Gigbuds_BE.Application.Features.Schedules.Commands.CreateJobPostSchedu
 {
     public class CreateJobPostScheduleCommand
     {
+        [JsonIgnore]
+        public int JobPostId { get; set; }
         public required int ShiftCount { get; set; }
         public required int MinimumShift { get; set; }
         [JsonPropertyName("JobShifts")]

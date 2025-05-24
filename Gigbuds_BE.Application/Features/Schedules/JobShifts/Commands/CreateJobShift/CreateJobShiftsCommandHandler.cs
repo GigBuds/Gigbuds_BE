@@ -17,6 +17,7 @@ namespace Gigbuds_BE.Application.Features.Schedules.JobShifts.Commands.CreateJob
             {
                 JobShift newJobShift = new()
                 {
+                    JobPostScheduleId = command.JobPostId,
                     StartTime = js.StartTime,
                     EndTime = js.EndTime,
                     DayOfWeek = js.DayOfWeek,

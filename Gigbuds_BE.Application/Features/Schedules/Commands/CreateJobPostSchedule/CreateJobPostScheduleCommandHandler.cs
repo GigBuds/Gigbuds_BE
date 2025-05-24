@@ -16,18 +16,12 @@ namespace Gigbuds_BE.Application.Features.Schedules.Commands.CreateJobPostSchedu
             IUnitOfWork unitOfWork,
             IMessageBus messageBus)
         {
-            IReadOnlyList<DomainJobShift.JobShift> jobShifts =
-            await messageBus.InvokeAsync<IReadOnlyList<DomainJobShift.JobShift>>(
-                new CreateJobShiftsCommand
-                {
-                    JobShifts = command.JobShifts
-                });
 
             JobPostSchedule newJobPostSchedule = new()
             {
+                Id = command.JobPostId,
                 ShiftCount = command.ShiftCount,
                 MinimumShift = command.MinimumShift,
-                JobShifts = [.. jobShifts],
             };
 
             unitOfWork.Repository<JobPostSchedule>().Insert(newJobPostSchedule);
@@ -36,6 +30,14 @@ namespace Gigbuds_BE.Application.Features.Schedules.Commands.CreateJobPostSchedu
             {
                 int rowsAdded = await unitOfWork.CompleteAsync();
                 logger.LogInformation("Added {RowsAdded} rows to the database, from {RowsProvided} rows provided", rowsAdded, command.JobShifts.Count);
+
+                IReadOnlyList<DomainJobShift.JobShift> jobShifts =
+                await messageBus.InvokeAsync<IReadOnlyList<DomainJobShift.JobShift>>(
+                    new CreateJobShiftsCommand
+                    {
+                        JobPostId = command.JobPostId,
+                        JobShifts = command.JobShifts
+                    });
                 return newJobPostSchedule;
             }
             catch (Exception ex)
