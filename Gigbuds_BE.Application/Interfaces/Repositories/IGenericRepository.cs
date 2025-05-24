@@ -14,7 +14,7 @@ namespace Gigbuds_BE.Application.Interfaces.Repositories
         Task<IReadOnlyList<TDto>> GetAllWithSpecificationProjectedAsync<TDto>(ISpecification<T> specification, IConfigurationProvider mapperConfig);
 
         // INSERT, DELETE, UPDATE
-        public T? Insert(T entity);
+        public T Insert(T entity);
         public T? Update(T entityToUpdate);
         public T? Delete(T entityToDelete);
         public T? Delete(object id);

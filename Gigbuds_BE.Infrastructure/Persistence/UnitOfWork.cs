@@ -16,7 +16,7 @@ namespace Gigbuds_BE.Infrastructure.Persistence
 
         private readonly ILoggerFactory _loggerFactory;
 
-        private ConcurrentDictionary<string, object> _repositoryDictionary;
+        private readonly ConcurrentDictionary<string, object> _repositoryDictionary;
 
         // ===================================
         // === Constructors
@@ -53,9 +53,10 @@ namespace Gigbuds_BE.Infrastructure.Persistence
                 valueFactory: _ =>
                 {
                     var repoType = typeof(GenericRepository<T>);
-                    var repoLogger = _loggerFactory.CreateLogger<GenericRepository<T>>();
+                    //var repoLogger = _loggerFactory.CreateLogger<GenericRepository<T>>();
 
-                    var repoInstance = Activator.CreateInstance(repoType, _dbContext, repoLogger);
+                    //var repoInstance = Activator.CreateInstance(repoType, _dbContext, repoLogger);
+                    var repoInstance = Activator.CreateInstance(repoType, _dbContext);
 
                     return repoInstance!;
                 });

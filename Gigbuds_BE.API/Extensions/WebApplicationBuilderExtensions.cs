@@ -1,7 +1,9 @@
 ﻿using Asp.Versioning;
+using Gigbuds_BE.API.Helpers;
 using Gigbuds_BE.API.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.Text;
@@ -19,7 +21,10 @@ namespace Gigbuds_BE.API.Extensions
             });
 
             // Add Controllers with Endpoints
-            builder.Services.AddControllers();
+            builder.Services.AddControllers(options =>
+            {
+                options.Conventions.Add(new RouteTokenTransformerConvention(new SlugifyParameterTransformer()));
+            });
 
             // Add Authentication
             builder.Services.AddAuthentication(options =>

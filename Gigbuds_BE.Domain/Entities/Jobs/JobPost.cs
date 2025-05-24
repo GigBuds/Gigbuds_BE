@@ -21,7 +21,7 @@ public class JobPost : BaseEntity
     public JobPostStatus JobPostStatus { get; set; }
     public int VacancyCount { get; set; }
     public bool IsOutstandingPost { get; set; }
-    
+
     // Navigation properties
     public virtual ApplicationUser Account { get; set; }
     public virtual ICollection<JobApplication> JobApplications { get; set; }

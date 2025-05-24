@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Gigbuds_BE.API.RequestHelpers
+namespace Gigbuds_BE.API.Helpers.RequestHelpers
 {
     [AttributeUsage(AttributeTargets.Method)]
     public class CacheAttribute : Attribute, IAsyncActionFilter

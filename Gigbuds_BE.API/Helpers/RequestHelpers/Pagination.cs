@@ -1,4 +1,4 @@
-﻿namespace Gigbuds_BE.API.RequestHelpers
+﻿namespace Gigbuds_BE.API.Helpers.RequestHelpers
 {
     public class Pagination<T>(IReadOnlyList<T> items, int count, int pageIndex, int pageSize)
     {
