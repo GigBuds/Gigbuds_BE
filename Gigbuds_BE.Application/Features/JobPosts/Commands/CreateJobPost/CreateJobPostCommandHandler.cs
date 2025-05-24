@@ -44,7 +44,7 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
                 logger.LogInformation("New job post created with id: {Id}", newJobPost.Id);
 
                 command.ScheduleCommand.JobPostId = newJobPost.Id;
-                await messageBus.InvokeAsync(command.ScheduleCommand);
+                await messageBus.SendAsync(command.ScheduleCommand);
                 return newJobPost.Id;
             }
             catch (Exception ex)
@@ -52,7 +52,6 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
                 logger.LogError(ex, "An error occurred while creating a new job post.");
                 throw new CreateFailedException(nameof(JobPost));
             }
-
         }
     }
 }
