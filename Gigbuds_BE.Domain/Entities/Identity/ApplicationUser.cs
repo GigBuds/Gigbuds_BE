@@ -22,7 +22,8 @@ namespace Gigbuds_BE.Domain.Entities.Identity
         public bool IsEnabled { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-        
+        public string? RefreshToken { get; set; }
+
         public virtual ICollection<ConversationMember> ConversationMembers { get; set; }
         public virtual ICollection<Message> Messages { get; set; }
         public virtual ICollection<Follower> Followers { get; set; }
