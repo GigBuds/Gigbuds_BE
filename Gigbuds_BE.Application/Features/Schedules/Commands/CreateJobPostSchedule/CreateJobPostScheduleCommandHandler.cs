@@ -31,8 +31,7 @@ namespace Gigbuds_BE.Application.Features.Schedules.Commands.CreateJobPostSchedu
                 int rowsAdded = await unitOfWork.CompleteAsync();
                 logger.LogInformation("Added {RowsAdded} rows to the database, from {RowsProvided} rows provided", rowsAdded, command.JobShifts.Count);
 
-                IReadOnlyList<DomainJobShift.JobShift> jobShifts =
-                await messageBus.InvokeAsync<IReadOnlyList<DomainJobShift.JobShift>>(
+                await messageBus.SendAsync(
                     new CreateJobShiftsCommand
                     {
                         JobPostId = command.JobPostId,
