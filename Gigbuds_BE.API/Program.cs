@@ -19,9 +19,6 @@ builder.Services.AddApplications(builder.Configuration);
 
 var app = builder.Build();
 
-//Seed roles
-await app.SeedRolesAsync();
-
 // ====================================
 // === Use Middlewares
 // ====================================
@@ -45,6 +42,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.MapGroup("api/identities")
+    .WithTags("Identities");
+    
 app.UseAuthentication();
 app.UseAuthorization();
 
