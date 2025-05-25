@@ -50,7 +50,8 @@ namespace Gigbuds_BE.Application.Interfaces.Services
         /// </summary>
         /// <param name="user">The user to insert.</param>
         /// <param name="password">The password for the new user.</param>
-        Task InsertEmployerAsync(ApplicationUser user, string password);
+        /// <param name="companyEmail">The company email for the new user.</param>
+        Task InsertEmployerAsync(ApplicationUser user, string password, string companyEmail);
 
         /// <summary>
         /// Assigns a role to a user asynchronously.

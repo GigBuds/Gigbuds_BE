@@ -30,19 +30,6 @@ namespace Gigbuds_BE.Infrastructure.Extensions
                     .EnableSensitiveDataLogging()
                     .EnableDetailedErrors());
 
-            // Add Identity services with role support (but without authentication middleware)
-            // services.AddIdentityCore<ApplicationUser>(options =>
-            // {
-            //     // Configure Identity options if needed
-            //     options.Password.RequireDigit = true;
-            //     options.Password.RequiredLength = 6;
-            //     options.Password.RequireNonAlphanumeric = false;
-            //     options.Password.RequireUppercase = false;
-            //     options.Password.RequireLowercase = false;
-            // })
-            // .AddRoles<ApplicationRole>()
-            // .AddEntityFrameworkStores<GigbudsDbContext>()
-            // .AddSignInManager<SignInManager<ApplicationUser>>();
             services.AddIdentityApiEndpoints<ApplicationUser>()
             .AddRoles<ApplicationRole>()
             .AddEntityFrameworkStores<GigbudsDbContext>();

@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace Gigbuds_BE.Application.Specifications
 {
-    internal class BaseSpecification<T> : ISpecification<T> where T : class
+    public class BaseSpecification<T> : ISpecification<T> where T : class
     {
         // =====================================
         // === Fields & Props

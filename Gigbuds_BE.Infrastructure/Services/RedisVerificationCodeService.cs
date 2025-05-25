@@ -1,3 +1,4 @@
+using Gigbuds_BE.Application.Commons.Constants;
 using Gigbuds_BE.Application.Configurations;
 using Gigbuds_BE.Application.Interfaces.Services;
 using Microsoft.Extensions.Logging;
@@ -11,7 +12,6 @@ public class RedisVerificationCodeService : IVerificationCodeService
     private readonly IDatabase _database;
     private readonly RedisSettings _settings;
     private readonly ILogger<RedisVerificationCodeService> _logger;
-    private const string VerificationCodePrefix = "verification_code:";
 
     public RedisVerificationCodeService(
         IConnectionMultiplexer redis, 
@@ -120,6 +120,6 @@ public class RedisVerificationCodeService : IVerificationCodeService
 
     private static string GetKey(string phoneNumber)
     {
-        return $"{VerificationCodePrefix}{phoneNumber}";
+        return $"{ProjectConstant.VerificationCodePrefix}{phoneNumber}";
     }
 } 
