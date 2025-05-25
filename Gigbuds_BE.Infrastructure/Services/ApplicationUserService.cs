@@ -1,6 +1,9 @@
 ﻿using Gigbuds_BE.Application.Interfaces;
+using Gigbuds_BE.Application.Interfaces.Repositories;
 using Gigbuds_BE.Application.Interfaces.Services;
 using Gigbuds_BE.Application.Specifications;
+using Gigbuds_BE.Domain.Entities.Accounts;
+using Gigbuds_BE.Domain.Entities.Constants;
 using Gigbuds_BE.Domain.Entities.Identity;
 using Gigbuds_BE.Domain.Exceptions;
 using Microsoft.AspNetCore.Identity;
@@ -16,14 +19,16 @@ namespace Gigbuds_BE.Infrastructure.Services
 
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
+        private readonly IUnitOfWork _unitOfWork;
 
         // ================================
         // === Constructors
         // ================================
-        public ApplicationUserService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
+        public ApplicationUserService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _unitOfWork = unitOfWork;
         }
 
         // ================================
@@ -66,26 +71,31 @@ namespace Gigbuds_BE.Infrastructure.Services
             await _userManager.UpdateAsync(user);
         }
 
-        public async Task InsertAsync(ApplicationUser user, string password)
+        public async Task InsertJobSeekerAsync(ApplicationUser user, string password)
         {
-            // Check for duplicate email
+            var existingUserByPhoneNumber = await _userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == user.PhoneNumber);
+            if(existingUserByPhoneNumber != null) {
+                throw new DuplicateUserException($"A user with the phone number {user.PhoneNumber} already exists.");
+            }
+
             var existingUserByEmail = await _userManager.FindByEmailAsync(user.Email!);
             if (existingUserByEmail != null)
             {
                 throw new DuplicateUserException($"A user with the email {user.Email} already exists.");
             }
-
-            // Check for duplicate username
-            var existingUserByUsername = await _userManager.FindByNameAsync(user.UserName!);
-            if (existingUserByUsername != null)
+            
+            
+            var existingUserBySocialSecurityNumber = await _userManager.Users.FirstOrDefaultAsync(u => u.SocialSecurityNumber == user.SocialSecurityNumber);
+            if (existingUserBySocialSecurityNumber != null)
             {
-                throw new DuplicateUserException($"A user with the username {user.UserName} already exists.");
+                throw new DuplicateUserException($"A user with the social security number {user.SocialSecurityNumber} already exists.");
             }
 
             var result = await _userManager.CreateAsync(user, password);
             if (!result.Succeeded)
             {
-                throw new CreateFailedException(user.Email!);
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                throw new CreateFailedException($"User creation failed: {errors}");
             }
         }
 
@@ -107,6 +117,88 @@ namespace Gigbuds_BE.Infrastructure.Services
         public async Task<ApplicationUser?> GetByIdAsync(int userId)
         {
             return await _userManager.FindByIdAsync(userId.ToString());
+        }
+
+        public async Task InsertEmployerAsync(ApplicationUser user, string password)
+        {
+            var existingUserByPhoneNumber = await _userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == user.PhoneNumber);
+            if(existingUserByPhoneNumber != null) {
+                if(await _userManager.IsInRoleAsync(existingUserByPhoneNumber, UserRoles.Employer)) {
+                    throw new DuplicateUserException($"A user with the phone number {user.PhoneNumber} already exists.");
+                } else
+                {
+                    var checkEmailExist = await _userManager.FindByEmailAsync(user.Email);
+                    if(checkEmailExist != null && existingUserByPhoneNumber.Email != user.Email)
+                    {
+                        throw new DuplicateUserException($"A user with the email {user.Email} already exists.");
+                    }
+                    var emptyEmployerProfileForExistingUser = new EmployerProfile {
+                        Id = existingUserByPhoneNumber.Id,
+                        CompanyEmail = string.Empty,
+                        CompanyAddress = string.Empty,
+                        TaxNumber = string.Empty,
+                        BusinessLicense = string.Empty,
+                        IsUnlimitedPost = false,
+                    };
+                    _unitOfWork.Repository<EmployerProfile>().Insert(emptyEmployerProfileForExistingUser);
+                    await _unitOfWork.CompleteAsync();
+                    await _userManager.AddToRoleAsync(existingUserByPhoneNumber, UserRoles.Employer);
+                    return;
+                }
+            }
+
+            var checkEmail = await _userManager.FindByEmailAsync(user.Email);
+            if (checkEmail != null)
+            {
+                throw new DuplicateUserException($"A user with the email {user.Email} already exists.");
+            }
+
+            var existingUserBySocialSecurityNumber = await _userManager.Users.FirstOrDefaultAsync(u => u.SocialSecurityNumber == user.SocialSecurityNumber);
+            if (existingUserBySocialSecurityNumber != null)
+            {
+                throw new DuplicateUserException($"A user with the social security number {user.SocialSecurityNumber} already exists.");
+            }
+
+            var result = await _userManager.CreateAsync(user, password);
+            
+            if (!result.Succeeded)
+            {
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                throw new CreateFailedException($"User creation failed: {errors}");
+            }
+
+            var emptyEmployerProfile = new EmployerProfile {
+                Id = user.Id,
+                CompanyEmail = string.Empty,
+                CompanyAddress = string.Empty,
+                TaxNumber = string.Empty,
+                BusinessLicense = string.Empty,
+                IsUnlimitedPost = false,
+            };
+            _unitOfWork.Repository<EmployerProfile>().Insert(emptyEmployerProfile);
+            await _unitOfWork.CompleteAsync();
+            await _userManager.AddToRolesAsync(user, new List<string> { UserRoles.Employer, UserRoles.JobSeeker });
+        }
+
+        public async Task InsertAsync(ApplicationUser user, string password)
+        {
+            var existingUserByPhoneNumber = await _userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == user.PhoneNumber);
+            if(existingUserByPhoneNumber != null) {
+            throw new DuplicateUserException($"A user with the phone number {user.PhoneNumber} already exists.");
+            }
+
+            var existingUserByEmail = await _userManager.FindByEmailAsync(user.Email!);
+            if (existingUserByEmail != null)
+            {
+                throw new DuplicateUserException($"A user with the email {user.Email} already exists.");
+            }
+            
+            var result = await _userManager.CreateAsync(user, password);
+            if (!result.Succeeded)
+            {
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                throw new CreateFailedException($"User creation failed: {errors}");
+            }
         }
     }
 }

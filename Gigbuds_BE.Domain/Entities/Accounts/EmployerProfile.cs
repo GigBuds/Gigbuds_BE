@@ -18,5 +18,4 @@ public class EmployerProfile : BaseEntity
     
     // Navigation property
     public virtual ApplicationUser Account { get; set; }
-    public virtual ICollection<BusinessApplication> BusinessApplications { get; set; }
 }

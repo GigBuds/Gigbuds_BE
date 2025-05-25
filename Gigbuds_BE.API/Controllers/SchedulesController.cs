@@ -2,7 +2,7 @@
 
 namespace Gigbuds_BE.API.Controllers
 {
-    public class SchedulesController : BaseApiController
+    public class SchedulesController : _BaseApiController
     {
     }
 }

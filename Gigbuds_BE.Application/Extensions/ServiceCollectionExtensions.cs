@@ -1,7 +1,9 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using Gigbuds_BE.Application.Commons.Helpers;
+using Gigbuds_BE.Domain.Entities.Identity;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -24,6 +26,11 @@ namespace Gigbuds_BE.Application.Extensions
             // Add Fluent Validation
             services.AddValidatorsFromAssembly(applicationAssembly)
                 .AddFluentValidationAutoValidation();
+            
+            services.AddMediatR(cfg => {
+        // Register all handlers from the Application assembly
+                cfg.RegisterServicesFromAssembly(applicationAssembly);
+            });
         }
     }
 }
