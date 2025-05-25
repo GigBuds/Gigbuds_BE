@@ -39,11 +39,18 @@ namespace Gigbuds_BE.Application.Interfaces.Services
         Task<int> CountAsync(ISpecification<T> spec);
 
         /// <summary>
-        /// Inserts a new user with the specified password asynchronously.
+        /// Inserts a new Job Seeker with the specified password asynchronously.
         /// </summary>
         /// <param name="user">The user to insert.</param>
         /// <param name="password">The password for the new user.</param>
-        Task InsertAsync(ApplicationUser user, string password);
+        Task InsertJobSeekerAsync(ApplicationUser user, string password);
+
+        /// <summary>
+        /// Inserts a new Employer with the specified password asynchronously.
+        /// </summary>
+        /// <param name="user">The user to insert.</param>
+        /// <param name="password">The password for the new user.</param>
+        Task InsertEmployerAsync(ApplicationUser user, string password);
 
         /// <summary>
         /// Assigns a role to a user asynchronously.
@@ -78,5 +85,12 @@ namespace Gigbuds_BE.Application.Interfaces.Services
         /// <param name="userId">The ID of the user to retrieve.</param>
         /// <returns>The user with the specified ID, or null if not found.</returns>
         Task<ApplicationUser?> GetByIdAsync(int userId);
+
+        /// <summary>
+        /// Inserts a new user with the specified password asynchronously.
+        /// </summary>
+        /// <param name="user">The user to insert.</param>
+        /// <param name="password">The password for the new user.</param>
+        Task InsertAsync(ApplicationUser user, string password);
     }
 }

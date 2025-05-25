@@ -30,8 +30,9 @@ internal class ApplicationUserConfiguration : IEntityTypeConfiguration<Applicati
             .IsRequired();
 
         builder.Property(a => a.SocialSecurityNumber)
-            .HasMaxLength(255);
-            
+            .HasMaxLength(255)
+            .IsRequired(false);
+
         builder.Property(a => a.IsMale)
             .HasDefaultValue(true);
 

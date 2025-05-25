@@ -5,7 +5,7 @@ using Wolverine;
 
 namespace Gigbuds_BE.API.Controllers
 {
-    public class JobPostsController(IMessageBus messageBus) : BaseApiController
+    public class JobPostsController(IMessageBus messageBus) : _BaseApiController
     {
         [HttpPost]
         public async Task<ActionResult<int>> CreateJobPost([FromBody] CreateJobPostCommand jobPostDto)

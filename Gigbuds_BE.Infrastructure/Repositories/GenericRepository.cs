@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Castle.Core.Logging;
 using Gigbuds_BE.Application.Interfaces;
 using Gigbuds_BE.Application.Interfaces.Repositories;
 using Gigbuds_BE.Application.Specifications;
 using Gigbuds_BE.Domain.Entities;
 using Gigbuds_BE.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Gigbuds_BE.Infrastructure.Repositories
 {
@@ -16,6 +18,7 @@ namespace Gigbuds_BE.Infrastructure.Repositories
         // ===========================
 
         private readonly GigbudsDbContext _dbContext;
+        private readonly ILogger<GenericRepository<T>> _logger;
 
         // ===========================
         // === Constructors
@@ -24,6 +27,12 @@ namespace Gigbuds_BE.Infrastructure.Repositories
         public GenericRepository(GigbudsDbContext context)
         {
             _dbContext = context;
+        }
+
+        public GenericRepository(GigbudsDbContext context, ILogger<GenericRepository<T>> logger)
+        {
+            _dbContext = context;
+            _logger = logger;
         }
 
         // ===========================
