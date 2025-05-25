@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text;
 using System.Text.Json;
+using Gigbuds_BE.Application.Commons.Constants;
 using Gigbuds_BE.Application.Configurations;
 using Gigbuds_BE.Application.Interfaces.Services;
 using Microsoft.Extensions.Logging;
@@ -13,7 +14,7 @@ public class SpeedSmsService : ISmsService
     private readonly SpeedSmsSettings _settings;
     private readonly ILogger<SpeedSmsService> _logger;
     private readonly HttpClient _httpClient;
-    private const string RootUrl = "https://api.speedsms.vn/index.php";
+    
 
     public SpeedSmsService(IOptions<SpeedSmsSettings> settings, ILogger<SpeedSmsService> logger, HttpClient httpClient)
     {
@@ -37,7 +38,7 @@ public class SpeedSmsService : ISmsService
     {
         try
         {
-            var url = $"{RootUrl}/sms/send";
+            var url = $"{ProjectConstant.RootUrl}/sms/send";
             
             // Ensure phone number is in correct format
             var formattedPhone = FormatPhoneNumber(phoneNumber);

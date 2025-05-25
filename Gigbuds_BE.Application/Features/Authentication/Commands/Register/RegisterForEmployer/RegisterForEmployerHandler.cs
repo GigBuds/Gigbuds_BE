@@ -33,7 +33,7 @@ namespace Gigbuds_BE.Application.Features.Authentication.Commands.Register.Regis
                 PhoneNumberConfirmed = false // Set to false initially, will be confirmed via SMS
             };
             
-            await applicationUserService.InsertEmployerAsync(user, user.Password);
+            await applicationUserService.InsertEmployerAsync(user, user.Password, request.BusinessEmail);
             
             // Send verification code after successful registration
             try

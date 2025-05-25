@@ -2,6 +2,7 @@
 using Gigbuds_BE.Application.Interfaces.Repositories;
 using Gigbuds_BE.Application.Interfaces.Services;
 using Gigbuds_BE.Application.Specifications;
+using Gigbuds_BE.Application.Specifications.EmployerProfiles;
 using Gigbuds_BE.Domain.Entities.Accounts;
 using Gigbuds_BE.Domain.Entities.Constants;
 using Gigbuds_BE.Domain.Entities.Identity;
@@ -119,8 +120,19 @@ namespace Gigbuds_BE.Infrastructure.Services
             return await _userManager.FindByIdAsync(userId.ToString());
         }
 
-        public async Task InsertEmployerAsync(ApplicationUser user, string password)
-        {
+        public async Task InsertEmployerAsync(ApplicationUser user, string password, string companyEmail)
+        {   
+            // Check if CompanyEmail already exists (only if not empty)
+            if (!string.IsNullOrEmpty(companyEmail))
+            {
+                var employerProfileSpec = new EmployerProfileSpecification(companyEmail);
+                var existingEmployerByCompanyEmail = await _unitOfWork.Repository<EmployerProfile>().GetBySpecificationAsync(employerProfileSpec);
+                if (existingEmployerByCompanyEmail != null)
+                {
+                    throw new DuplicateUserException($"A company with the email {companyEmail} already exists.");
+                }
+            }
+
             var existingUserByPhoneNumber = await _userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == user.PhoneNumber);
             if(existingUserByPhoneNumber != null) {
                 if(await _userManager.IsInRoleAsync(existingUserByPhoneNumber, UserRoles.Employer)) {
@@ -132,9 +144,10 @@ namespace Gigbuds_BE.Infrastructure.Services
                     {
                         throw new DuplicateUserException($"A user with the email {user.Email} already exists.");
                     }
+                    
                     var emptyEmployerProfileForExistingUser = new EmployerProfile {
                         Id = existingUserByPhoneNumber.Id,
-                        CompanyEmail = string.Empty,
+                        CompanyEmail = companyEmail,
                         CompanyAddress = string.Empty,
                         TaxNumber = string.Empty,
                         BusinessLicense = string.Empty,
@@ -169,7 +182,7 @@ namespace Gigbuds_BE.Infrastructure.Services
 
             var emptyEmployerProfile = new EmployerProfile {
                 Id = user.Id,
-                CompanyEmail = string.Empty,
+                CompanyEmail = companyEmail,
                 CompanyAddress = string.Empty,
                 TaxNumber = string.Empty,
                 BusinessLicense = string.Empty,
