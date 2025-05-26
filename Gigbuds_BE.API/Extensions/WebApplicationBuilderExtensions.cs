@@ -98,12 +98,14 @@ namespace Gigbuds_BE.API.Extensions
             {
                 options.AddPolicy("AllowFrontend", policy =>
                 {
-                    policy.WithOrigins()
-
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials()
-                    .WithExposedHeaders("Location");
+                    policy.WithOrigins("http://localhost:3000",
+                                        "https://localhost:3000",
+                                        "http://localhost:3001",
+                                        "https://localhost:3001")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials()
+                        .WithExposedHeaders("Location");
                 });
 
                 options.AddPolicy("AllowGemini", policy =>

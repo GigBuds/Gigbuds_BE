@@ -4,11 +4,7 @@ using Gigbuds_BE.Application.Extensions;
 using Gigbuds_BE.Infrastructure.Extensions;
 using Gigbuds_BE.Infrastructure.Persistence;
 using Gigbuds_BE.Infrastructure.Seeder;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Build.Logging;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client.Extensibility;
-using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,4 +52,20 @@ var applicationDbContext = scope.ServiceProvider.GetRequiredService<GigbudsDbCon
 
 var ShouldReseedData = app.Configuration.GetValue<bool>("ClearAndReseedData");
 
-app.Run();
+try
+{
+    if (ShouldReseedData)
+    {
+        logger.LogInformation("Clearing data...");
+        await applicationDbContext.Database.EnsureDeletedAsync();
+    }
+
+    await applicationDbContext.Database.MigrateAsync();
+    await identitySeeder.SeedAsync();
+}
+catch (Exception ex)
+{
+    logger.LogError(ex, "Error happens during migrations!");
+}
+
+await app.RunAsync();
