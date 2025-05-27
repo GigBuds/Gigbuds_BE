@@ -118,8 +118,8 @@ public class RedisVerificationCodeService : IVerificationCodeService
         }
     }
 
-    private static string GetKey(string phoneNumber)
+    private string GetKey(string phoneNumber)
     {
-        return $"{ProjectConstant.VerificationCodePrefix}{phoneNumber}";
+        return $"{_settings.VerificationCodePrefix}{phoneNumber}";
     }
-} 
+}

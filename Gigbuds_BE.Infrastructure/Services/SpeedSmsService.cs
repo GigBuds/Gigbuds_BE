@@ -38,7 +38,7 @@ public class SpeedSmsService : ISmsService
     {
         try
         {
-            var url = $"{ProjectConstant.RootUrl}/sms/send";
+            var url = $"{_settings.RootUrl}/sms/send";
             
             // Ensure phone number is in correct format
             var formattedPhone = FormatPhoneNumber(phoneNumber);

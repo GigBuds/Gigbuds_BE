@@ -15,11 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Gigbuds_BE.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class IdentityApiController(
-        IMediator mediator,
-        UserManager<ApplicationUser> userManager) : _BaseApiController
+    public class IdentitiesController(IMediator mediator) : _BaseApiController
     {
         // POST /api/v1/identities/register
         // Register a new Job Seeker account

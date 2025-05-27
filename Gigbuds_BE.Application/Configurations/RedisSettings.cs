@@ -11,4 +11,7 @@ public class RedisSettings
 
     [Range(1, 60)]
     public int VerificationCodeExpirationMinutes { get; set; } = 5;
+
+    [Required]
+    public string VerificationCodePrefix { get; set; } = string.Empty;
 } 
