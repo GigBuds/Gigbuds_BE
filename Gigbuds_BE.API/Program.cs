@@ -1,6 +1,7 @@
 using Gigbuds_BE.API.Extensions;
 using Gigbuds_BE.API.Middlewares;
 using Gigbuds_BE.Application.Extensions;
+using Gigbuds_BE.Application.Interfaces.Utilities.Seeding;
 using Gigbuds_BE.Infrastructure.Extensions;
 using Gigbuds_BE.Infrastructure.Persistence;
 using Gigbuds_BE.Infrastructure.Seeder;
@@ -49,6 +50,7 @@ app.MapControllers();
 using var scope = app.Services.CreateScope();
 var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 var applicationDbContext = scope.ServiceProvider.GetRequiredService<GigbudsDbContext>();
+var identitySeeder = scope.ServiceProvider.GetRequiredService<IIdentitySeeder>();
 
 var ShouldReseedData = app.Configuration.GetValue<bool>("ClearAndReseedData");
 
