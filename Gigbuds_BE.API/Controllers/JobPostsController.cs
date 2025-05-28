@@ -25,11 +25,5 @@ namespace Gigbuds_BE.API.Controllers
             return Created(string.Empty, createdJobPostId);
         }
 
-        [HttpGet]
-        public async Task<ActionResult<Pagination<SearchJobPostDto>>> SearchJobPosts([FromQuery] JobPostSearchParams jobPostSearchParams)
-        {
-            var jobPosts = await messageBus.InvokeAsync<Pagination<SearchJobPostDto>>(jobPostSearchParams);
-            return Ok(jobPosts);
-        }
     }
 }
