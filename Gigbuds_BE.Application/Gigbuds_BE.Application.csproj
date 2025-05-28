@@ -29,10 +29,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DTOs\" />
     <Folder Include="Extensions\" />
-    <Folder Include="Features\" />
     <Folder Include="BackgroundJobs\" />
+    <Folder Include="Features\JobPosts\Commands\SearchJobPosts\" />
   </ItemGroup>
 
   <ItemGroup>

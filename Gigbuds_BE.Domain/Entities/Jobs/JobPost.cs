@@ -21,6 +21,12 @@ public class JobPost : BaseEntity
     public JobPostStatus JobPostStatus { get; set; }
     public int VacancyCount { get; set; }
     public bool IsOutstandingPost { get; set; }
+    public bool IsMale { get; set; }
+    public int? AgeRequirement { get; set; }
+    public int JobPositionId { get; set; }
+    public string DistrictCode { get; set; }
+    public string ProvinceCode { get; set; }
+    public int PriorityLevel { get; set; }
 
     // Navigation properties
     public virtual ApplicationUser Account { get; set; }
@@ -28,6 +34,7 @@ public class JobPost : BaseEntity
     public virtual ICollection<JobHistory> JobHistories { get; set; }
     public virtual ICollection<Notification> Notifications { get; set; }
     public virtual JobPostSchedule JobPostSchedule { get; set; }
+    public virtual JobPosition JobPosition { get; set; }
 }
 
 public enum SalaryUnit

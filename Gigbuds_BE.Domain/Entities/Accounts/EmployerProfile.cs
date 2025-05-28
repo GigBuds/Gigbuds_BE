@@ -7,6 +7,7 @@ namespace Gigbuds_BE.Domain.Entities.Accounts;
 public class EmployerProfile : BaseEntity
 {
     public string CompanyEmail { get; set; }
+    public string CompanyName { get; set; }
     public string CompanyAddress { get; set; }
     public string TaxNumber { get; set; }
 
