@@ -1,11 +1,11 @@
 ﻿using Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost;
 using Gigbuds_BE.Domain.Exceptions;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Wolverine;
 
 namespace Gigbuds_BE.API.Controllers
 {
-    public class JobPostsController(IMessageBus messageBus) : _BaseApiController
+    public class JobPostsController(IMediator mediator) : _BaseApiController
     {
         [HttpPost]
         public async Task<ActionResult<int>> CreateJobPost([FromBody] CreateJobPostCommand jobPostDto)
@@ -13,8 +13,9 @@ namespace Gigbuds_BE.API.Controllers
             int createdJobPostId;
             try
             {
-                createdJobPostId = await messageBus.InvokeAsync<int>(jobPostDto);
-            } catch (CreateFailedException)
+                createdJobPostId = await mediator.Send(jobPostDto);
+            }
+            catch (CreateFailedException)
             {
                 return BadRequest("Failed to create job post");
             }

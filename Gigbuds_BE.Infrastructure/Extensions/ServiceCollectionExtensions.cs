@@ -14,6 +14,7 @@ using StackExchange.Redis;
 using Gigbuds_BE.Application.Interfaces.Services.AuthenticationServices;
 using Gigbuds_BE.Infrastructure.Services.AuthenticationServices;
 using Gigbuds_BE.Application.Configurations;
+using Gigbuds_BE.Infrastructure.Seeder;
 
 namespace Gigbuds_BE.Infrastructure.Extensions
 {
@@ -78,6 +79,7 @@ namespace Gigbuds_BE.Infrastructure.Extensions
             // Add ApplicationUser service
             services.AddScoped(typeof(UserManager<>));
             services.AddScoped(typeof(RoleManager<>));
+            services.AddScoped<IIdentitySeeder, IdentitySeeder>();
             services.AddScoped(typeof(IApplicationUserService<>), typeof(ApplicationUserService<>));
             services.AddScoped<IUserTokenService, UserTokenService>();
             

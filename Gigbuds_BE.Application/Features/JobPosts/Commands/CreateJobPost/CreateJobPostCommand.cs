@@ -1,9 +1,10 @@
 ﻿using Gigbuds_BE.Application.Features.Schedules.Commands.CreateJobPostSchedule;
 using System.Text.Json.Serialization;
+using MediatR;
 
 namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
 {
-    public class CreateJobPostCommand
+    public class CreateJobPostCommand : IRequest<int>
     {
         public required int AccountId { get; set; }
         public required string JobTitle { get; set; }

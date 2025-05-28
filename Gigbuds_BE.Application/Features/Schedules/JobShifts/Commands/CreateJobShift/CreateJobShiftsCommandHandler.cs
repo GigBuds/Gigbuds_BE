@@ -2,15 +2,24 @@
 using Gigbuds_BE.Domain.Entities.Jobs;
 using Microsoft.Extensions.Logging;
 using Gigbuds_BE.Domain.Exceptions;
+using MediatR;
 
 namespace Gigbuds_BE.Application.Features.Schedules.JobShifts.Commands.CreateJobShift
 {
-    public class CreateJobShiftsCommandHandler
+    public class CreateJobShiftsCommandHandler : INotificationHandler<CreateJobShiftsCommand>
     {
-        public async Task<IReadOnlyList<JobShift>> Handle(
-            CreateJobShiftsCommand command,
+        private readonly ILogger<CreateJobShiftsCommandHandler> _logger;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public CreateJobShiftsCommandHandler(
             ILogger<CreateJobShiftsCommandHandler> logger,
             IUnitOfWork unitOfWork)
+        {
+            _logger = logger;
+            _unitOfWork = unitOfWork;
+        }
+
+        public async Task Handle(CreateJobShiftsCommand command, CancellationToken cancellationToken)
         {
             List<JobShift> newJobShifts = new();
             foreach (var js in command.JobShifts)
@@ -22,20 +31,19 @@ namespace Gigbuds_BE.Application.Features.Schedules.JobShifts.Commands.CreateJob
                     EndTime = js.EndTime,
                     DayOfWeek = js.DayOfWeek,
                 };
-                logger.LogInformation("New job shift: {JobShift}", newJobShift);
-                unitOfWork.Repository<JobShift>().Insert(newJobShift);
+                _logger.LogInformation("New job shift: {JobShift}", newJobShift);
+                _unitOfWork.Repository<JobShift>().Insert(newJobShift);
                 newJobShifts.Add(newJobShift);
             }
 
             try
             {
-                int rowsAdded = await unitOfWork.CompleteAsync();
-                logger.LogInformation("Added {RowsAdded} rows to the database, from {RowsProvided} rows provided", rowsAdded, command.JobShifts.Count);
-                return newJobShifts;
+                int rowsAdded = await _unitOfWork.CompleteAsync();
+                _logger.LogInformation("Added {RowsAdded} rows to the database, from {RowsProvided} rows provided", rowsAdded, command.JobShifts.Count);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "An error occurred while creating a new job post.");
+                _logger.LogError(ex, "An error occurred while creating a new job post.");
                 throw new CreateFailedException(nameof(JobShift));
             }
         }
