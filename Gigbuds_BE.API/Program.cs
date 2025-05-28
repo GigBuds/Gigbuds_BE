@@ -50,7 +50,7 @@ app.MapControllers();
 using var scope = app.Services.CreateScope();
 var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 var applicationDbContext = scope.ServiceProvider.GetRequiredService<GigbudsDbContext>();
-//var identitySeeder = scope.ServiceProvider.GetRequiredService<IIdentitySeeder>();
+var identitySeeder = scope.ServiceProvider.GetRequiredService<IIdentitySeeder>();
 
 var ShouldReseedData = app.Configuration.GetValue<bool>("ClearAndReseedData");
 
@@ -63,7 +63,7 @@ try
     }
 
     await applicationDbContext.Database.MigrateAsync();
-    //await identitySeeder.SeedAsync();
+    await identitySeeder.SeedAsync();
 }
 catch (Exception ex)
 {

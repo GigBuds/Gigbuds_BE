@@ -2,22 +2,28 @@ using Gigbuds_BE.Application.Features.Schedules.Commands.CreateJobPostSchedule;
 using Gigbuds_BE.Application.Interfaces.Repositories;
 using Gigbuds_BE.Domain.Entities.Jobs;
 using Gigbuds_BE.Domain.Exceptions;
-using Microsoft.Build.Framework;
 using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
-using Wolverine;
-using Wolverine.Attributes;
+using MediatR;
 
 namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
 {
-    [WolverineHandler]
-    public class CreateJobPostCommandHandler
+    public class CreateJobPostCommandHandler : IRequestHandler<CreateJobPostCommand, int>
     {
-        public async Task<int> Handle(
-            CreateJobPostCommand command,
+        private readonly ILogger<CreateJobPostCommandHandler> _logger;
+        private readonly IMediator _mediator;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public CreateJobPostCommandHandler(
             ILogger<CreateJobPostCommandHandler> logger,
-            IMessageBus messageBus,
+            IMediator mediator,
             IUnitOfWork unitOfWork)
+        {
+            _logger = logger;
+            _mediator = mediator;
+            _unitOfWork = unitOfWork;
+        }
+
+        public async Task<int> Handle(CreateJobPostCommand command, CancellationToken cancellationToken)
         {
             JobPost newJobPost = new()
             {
@@ -35,21 +41,21 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
                 IsOutstandingPost = command.IsOutstandingPost,
             };
 
-            logger.LogInformation("New job post: {JobPost}", newJobPost);
+            _logger.LogInformation("New job post: {JobPost}", newJobPost);
 
-            newJobPost = unitOfWork.Repository<JobPost>().Insert(newJobPost);
+            newJobPost = _unitOfWork.Repository<JobPost>().Insert(newJobPost);
             try
             {
-                await unitOfWork.CompleteAsync();
-                logger.LogInformation("New job post created with id: {Id}", newJobPost.Id);
+                await _unitOfWork.CompleteAsync();
+                _logger.LogInformation("New job post created with id: {Id}", newJobPost.Id);
 
                 command.ScheduleCommand.JobPostId = newJobPost.Id;
-                await messageBus.SendAsync(command.ScheduleCommand);
+                await _mediator.Publish(command.ScheduleCommand, cancellationToken);
                 return newJobPost.Id;
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "An error occurred while creating a new job post.");
+                _logger.LogError(ex, "An error occurred while creating a new job post.");
                 throw new CreateFailedException(nameof(JobPost));
             }
         }

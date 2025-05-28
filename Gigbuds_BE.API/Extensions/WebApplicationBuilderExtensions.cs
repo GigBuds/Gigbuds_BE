@@ -8,7 +8,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Text;
-using Wolverine;
 
 namespace Gigbuds_BE.API.Extensions
 {
@@ -45,10 +44,6 @@ namespace Gigbuds_BE.API.Extensions
                         new string[]{}
                     }
                 });
-            });
-            builder.Host.UseWolverine(opt =>
-            {
-                opt.UseSystemTextJsonForSerialization();
             });
 
             // Add Controllers with Endpoints

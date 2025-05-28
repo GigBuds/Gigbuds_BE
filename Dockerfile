@@ -12,7 +12,13 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Gigbuds_BE.API/Gigbuds_BE.API.csproj", "Gigbuds_BE.API/"]
+COPY --link ["./Gidbugds_BE.sln", "./"]
+COPY --link ["./Gigbuds_BE.Domain/*.csproj", "Gigbuds_BE.Domain/"]
+COPY --link ["./Gigbuds_BE.Infrastructure/*.csproj", "Gigbuds_BE.Infrastructure/"]
+COPY --link ["./Gigbuds_BE.Application/*.csproj", "Gigbuds_BE.Application/"]
+COPY --link ["./Gigbuds_BE.API/*.csproj", "Gigbuds_BE.API/"]
+COPY --link ["./Gigbuds_BE.API/appsettings.json", "Gigbuds_BE.API/"]
+
 RUN dotnet restore "./Gigbuds_BE.API/Gigbuds_BE.API.csproj"
 COPY . .
 WORKDIR "/src/Gigbuds_BE.API"

@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Identity;
 namespace Gigbuds_BE.Application.Features.Register.RegisterForUsers;
 
 public class RegisterForUserHandler(
-    IMediator mediator,
     IApplicationUserService<ApplicationUser> applicationUserService) : IRequestHandler<RegisterForUserCommand>
 {
     public async Task Handle(RegisterForUserCommand request, CancellationToken cancellationToken)

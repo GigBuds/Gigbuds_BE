@@ -1,8 +1,9 @@
 ﻿using System.Text.Json.Serialization;
+using MediatR;
 
 namespace Gigbuds_BE.Application.Features.Schedules.Commands.CreateJobPostSchedule
 {
-    public class CreateJobPostScheduleCommand
+    public class CreateJobPostScheduleCommand : INotification
     {
         [JsonIgnore]
         public int JobPostId { get; set; }

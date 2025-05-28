@@ -1,22 +1,31 @@
 ﻿using Gigbuds_BE.Application.Interfaces.Repositories;
 using DomainJobShift = Gigbuds_BE.Domain.Entities.Jobs;
 using Microsoft.Extensions.Logging;
-using Wolverine;
+using MediatR;
 using Gigbuds_BE.Application.Features.Schedules.JobShifts.Commands.CreateJobShift;
 using Gigbuds_BE.Domain.Entities.Jobs;
 using Gigbuds_BE.Domain.Exceptions;
 
 namespace Gigbuds_BE.Application.Features.Schedules.Commands.CreateJobPostSchedule
 {
-    public class CreateJobPostScheduleCommandHandler
+    public class CreateJobPostScheduleCommandHandler : INotificationHandler<CreateJobPostScheduleCommand>
     {
-        public async Task<JobPostSchedule> Handle(
-            CreateJobPostScheduleCommand command,
+        private readonly ILogger<CreateJobPostScheduleCommandHandler> _logger;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMediator _mediator;
+
+        public CreateJobPostScheduleCommandHandler(
             ILogger<CreateJobPostScheduleCommandHandler> logger,
             IUnitOfWork unitOfWork,
-            IMessageBus messageBus)
+            IMediator mediator)
         {
+            _logger = logger;
+            _unitOfWork = unitOfWork;
+            _mediator = mediator;
+        }
 
+        public async Task Handle(CreateJobPostScheduleCommand command, CancellationToken cancellationToken)
+        {
             JobPostSchedule newJobPostSchedule = new()
             {
                 Id = command.JobPostId,
@@ -24,24 +33,23 @@ namespace Gigbuds_BE.Application.Features.Schedules.Commands.CreateJobPostSchedu
                 MinimumShift = command.MinimumShift,
             };
 
-            unitOfWork.Repository<JobPostSchedule>().Insert(newJobPostSchedule);
+            _unitOfWork.Repository<JobPostSchedule>().Insert(newJobPostSchedule);
 
             try
             {
-                int rowsAdded = await unitOfWork.CompleteAsync();
-                logger.LogInformation("Added {RowsAdded} rows to the database, from {RowsProvided} rows provided", rowsAdded, command.JobShifts.Count);
+                int rowsAdded = await _unitOfWork.CompleteAsync();
+                _logger.LogInformation("Added {RowsAdded} rows to the database, from {RowsProvided} rows provided", rowsAdded, command.JobShifts.Count);
 
-                await messageBus.SendAsync(
+                await _mediator.Publish(
                     new CreateJobShiftsCommand
                     {
                         JobPostId = command.JobPostId,
                         JobShifts = command.JobShifts
-                    });
-                return newJobPostSchedule;
+                    }, cancellationToken);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "An error occurred while creating a new job post schedule.");
+                _logger.LogError(ex, "An error occurred while creating a new job post schedule.");
                 throw new CreateFailedException(nameof(JobPostSchedule));
             }
         }
