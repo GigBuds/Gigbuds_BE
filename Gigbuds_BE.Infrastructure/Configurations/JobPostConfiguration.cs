@@ -1,4 +1,5 @@
 using System;
+using Gigbuds_BE.Application.Commons.Constants;
 using Gigbuds_BE.Domain.Entities.Jobs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -62,6 +63,22 @@ internal class JobPostConfiguration : IEntityTypeConfiguration<JobPost>
             .IsRequired()
             .HasDefaultValue(false);
             
+        builder.Property(jp => jp.IsMale)
+            .IsRequired().HasDefaultValue(true);
+            
+        builder.Property(jp => jp.AgeRequirement)
+            .IsRequired(false);
+            
+        builder.Property(jp => jp.DistrictCode)
+            .HasMaxLength(255)
+            .IsRequired();
+            
+        builder.Property(jp => jp.ProvinceCode)
+            .HasMaxLength(255)
+            .IsRequired();
+            
+        builder.Property(jp => jp.PriorityLevel)
+            .IsRequired().HasDefaultValue(ProjectConstant.Default_Priority_Level);
         // Relationships
         builder.HasOne(jp => jp.Account)
             .WithMany(a => a.JobPosts)
@@ -72,6 +89,5 @@ internal class JobPostConfiguration : IEntityTypeConfiguration<JobPost>
             .WithOne(ja => ja.JobPost)
             .HasForeignKey(ja => ja.JobPostId)
             .OnDelete(DeleteBehavior.Cascade);
-            
     }
 } 

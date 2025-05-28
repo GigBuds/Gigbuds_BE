@@ -3,6 +3,7 @@ namespace Gigbuds_BE.Application.Commons.Constants;
 public static class ProjectConstant
 {
     public static int Free_Tier_Job_Application = 10;
+    public static int Default_Priority_Level = 0;
     public static class UserRoles
     {
         public const string JobSeeker = "JobSeeker";

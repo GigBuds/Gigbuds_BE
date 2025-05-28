@@ -39,6 +39,8 @@ namespace Gigbuds_BE.Infrastructure.Persistence
         public DbSet<JobHistory> JobHistories { get; set; }
         public DbSet<JobShift> JobShifts { get; set; }
         public DbSet<JobPostSchedule> JobPostSchedules { get; set; }
+        public DbSet<JobType> JobTypes { get; set; }
+        public DbSet<JobPosition> JobPositions { get; set; }
 
         // Membership entities
         public DbSet<Membership> Memberships { get; set; }
