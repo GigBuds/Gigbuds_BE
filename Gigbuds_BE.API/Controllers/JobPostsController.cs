@@ -11,6 +11,9 @@ using Gigbuds_BE.Application.Features.JobPosts.Commands.UpdateJobPostStatus;
 using Gigbuds_BE.Domain.Entities.Jobs;
 using MediatR;
 using Gigbuds_BE.Application.Features.JobPosts.Queries.GetSearchJobPosts;
+using Gigbuds_BE.Application.DTOs.JobPosts;
+using Gigbuds_BE.API.Helpers.RequestHelpers;
+using Gigbuds_BE.Application.Specifications.JobPosts;
 
 namespace Gigbuds_BE.API.Controllers
 {
@@ -128,6 +131,7 @@ namespace Gigbuds_BE.API.Controllers
                 return BadRequest($"Failed to remove job post with id {id}");
             }
             return NoContent();
+        }
         [HttpGet]
         public async Task<ActionResult<Pagination<SearchJobPostDto>>> SearchJobPosts([FromQuery] JobPostSearchParams jobPostSearchParams)
         {
