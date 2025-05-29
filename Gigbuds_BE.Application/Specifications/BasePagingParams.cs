@@ -1,6 +1,6 @@
 ﻿namespace Gigbuds_BE.Application.Specifications
 {
-    internal abstract class BasePagingParams
+    public abstract class BasePagingParams
     {
         // Page Index
         // - Start a 1

@@ -18,7 +18,6 @@ namespace Gigbuds_BE.Infrastructure.Repositories
         // ===========================
 
         private readonly GigbudsDbContext _dbContext;
-        private readonly ILogger<GenericRepository<T>> _logger;
 
         // ===========================
         // === Constructors
@@ -27,12 +26,6 @@ namespace Gigbuds_BE.Infrastructure.Repositories
         public GenericRepository(GigbudsDbContext context)
         {
             _dbContext = context;
-        }
-
-        public GenericRepository(GigbudsDbContext context, ILogger<GenericRepository<T>> logger)
-        {
-            _dbContext = context;
-            _logger = logger;
         }
 
         // ===========================
