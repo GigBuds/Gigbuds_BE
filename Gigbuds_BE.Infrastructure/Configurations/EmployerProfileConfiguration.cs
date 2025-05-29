@@ -40,10 +40,14 @@ internal class EmployerProfileConfiguration : IEntityTypeConfiguration<EmployerP
             .IsRequired()
             .HasDefaultValue(false);
             
+        builder.Property(ep => ep.CompanyName)
+            .IsRequired(false);
+
         // Relationship with ApplicationUser - One-to-One
         builder.HasOne(ep => ep.Account)
             .WithOne(a => a.EmployerProfile)
             .HasForeignKey<EmployerProfile>(ep => ep.Id)
             .OnDelete(DeleteBehavior.Cascade);
+            
     }
 } 

@@ -5,10 +5,12 @@ using Gigbuds_BE.Application.Specifications.JobPosts;
 using Gigbuds_BE.Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Wolverine;
+using MediatR;
+using Gigbuds_BE.Application.Features.JobPosts.Queries.GetSearchJobPosts;
 
 namespace Gigbuds_BE.API.Controllers
 {
-    public class JobPostsController(IMessageBus messageBus) : _BaseApiController
+    public class JobPostsController(IMessageBus messageBus, IMediator mediator) : _BaseApiController
     {
         [HttpPost]
         public async Task<ActionResult<int>> CreateJobPost([FromBody] CreateJobPostCommand jobPostDto)
@@ -27,8 +29,8 @@ namespace Gigbuds_BE.API.Controllers
         [HttpGet]
         public async Task<ActionResult<Pagination<SearchJobPostDto>>> SearchJobPosts([FromQuery] JobPostSearchParams jobPostSearchParams)
         {
-            var jobPosts = await messageBus.InvokeAsync<Pagination<SearchJobPostDto>>(jobPostSearchParams);
-            return Ok(jobPosts);
+            var jobPosts = await mediator.Send(new GetSearchJobPostQuery(jobPostSearchParams));
+            return ResultWithPagination(jobPosts.Data, jobPosts.Count, jobPostSearchParams.PageIndex, jobPostSearchParams.PageSize);
         }
     }
 }

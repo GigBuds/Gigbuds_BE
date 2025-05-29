@@ -35,7 +35,7 @@ namespace Gigbuds_BE.Application.Features.Authentication.Commands.Register.Regis
             
             await applicationUserService.InsertEmployerAsync(user, user.Password, request.BusinessEmail);
             
-            // Send verification code after successful registration
+            //Send verification code after successful registration
             try
             {
                 var verificationCode = await verificationCodeService.GenerateVerificationCodeAsync(request.PhoneNumber);

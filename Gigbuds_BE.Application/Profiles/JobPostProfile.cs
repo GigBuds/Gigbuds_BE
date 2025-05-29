@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Gigbuds_BE.Application.DTOs.JobPosts;
 using Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost;
 using Gigbuds_BE.Domain.Entities.Jobs;
 
@@ -23,6 +24,7 @@ namespace Gigbuds_BE.Application.Profiles
                 .ForMember(dest => dest.IsOutstandingPost, opt => opt.MapFrom(src => src.IsOutstandingPost));
 
             // Projection
+            CreateProjection<JobPost, SearchJobPostDto>();
         }
     }
 }
