@@ -1,4 +1,4 @@
-﻿using Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost;
+using Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost;
 using Gigbuds_BE.Application.Features.JobPosts.Commands.UpdateJobPost;
 using Gigbuds_BE.Domain.Exceptions;
 using MediatR;
@@ -35,7 +35,6 @@ namespace Gigbuds_BE.API.Controllers
             }
             return Created(string.Empty, createdJobPostId);
         }
-
         /// <summary>
         /// Retrieves a paged list of job posts.
         /// </summary>
