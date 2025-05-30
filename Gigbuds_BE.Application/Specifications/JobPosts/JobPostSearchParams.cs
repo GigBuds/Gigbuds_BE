@@ -14,7 +14,5 @@ public class JobPostSearchParams : BasePagingParams
     public DateTime? JobTimeTo { get; set; }
     public SalaryUnit? SalaryUnit { get; set; }
     public int? JobPositionId { get; set; }
-    public int? AgeFrom { get; set; }
-    public int? AgeTo { get; set; }
     public IEnumerable<string> DistrictCodeList { get; set; } = new List<string>();
 }
