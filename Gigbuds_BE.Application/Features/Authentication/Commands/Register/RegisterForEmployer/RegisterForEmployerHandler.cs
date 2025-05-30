@@ -43,6 +43,7 @@ namespace Gigbuds_BE.Application.Features.Authentication.Commands.Register.Regis
             }
             catch (Exception ex)
             {
+                await verificationCodeService.RemoveCodeAsync(request.PhoneNumber);
                 throw new BadHttpRequestException(ex.Message);
             }
         }

@@ -24,7 +24,6 @@ namespace Gigbuds_BE.Application.Profiles
                 .ForMember(dest => dest.VacancyCount, opt => opt.MapFrom(src => src.VacancyCount))
                 .ForMember(dest => dest.IsOutstandingPost, opt => opt.MapFrom(src => src.IsOutstandingPost));
 
-            // Projection
             CreateMap<JobPost, JobPostDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.JobTitle, opt => opt.MapFrom(src => src.JobTitle))
@@ -37,7 +36,10 @@ namespace Gigbuds_BE.Application.Profiles
                 .ForMember(dest => dest.ExpireTime, opt => opt.MapFrom(src => src.ExpireTime))
                 .ForMember(dest => dest.Benefit, opt => opt.MapFrom(src => src.Benefit))
                 .ForMember(dest => dest.VacancyCount, opt => opt.MapFrom(src => src.VacancyCount))
-                .ForMember(dest => dest.IsOutstandingPost, opt => opt.MapFrom(src => src.IsOutstandingPost));
+                .ForMember(dest => dest.IsOutstandingPost, opt => opt.MapFrom(src => src.IsOutstandingPost))
+                .ForMember(dest => dest.JobSchedule, opt => opt.MapFrom(src => src.JobPostSchedule));
+            
+            //Projection
             CreateProjection<JobPost, SearchJobPostDto>();
         }
     }

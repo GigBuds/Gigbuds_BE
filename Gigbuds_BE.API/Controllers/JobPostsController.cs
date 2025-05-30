@@ -1,4 +1,4 @@
-using Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost;
+﻿using Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost;
 using Gigbuds_BE.Application.Features.JobPosts.Commands.UpdateJobPost;
 using Gigbuds_BE.Domain.Exceptions;
 using MediatR;
@@ -8,12 +8,11 @@ using Gigbuds_BE.Application.DTOs;
 using Gigbuds_BE.Application.DTOs.ApplicationUsers;
 using Gigbuds_BE.Application.Features.JobPosts.Commands.RemoveJobPost;
 using Gigbuds_BE.Application.Features.JobPosts.Commands.UpdateJobPostStatus;
-using Gigbuds_BE.Domain.Entities.Jobs;
-using MediatR;
 using Gigbuds_BE.Application.Features.JobPosts.Queries.GetSearchJobPosts;
 using Gigbuds_BE.Application.DTOs.JobPosts;
 using Gigbuds_BE.API.Helpers.RequestHelpers;
 using Gigbuds_BE.Application.Specifications.JobPosts;
+using Gigbuds_BE.Application.Features.JobPosts.Queries.GetJobPosts;
 
 namespace Gigbuds_BE.API.Controllers
 {
@@ -132,11 +131,18 @@ namespace Gigbuds_BE.API.Controllers
             }
             return NoContent();
         }
-        [HttpGet]
+        [HttpGet("search")]
         public async Task<ActionResult<Pagination<SearchJobPostDto>>> SearchJobPosts([FromQuery] JobPostSearchParams jobPostSearchParams)
         {
             var jobPosts = await mediator.Send(new GetSearchJobPostQuery(jobPostSearchParams));
             return ResultWithPagination(jobPosts.Data, jobPosts.Count, jobPostSearchParams.PageIndex, jobPostSearchParams.PageSize);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<JobPostDto>> GetJobPostById(int id)
+        {
+            var jobPost = await mediator.Send(new GetJobPostByIdQuery(id));
+            return Ok(jobPost);
         }
     }
 }
