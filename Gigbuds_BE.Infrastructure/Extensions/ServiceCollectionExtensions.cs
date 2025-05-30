@@ -15,6 +15,8 @@ using Gigbuds_BE.Application.Interfaces.Services.AuthenticationServices;
 using Gigbuds_BE.Infrastructure.Services.AuthenticationServices;
 using Gigbuds_BE.Application.Configurations;
 using Gigbuds_BE.Infrastructure.Seeder;
+using Gigbuds_BE.Application.Interfaces;
+using Gigbuds_BE.Infrastructure.Repositories;
 
 namespace Gigbuds_BE.Infrastructure.Extensions
 {
@@ -46,8 +48,8 @@ namespace Gigbuds_BE.Infrastructure.Extensions
             // Configure Redis settings
             services.Configure<RedisSettings>(configuration.GetSection(RedisSettings.SectionName));
             
-            // Configure SpeedSMS settings
-            services.Configure<SpeedSmsSettings>(configuration.GetSection(SpeedSmsSettings.SectionName));
+            // Configure Abenla SMS settings (replacing SpeedSMS)
+            services.Configure<AbenlaSmsSettings>(configuration.GetSection(AbenlaSmsSettings.SectionName));
 
             // Add Quartz
             services.AddQuartz(q =>
@@ -83,8 +85,7 @@ namespace Gigbuds_BE.Infrastructure.Extensions
             services.AddScoped(typeof(IApplicationUserService<>), typeof(ApplicationUserService<>));
             services.AddScoped<IUserTokenService, UserTokenService>();
             
-            // Add SMS and Verification services
-            services.AddHttpClient<ISmsService, SpeedSmsService>();
+            services.AddHttpClient<ISmsService, AbenlaSmsService>();
             services.AddScoped<IVerificationCodeService, RedisVerificationCodeService>();
             
         }

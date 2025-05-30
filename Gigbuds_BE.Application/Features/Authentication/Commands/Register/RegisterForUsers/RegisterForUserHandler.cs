@@ -40,8 +40,7 @@ public class RegisterForUserHandler(
         }
         catch (Exception)
         {
-            // Log error but don't fail registration if SMS fails
-            // The user can request a new verification code later
+            await verificationCodeService.RemoveCodeAsync(request.PhoneNumber);
         }
     }
 }

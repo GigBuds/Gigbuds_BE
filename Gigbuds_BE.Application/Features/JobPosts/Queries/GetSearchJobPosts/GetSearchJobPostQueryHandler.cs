@@ -20,7 +20,7 @@ public class GetSearchJobPostQueryHandler : IRequestHandler<GetSearchJobPostQuer
     }
     public async Task<PagedResultDto<SearchJobPostDto>> Handle(GetSearchJobPostQuery request, CancellationToken cancellationToken)
     {
-        var spec = new JobPostSpecification(request.JobPostSearchParams);
+        var spec = new GetSearchJobPostsSpecification(request.JobPostSearchParams);
         var jobPosts = await _unitOfWork.Repository<JobPost>().GetAllWithSpecificationProjectedAsync<SearchJobPostDto>(spec, _mapper.ConfigurationProvider);
         return new PagedResultDto<SearchJobPostDto>(jobPosts.Count, jobPosts);
     }

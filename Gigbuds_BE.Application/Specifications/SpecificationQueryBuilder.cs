@@ -34,6 +34,11 @@ namespace Gigbuds_BE.Application.Specifications
                 query = query.Take(specification.Top.Value);
             }
 
+            if (specification.IsPagingEnabled)
+            {
+                query = query.Skip(specification.Skip).Take(specification.Take);
+            }
+
             return query;
         }
 
