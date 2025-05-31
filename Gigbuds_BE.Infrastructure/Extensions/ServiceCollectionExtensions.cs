@@ -50,6 +50,9 @@ namespace Gigbuds_BE.Infrastructure.Extensions
             
             // Configure Abenla SMS settings (replacing SpeedSMS)
             services.Configure<AbenlaSmsSettings>(configuration.GetSection(AbenlaSmsSettings.SectionName));
+            
+            // Configure Firebase settings
+            services.Configure<FirebaseSettings>(configuration.GetSection(FirebaseSettings.SectionName));
 
             // Add Quartz
             services.AddQuartz(q =>
@@ -85,8 +88,10 @@ namespace Gigbuds_BE.Infrastructure.Extensions
             services.AddScoped(typeof(IApplicationUserService<>), typeof(ApplicationUserService<>));
             services.AddScoped<IUserTokenService, UserTokenService>();
             
+            // Add SMS and File Storage services
             services.AddHttpClient<ISmsService, AbenlaSmsService>();
             services.AddScoped<IVerificationCodeService, RedisVerificationCodeService>();
+            services.AddScoped<IFileStorageService, FirebaseStorageService>();
             
         }
     }

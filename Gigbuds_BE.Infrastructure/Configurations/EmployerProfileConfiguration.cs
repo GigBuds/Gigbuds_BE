@@ -42,6 +42,9 @@ internal class EmployerProfileConfiguration : IEntityTypeConfiguration<EmployerP
             
         builder.Property(ep => ep.CompanyName)
             .IsRequired(false);
+        
+        builder.Property(ep => ep.CompanyLogo)
+            .IsRequired(false);
 
         // Relationship with ApplicationUser - One-to-One
         builder.HasOne(ep => ep.Account)

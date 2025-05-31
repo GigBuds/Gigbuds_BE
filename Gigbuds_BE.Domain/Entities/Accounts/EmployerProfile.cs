@@ -12,7 +12,7 @@ public class EmployerProfile : BaseEntity
     public string TaxNumber { get; set; }
 
     public string BusinessLicense { get; set; }
-
+    public string CompanyLogo { get; set; }
     public int NumOfAvailablePost { get; set; }
 
     public bool IsUnlimitedPost { get; set; } = false;

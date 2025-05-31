@@ -38,9 +38,11 @@ namespace Gigbuds_BE.Application.Profiles
                 .ForMember(dest => dest.VacancyCount, opt => opt.MapFrom(src => src.VacancyCount))
                 .ForMember(dest => dest.IsOutstandingPost, opt => opt.MapFrom(src => src.IsOutstandingPost))
                 .ForMember(dest => dest.JobSchedule, opt => opt.MapFrom(src => src.JobPostSchedule));
-            
+                
             //Projection
-            CreateProjection<JobPost, SearchJobPostDto>();
+            CreateProjection<JobPost, SearchJobPostDto>()
+                .ForMember(dest => dest.CompanyLogo, opt => opt.MapFrom(src => src.Account.EmployerProfile.CompanyLogo))
+                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Account.EmployerProfile.CompanyName));
         }
     }
 }

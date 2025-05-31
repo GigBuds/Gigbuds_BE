@@ -30,7 +30,7 @@ namespace Gigbuds_BE.Application.Specifications.JobPosts
     {
         public GetSearchJobPostsSpecification(JobPostSearchParams jobPostSearchParams)
         : base(x =>
-        (string.IsNullOrEmpty(jobPostSearchParams.EmployerName) || x.Account.EmployerProfile.CompanyName.ToLower().Contains(jobPostSearchParams.EmployerName.ToLower())) &&
+        (string.IsNullOrEmpty(jobPostSearchParams.CompanyName) || x.Account.EmployerProfile.CompanyName.ToLower().Contains(jobPostSearchParams.CompanyName.ToLower())) &&
         (string.IsNullOrEmpty(jobPostSearchParams.JobName) || x.JobTitle.ToLower().Contains(jobPostSearchParams.JobName.ToLower())) &&
         (!jobPostSearchParams.SalaryFrom.HasValue || x.Salary >= jobPostSearchParams.SalaryFrom.Value) &&
         (!jobPostSearchParams.SalaryTo.HasValue || x.Salary <= jobPostSearchParams.SalaryTo.Value) &&
