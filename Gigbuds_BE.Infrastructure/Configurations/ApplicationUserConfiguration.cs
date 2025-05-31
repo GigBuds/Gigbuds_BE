@@ -48,6 +48,9 @@ internal class ApplicationUserConfiguration : IEntityTypeConfiguration<Applicati
         builder.Property(a => a.UpdatedAt)
             .HasDefaultValueSql("NOW()");
 
+        builder.Property(a => a.AvatarUrl)
+            .IsRequired(false);
+
         // Relationships with Roles handled by Identity framework
     }
 } 

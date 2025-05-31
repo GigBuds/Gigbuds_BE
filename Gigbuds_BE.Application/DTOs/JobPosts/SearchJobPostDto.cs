@@ -6,6 +6,8 @@ namespace Gigbuds_BE.Application.DTOs.JobPosts;
 public class SearchJobPostDto
 {
     public int AccountId { get; set; }
+    public string CompanyLogo { get; set; }
+    public string CompanyName { get; set; }
     public string JobTitle { get; set; }
     public string JobDescription { get; set; }
     public string JobRequirement { get; set; }
@@ -24,4 +26,6 @@ public class SearchJobPostDto
     public string DistrictCode { get; set; }
     public string ProvinceCode { get; set; }
     public int PriorityLevel { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 }

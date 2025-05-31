@@ -5,7 +5,7 @@ namespace Gigbuds_BE.Application.Specifications.JobPosts;
 
 public class JobPostSearchParams : BasePagingParams
 {
-    public string? EmployerName { get; set; }
+    public string? CompanyName { get; set; }
     public string? JobName { get; set; }
     public decimal? SalaryFrom { get; set; }
     public decimal? SalaryTo { get; set; }
