@@ -26,4 +26,6 @@ public class SearchJobPostDto
     public string DistrictCode { get; set; }
     public string ProvinceCode { get; set; }
     public int PriorityLevel { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 }
