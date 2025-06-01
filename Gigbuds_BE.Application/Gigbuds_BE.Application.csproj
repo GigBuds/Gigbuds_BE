@@ -7,25 +7,25 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR" Version="12.5.0" />
-    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
-    <PackageReference Include="WolverineFx" Version="3.13.3" />
+	<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
+	<PackageReference Include="MediatR" Version="12.5.0" />
 	  <PackageReference Include="AutoMapper" Version="14.0.0" />
 	  <PackageReference Include="FluentEmail.Smtp" Version="3.0.2" />
-	  <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+	  <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.14.8" />
 	  <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.5" />
-	  <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.10.0" />
-	  <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.10.0" />
+	  <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.11.0" />
+	  <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.11.0" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />
 	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	  <PackageReference Include="Quartz" Version="3.14.0" />
 	  <PackageReference Include="StackExchange.Redis" Version="2.8.37" />
+	  <PackageReference Include="System.Formats.Asn1" Version="9.0.5" />
 	  <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.1" />
 
-	  <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.11.0" />
-	  <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.11.0" />
-	  <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.11.0" />
-	  <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.11.0" />
+	  <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.14.0" />
+	  <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.14.0" />
+	  <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.14.0" />
+	  <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.14.0" />
   </ItemGroup>
 
   <ItemGroup>

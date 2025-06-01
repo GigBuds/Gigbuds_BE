@@ -15,6 +15,8 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.UpdateJobPost
         public required string SalaryUnit { get; set; }
         public required string JobLocation { get; set; }
         public required DateTime ExpireTime { get; set; }
+        public required string DistrictCode { get; set; }
+        public required string ProvinceCode { get; set; }
         public required string Benefit { get; set; }
         public required int VacancyCount { get; set; }
         public required bool IsOutstandingPost { get; set; }

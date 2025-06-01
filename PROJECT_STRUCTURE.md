@@ -28,3 +28,66 @@
   - [RES] Result: Improved code clarity, maintainability, and efficiency. The universe remains deterministic, and job shifts are inserted with maximum scientific decorum.
 
 // Dry technical comment: Side effects in LINQ are now a thing of the past. Order is restored to the cosmos.
+
+## Domain Layer: NotFoundException
+
+- **Class:** `NotFoundException` (in `Gigbuds_BE.Domain.Exceptions`)
+  - [HYP] Hypothesis: A NotFoundException is required to standardize error handling for missing resources across the application. It should accept a resource name and an optional key, formatting a clear error message.
+  - [VER] Verification: Confirmed by reviewing exception usage in the application layer and by referencing Microsoft Docs on custom exceptions ([source](https://learn.microsoft.com/en-us/dotnet/standard/exceptions/how-to-create-user-defined-exceptions)).
+  - [DAT] Implementation: `NotFoundException` created, inheriting from `Exception`, with a constructor accepting a resource name and optional key, formatting the message as: "Resource '{resourceName}' with key '{key}' was not found."
+  - [RES] Result: Exception is now available for consistent not-found error handling. Linter error resolved in UpdateJobPostCommandHandler. The universe remains deterministic, and missing resources are now scientifically accounted for.
+
+// Dry technical comment: The void of missing resources is now filled with meaningful exceptions.
+
+## Domain Layer: UpdateFailedException
+
+- **Class:** `UpdateFailedException` (in `Gigbuds_BE.Domain.Exceptions`)
+  - [HYP] Hypothesis: A custom UpdateFailedException is required to standardize error handling for update failures across the application. It should accept a resource name and format a clear error message.
+  - [VER] Verification: Confirmed by reviewing exception usage in the application layer, Microsoft Docs on custom exceptions ([source](https://learn.microsoft.com/en-us/dotnet/standard/exceptions/best-practices-for-exceptions)), and DDD best practices ([source](https://medium.com/@roccolangeweg/domain-driven-challenges-how-to-handle-exceptions-9c115a8cb1c9)).
+  - [DAT] Implementation: `UpdateFailedException` created, inheriting from `Exception`, with a constructor accepting a resource name, formatting the message as: "Update resource {resourceName} failed."
+  - [RES] Result: Exception is now available for consistent update-failure error handling. The universe remains deterministic, and failed updates are now scientifically accounted for.
+
+// Dry technical comment: The entropy of failed updates is now contained within a single exception class.
+
+## Domain Layer: RemoveFailedException
+
+- **Class:** `RemoveFailedException` (in `Gigbuds_BE.Domain.Exceptions`)
+  - [HYP] Hypothesis: A custom RemoveFailedException is required to standardize error handling for remove/delete failures across the application. It should accept a resource name and format a clear error message, and optionally support error chaining via an inner exception.
+  - [VER] Verification: Confirmed by reviewing exception usage in the application layer, Microsoft Docs on custom exceptions ([source](https://learn.microsoft.com/en-us/dotnet/standard/exceptions/how-to-create-user-defined-exceptions)), and DDD best practices ([source](https://medium.com/@roccolangeweg/domain-driven-challenges-how-to-handle-exceptions-9c115a8cb1c9)).
+  - [DAT] Implementation: `RemoveFailedException` created, inheriting from `Exception`, with constructors accepting a resource name or a message and inner exception, formatting the message as: "Remove resource {resourceName} failed."
+  - [RES] Result: Exception is now available for consistent remove-failure error handling. Linter errors resolved in RemoveJobPostCommandHandler. The universe remains deterministic, and failed removals are now scientifically accounted for.
+
+// Dry technical comment: The entropy of failed removals is now contained within a single exception class. The cosmos frowns upon unhandled deletions.
+
+## API Layer: JobPostsController - GET /api/jobposts
+
+- **Endpoint:** `GET /api/jobposts`
+- **Action:** `GetAllJobPosts`
+  - [HYP] Hypothesis: Exposing a GET endpoint that accepts paging and search parameters will allow clients to retrieve a paged, filterable list of job posts. The endpoint will use MediatR to send a `GetAllJobPostsQuery` and return a `PagedResultDto<JobPostDto>`.
+  - [VER] Verification: Confirmed by reviewing the controller implementation and MediatR handler logic ([source](https://learn.microsoft.com/en-us/aspnet/core/web-api/?view=aspnetcore-8.0), [source](https://github.com/jbogard/MediatR)).
+  - [DAT] Implementation: The controller action maps query parameters (`pageIndex`, `pageSize`, `searchTerm`) to `GetAllJobPostsQueryParams`, sends the query via MediatR, and returns the result as an HTTP 200 response. The response format is:
+    ```json
+    {
+      "count": int,
+      "data": [
+        {
+          "id": int,
+          "jobTitle": string,
+          "jobDescription": string,
+          "jobRequirement": string,
+          "experienceRequirement": string,
+          "salary": int,
+          "salaryUnit": string,
+          "jobLocation": string,
+          "expireTime": string,
+          "benefit": string,
+          "vacancyCount": int,
+          "isOutstandingPost": bool,
+          "jobSchedule": { /* JobScheduleDto */ }
+        }
+      ]
+    }
+    ```
+  - [RES] Result: Endpoint is available for paged, filterable job post retrieval. The universe remains deterministic, and job posts are now observable in discrete, paged quanta.
+
+// Dry technical comment: The uncertainty of job post enumeration has collapsed into a single, observable endpoint.
