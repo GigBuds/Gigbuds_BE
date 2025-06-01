@@ -31,6 +31,7 @@
   <ItemGroup>
     <Folder Include="Extensions\" />
     <Folder Include="BackgroundJobs\" />
+    <Folder Include="Features\JobPosts\Commands\JobApplication\" />
     <Folder Include="Features\JobPosts\Commands\SearchJobPosts\" />
   </ItemGroup>
 

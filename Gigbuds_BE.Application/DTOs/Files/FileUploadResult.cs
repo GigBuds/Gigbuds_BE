@@ -28,4 +28,10 @@ public enum FileType
     Avatar,
     CompanyLogo,
     JobAttachment
-} 
+}
+
+public enum FolderType
+{
+    Images,
+    Files
+}

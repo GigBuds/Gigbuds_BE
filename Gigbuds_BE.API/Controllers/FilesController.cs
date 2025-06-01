@@ -8,6 +8,7 @@ namespace Gigbuds_BE.API.Controllers;
 [ApiController]
 [Route("api/v1/[controller]")]
 [Authorize]
+[AllowAnonymous]
 public class FilesController : ControllerBase
 {
     private readonly IFileStorageService _fileStorageService;
@@ -20,91 +21,72 @@ public class FilesController : ControllerBase
     }
 
     /// <summary>
-    /// Upload a single file
+    /// Upload a single file to any folder
     /// </summary>
     /// <param name="file">The file to upload</param>
-    /// <param name="folder">The folder to upload to (optional, defaults to 'uploads')</param>
+    /// <param name="folder">The folder to upload to (e.g., 'uploads', 'images', 'avatars', 'company-logos')</param>
     /// <param name="fileType">The type of file being uploaded</param>
     /// <returns>File upload result with URL</returns>
     [HttpPost("upload")]
-    public async Task<ActionResult<FileUploadResult>> UploadFile(
-        IFormFile file, 
-        [FromQuery] string folder = "uploads", 
+    [RequestSizeLimit(10_000_000)] // 10MB limit
+    [Consumes("multipart/form-data")]
+    [ProducesResponseType(typeof(FileUploadResult), 200)]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> UploadFile(
+        IFormFile file,
+        [FromQuery] FolderType folder = FolderType.Files,
         [FromQuery] FileType fileType = FileType.Document)
     {
+        _logger.LogInformation("Starting upload for file: {FileName}, Content-Type: {ContentType}, Size: {Size} to folder: {Folder}",
+            file.FileName, file.ContentType, file.Length, folder);
         try
         {
             if (file == null || file.Length == 0)
             {
-                return BadRequest(new { message = "No file provided" });
+                return BadRequest(new { error = "No file provided" });
             }
 
-            var result = await _fileStorageService.UploadFileAsync(file, folder, fileType);
-            
-            if (result.Success)
+            FileUploadResult result;
+
+            // Handle image files (avatars, company logos, general images)
+            if (IsImageFile(file.ContentType) || 
+                folder.ToString().Equals(FolderType.Files.ToString(), StringComparison.OrdinalIgnoreCase) ||
+                folder.ToString().Equals(FolderType.Images.ToString(), StringComparison.OrdinalIgnoreCase))
             {
-                return Ok(result);
+                result = await _fileStorageService.PrepareUploadImageAsync(file, folder.ToString());
             }
             else
             {
-                return BadRequest(new { message = result.ErrorMessage });
+                // Handle documents and other files
+                result = await _fileStorageService.PrepareUploadFileAsync(file, folder.ToString(), fileType);
             }
+            
+            if (!result.Success)
+            {
+                return BadRequest(new { error = result.ErrorMessage });
+            }
+
+            return Ok(result);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error uploading file");
-            return StatusCode(500, new { message = "Internal server error" });
+            _logger.LogError(ex, "Error uploading file to folder {Folder}", folder);
+            return StatusCode(500, new { error = "Internal server error" });
         }
     }
 
     /// <summary>
-    /// Upload an image with optional resizing
-    /// </summary>
-    /// <param name="file">The image file to upload</param>
-    /// <param name="folder">The folder to upload to (optional, defaults to 'images')</param>
-    /// <param name="maxWidth">Maximum width for resizing (optional)</param>
-    /// <param name="maxHeight">Maximum height for resizing (optional)</param>
-    /// <returns>File upload result with URL</returns>
-    [HttpPost("upload-image")]
-    public async Task<ActionResult<FileUploadResult>> UploadImage(
-        IFormFile file,
-        [FromQuery] string folder = "images",
-        [FromQuery] int? maxWidth = null,
-        [FromQuery] int? maxHeight = null)
-    {
-        try
-        {
-            if (file == null || file.Length == 0)
-            {
-                return BadRequest(new { message = "No image file provided" });
-            }
-
-            var result = await _fileStorageService.UploadImageAsync(file, folder, maxWidth, maxHeight);
-            
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            else
-            {
-                return BadRequest(new { message = result.ErrorMessage });
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error uploading image");
-            return StatusCode(500, new { message = "Internal server error" });
-        }
-    }
-
-    /// <summary>
-    /// Upload multiple files
+    /// Upload multiple files to the same folder
     /// </summary>
     /// <param name="files">The files to upload</param>
     /// <param name="folder">The folder to upload to (optional, defaults to 'uploads')</param>
     /// <param name="fileType">The type of files being uploaded</param>
     /// <returns>List of file upload results</returns>
     [HttpPost("upload-multiple")]
+    [RequestSizeLimit(50_000_000)] // 50MB limit for multiple files
+    [Consumes("multipart/form-data")]
+    [ProducesResponseType(typeof(List<FileUploadResult>), 200)]
+    [ProducesResponseType(400)]
     public async Task<ActionResult<List<FileUploadResult>>> UploadMultipleFiles(
         List<IFormFile> files,
         [FromQuery] string folder = "uploads",
@@ -123,7 +105,21 @@ public class FilesController : ControllerBase
             {
                 if (file.Length > 0)
                 {
-                    var result = await _fileStorageService.UploadFileAsync(file, folder, fileType);
+                    FileUploadResult result;
+
+                    // Handle image files
+                    if (IsImageFile(file.ContentType) || 
+                        folder.Equals("avatars", StringComparison.OrdinalIgnoreCase) ||
+                        folder.Equals("company-logos", StringComparison.OrdinalIgnoreCase) ||
+                        folder.Equals("images", StringComparison.OrdinalIgnoreCase))
+                    {
+                        result = await _fileStorageService.PrepareUploadImageAsync(file, folder);
+                    }
+                    else
+                    {
+                        result = await _fileStorageService.PrepareUploadFileAsync(file, folder, fileType);
+                    }
+                    
                     results.Add(result);
                 }
             }
@@ -132,75 +128,7 @@ public class FilesController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error uploading multiple files");
-            return StatusCode(500, new { message = "Internal server error" });
-        }
-    }
-
-    /// <summary>
-    /// Upload avatar image
-    /// </summary>
-    /// <param name="file">The avatar image file</param>
-    /// <returns>File upload result with URL</returns>
-    [HttpPost("upload-avatar")]
-    public async Task<ActionResult<FileUploadResult>> UploadAvatar(IFormFile file)
-    {
-        try
-        {
-            if (file == null || file.Length == 0)
-            {
-                return BadRequest(new { message = "No avatar image provided" });
-            }
-
-            // Resize avatar to standard size (300x300)
-            var result = await _fileStorageService.UploadImageAsync(file, "avatars", 300, 300);
-            
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            else
-            {
-                return BadRequest(new { message = result.ErrorMessage });
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error uploading avatar");
-            return StatusCode(500, new { message = "Internal server error" });
-        }
-    }
-
-    /// <summary>
-    /// Upload company logo
-    /// </summary>
-    /// <param name="file">The company logo image file</param>
-    /// <returns>File upload result with URL</returns>
-    [HttpPost("upload-company-logo")]
-    public async Task<ActionResult<FileUploadResult>> UploadCompanyLogo(IFormFile file)
-    {
-        try
-        {
-            if (file == null || file.Length == 0)
-            {
-                return BadRequest(new { message = "No company logo provided" });
-            }
-
-            // Resize logo to standard size (500x200)
-            var result = await _fileStorageService.UploadImageAsync(file, "company-logos", 500, 200);
-            
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            else
-            {
-                return BadRequest(new { message = result.ErrorMessage });
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error uploading company logo");
+            _logger.LogError(ex, "Error uploading multiple files to folder {Folder}", folder);
             return StatusCode(500, new { message = "Internal server error" });
         }
     }
@@ -210,64 +138,41 @@ public class FilesController : ControllerBase
     /// </summary>
     /// <param name="filePath">The path of the file to delete</param>
     /// <returns>Success status</returns>
-    [HttpDelete("delete")]
-    public async Task<ActionResult> DeleteFile([FromQuery] string filePath)
+    [HttpDelete]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> DeleteFile([FromQuery] string filePath)
     {
         try
         {
             if (string.IsNullOrEmpty(filePath))
             {
-                return BadRequest(new { message = "File path is required" });
+                return BadRequest(new { error = "File path is required" });
             }
 
             var success = await _fileStorageService.DeleteFileAsync(filePath);
             
-            if (success)
+            if (!success)
             {
-                return Ok(new { message = "File deleted successfully" });
+                return NotFound(new { error = "File not found or could not be deleted" });
             }
-            else
-            {
-                return NotFound(new { message = "File not found or could not be deleted" });
-            }
+
+            return Ok(new { message = "File deleted successfully" });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error deleting file {FilePath}", filePath);
-            return StatusCode(500, new { message = "Internal server error" });
+            return StatusCode(500, new { error = "Internal server error" });
         }
     }
 
     /// <summary>
-    /// Get file URL
+    /// Helper method to check if a file is an image
     /// </summary>
-    /// <param name="filePath">The path of the file</param>
-    /// <returns>File URL</returns>
-    [HttpGet("url")]
-    public async Task<ActionResult<string>> GetFileUrl([FromQuery] string filePath)
+    /// <param name="contentType">The content type of the file</param>
+    /// <returns>True if the file is an image</returns>
+    private static bool IsImageFile(string contentType)
     {
-        try
-        {
-            if (string.IsNullOrEmpty(filePath))
-            {
-                return BadRequest(new { message = "File path is required" });
-            }
-
-            var url = await _fileStorageService.GetFileUrlAsync(filePath);
-            
-            if (!string.IsNullOrEmpty(url))
-            {
-                return Ok(new { url });
-            }
-            else
-            {
-                return NotFound(new { message = "File not found" });
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error getting file URL for {FilePath}", filePath);
-            return StatusCode(500, new { message = "Internal server error" });
-        }
+        return contentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase);
     }
-} 
+}
