@@ -31,6 +31,9 @@
 	  <PackageReference Include="StackExchange.Redis" Version="2.8.37" />
 	  <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1" />
 	  
+	  <!-- Firebase Admin SDK -->
+	  <PackageReference Include="FirebaseAdmin" Version="3.0.1" />
+	  
 	  <!-- Firebase Storage -->
 	  <PackageReference Include="Google.Cloud.Storage.V1" Version="4.10.0" />
 	  

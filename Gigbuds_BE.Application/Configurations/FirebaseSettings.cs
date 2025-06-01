@@ -14,8 +14,7 @@ public class FirebaseSettings
     public string StorageBucket { get; set; } = string.Empty;
 
     [Required]
-    [JsonIgnore]
-    public string ServiceAccountJson { get; set; } = string.Empty;
+    public string ServiceAccountKeyPath { get; set; } = string.Empty;
 
     public string BaseUrl { get; set; } = "https://firebasestorage.googleapis.com/v0/b";
 
@@ -24,4 +23,6 @@ public class FirebaseSettings
     public string[] AllowedImageExtensions { get; set; } = { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
 
     public string[] AllowedDocumentExtensions { get; set; } = { ".pdf", ".doc", ".docx", ".txt" };
+
+    public string[] AllowedJobAttachmentExtensions { get; set; } = { ".pdf" };
 } 
