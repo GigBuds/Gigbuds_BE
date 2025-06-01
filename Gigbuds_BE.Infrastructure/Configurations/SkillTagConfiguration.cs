@@ -16,8 +16,7 @@ internal class SkillTagConfiguration : IEntityTypeConfiguration<SkillTag>
             .HasMaxLength(255)
             .IsRequired();
         
-        builder.HasOne(s => s.Account)
-            .WithMany(a => a.SkillTags)
-            .HasForeignKey(s => s.AccountId);
+        builder.HasMany(s => s.Accounts)
+            .WithMany(a => a.SkillTags);
     }
 }

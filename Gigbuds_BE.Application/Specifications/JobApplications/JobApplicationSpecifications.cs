@@ -15,3 +15,15 @@ public class GetJobSpecificationById : BaseSpecification<JobApplication>
     {
     }
 }
+
+public class GetJobApplicationsByJobPostSpecification : BaseSpecification<JobApplication>
+{
+    public GetJobApplicationsByJobPostSpecification(int jobPostId)
+        : base(x => x.JobPostId == jobPostId)
+    {
+        AddInclude(x => x.JobPost);
+        AddInclude(x => x.Account);
+        AddInclude(x => x.JobPost.JobPosition);
+        AddInclude(x => x.Account.SkillTags);
+    }
+}

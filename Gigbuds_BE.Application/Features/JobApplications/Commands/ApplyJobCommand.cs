@@ -1,4 +1,5 @@
 using System;
+using Gigbuds_BE.Application.DTOs.JobApplicationDto;
 using Gigbuds_BE.Application.DTOs.JobApplications;
 using MediatR;
 
