@@ -1,11 +1,16 @@
-﻿using Gigbuds_BE.Application.DTOs.Files;
+﻿using AutoMapper;
+using Gigbuds_BE.Application.DTOs.Files;
 using Gigbuds_BE.Application.DTOs.JobApplications;
+using Gigbuds_BE.Application.DTOs.SkillTags;
 using Gigbuds_BE.Application.Interfaces.Repositories;
 using Gigbuds_BE.Application.Interfaces.Services;
+using Gigbuds_BE.Application.Specifications.ApplicationUsers;
 using Gigbuds_BE.Application.Specifications.JobApplications;
 using Gigbuds_BE.Application.Specifications.JobPosts;
+using Gigbuds_BE.Domain.Entities.Identity;
 using Gigbuds_BE.Domain.Entities.Jobs;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 
 namespace Gigbuds_BE.Application.Features.JobApplications.Commands
@@ -15,19 +20,30 @@ namespace Gigbuds_BE.Application.Features.JobApplications.Commands
         private readonly IUnitOfWork _unitOfWork;
         private readonly IFileStorageService _fileStorageService;
         private readonly ILogger<ApplyJobCommandHandler> _logger;
+        private readonly IMapper _mapper;
+        private readonly IApplicationUserService<ApplicationUser> _applicationUserService;
 
-        public ApplyJobCommandHandler(IUnitOfWork unitOfWork, IFileStorageService fileStorageService, ILogger<ApplyJobCommandHandler> logger)
+
+        public ApplyJobCommandHandler(IUnitOfWork unitOfWork, IFileStorageService fileStorageService, ILogger<ApplyJobCommandHandler> logger, IMapper mapper, IApplicationUserService<ApplicationUser> applicationUserService)
         {
             _unitOfWork = unitOfWork;
             _fileStorageService = fileStorageService;
             _logger = logger;
+            _mapper = mapper;
+            _applicationUserService = applicationUserService;
         }
 
         public async Task<JobApplicationResponseDto> Handle(ApplyJobCommand request, CancellationToken cancellationToken)
         {
             try
             {
-                // Check if user already applied for this job
+                var jobSeekerSpec = new JobSeekerByIdSpecification(request.JobApplication.AccountId);
+                var jobSeeker = await _applicationUserService.GetUserWithSpec(jobSeekerSpec);
+                if(jobSeeker.AvailableJobApplication == 0)
+                {
+                    throw new InvalidOperationException("You have reached the maximum number of job applications");
+                }
+
                 var getJobApplicationSpec = new GetJobSpecificationById(request.JobApplication.JobPostId, request.JobApplication.AccountId);
                 var existingApplication = await _unitOfWork.Repository<JobApplication>().GetBySpecificationAsync(getJobApplicationSpec);
 
@@ -73,29 +89,21 @@ namespace Gigbuds_BE.Application.Features.JobApplications.Commands
                 }
 
                 // Create job application
-                var newJobApplication = new JobApplication
-                {
-                    JobPostId = request.JobApplication.JobPostId,
-                    AccountId = request.JobApplication.AccountId,
-                    CvUrl = cvUrl,
-                    ApplicationStatus = JobApplicationStatus.Pending
-                };
+                var jobApplication = _mapper.Map<JobApplication>(request.JobApplication);
+                jobApplication.CvUrl = cvUrl;
+                jobApplication.ApplicationStatus = JobApplicationStatus.Pending;
+                jobApplication.CreatedAt = DateTime.UtcNow;
+                jobApplication.UpdatedAt = DateTime.UtcNow;
 
-                var savedApplication = _unitOfWork.Repository<JobApplication>().Insert(newJobApplication);
+                var savedApplication = _unitOfWork.Repository<JobApplication>().Insert(jobApplication);
+                jobSeeker.AvailableJobApplication--;
+                await _applicationUserService.UpdateAsync(jobSeeker);
                 await _unitOfWork.CompleteAsync();
 
-                _logger.LogInformation("Job application created successfully. ApplicationId: {ApplicationId}", savedApplication.Id);
-
                 // Return response
-                return new JobApplicationResponseDto
-                {
-                    Id = savedApplication.Id,
-                    JobPostId = savedApplication.JobPostId,
-                    AccountId = savedApplication.AccountId,
-                    CvUrl = savedApplication.CvUrl,
-                    ApplicationStatus = savedApplication.ApplicationStatus.ToString(),
-                    AppliedAt = savedApplication.CreatedAt
-                };
+                var jobApplicationResponse = _mapper.Map<JobApplicationResponseDto>(savedApplication);
+                
+                return jobApplicationResponse;
             }
             catch (Exception ex)
             {

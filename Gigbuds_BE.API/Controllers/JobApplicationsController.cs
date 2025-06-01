@@ -1,5 +1,7 @@
+using Gigbuds_BE.Application.DTOs.JobApplicationDto;
 using Gigbuds_BE.Application.DTOs.JobApplications;
 using Gigbuds_BE.Application.Features.JobApplications.Commands;
+using Gigbuds_BE.Application.Features.JobApplications.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +13,6 @@ namespace Gigbuds_BE.API.Controllers
     {
         private readonly IMediator _mediator;
         private readonly ILogger<JobApplicationsController> _logger;
-
         public JobApplicationsController(IMediator mediator, ILogger<JobApplicationsController> logger)
         {
             _mediator = mediator;
@@ -30,20 +31,13 @@ namespace Gigbuds_BE.API.Controllers
         [Consumes("multipart/form-data")]
         [ProducesResponseType(typeof(JobApplicationResponseDto), 200)]
         [ProducesResponseType(400)]
-        [ProducesResponseType(409)] // Conflict - already applied
-        public async Task<IActionResult> ApplyJob(int jobPostId, int accountId, IFormFile? cvFile = null)
+        [ProducesResponseType(409)]
+        public async Task<IActionResult> ApplyJob(JobApplicationDto jobApplicationDto)
         {
             try
             {
                 _logger.LogInformation("Job application request received. JobPostId: {JobPostId}, AccountId: {AccountId}, HasCV: {HasCV}",
-                    jobPostId, accountId, cvFile != null);
-
-                var jobApplicationDto = new JobApplicationDto
-                {
-                    JobPostId = jobPostId,
-                    AccountId = accountId,
-                    CvFile = cvFile
-                };
+                    jobApplicationDto.JobPostId, jobApplicationDto.AccountId, jobApplicationDto.CvFile != null);
 
                 var command = new ApplyJobCommand(jobApplicationDto);
                 var result = await _mediator.Send(command);
@@ -54,7 +48,7 @@ namespace Gigbuds_BE.API.Controllers
             catch (InvalidOperationException ex) when (ex.Message.Contains("already applied"))
             {
                 _logger.LogWarning("Duplicate job application attempt. JobPostId: {JobPostId}, AccountId: {AccountId}", 
-                    jobPostId, accountId);
+                    jobApplicationDto.JobPostId, jobApplicationDto.AccountId);
                 return Conflict(new { error = ex.Message });
             }
             catch (InvalidOperationException ex)
@@ -65,7 +59,7 @@ namespace Gigbuds_BE.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error processing job application. JobPostId: {JobPostId}, AccountId: {AccountId}", 
-                    jobPostId, accountId);
+                    jobApplicationDto.JobPostId, jobApplicationDto.AccountId);
                 return StatusCode(500, new { error = "An error occurred while processing your application" });
             }
         }
@@ -79,8 +73,9 @@ namespace Gigbuds_BE.API.Controllers
         [ProducesResponseType(typeof(List<JobApplicationResponseDto>), 200)]
         public async Task<IActionResult> GetJobApplicationsByJobPost(int jobPostId)
         {
-            // TODO: Implement GetJobApplicationsByJobPostQuery
-            return Ok(new List<JobApplicationResponseDto>());
+            var query = new GetJobApplicationsByJobPostQuery(jobPostId);
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
 
         /// <summary>
