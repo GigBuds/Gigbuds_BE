@@ -39,6 +39,11 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
                 Benefit = command.Benefit,
                 VacancyCount = command.VacancyCount,
                 IsOutstandingPost = command.IsOutstandingPost,
+                DistrictCode = command.DistrictCode,
+                ProvinceCode = command.ProvinceCode,
+
+                // TODO: add check memberhsip type -> if not premium, priority level high, else low
+                //PriorityLevel = command.Membership == "Premium" ? 1 : 2, // Assuming 1 is high priority and 2 is low priority
             };
 
             _logger.LogInformation("New job post: {JobPost}", newJobPost);

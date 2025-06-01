@@ -54,6 +54,13 @@ var identitySeeder = scope.ServiceProvider.GetRequiredService<IIdentitySeeder>()
 
 var ShouldReseedData = app.Configuration.GetValue<bool>("ClearAndReseedData");
 
+// Add after app.UseHttpsRedirection();
+
+app.MapGet("/api/cats", () =>
+{
+    var cats = new[] { "Whiskers", "Mittens", "Shadow" };
+    return Results.Ok(cats);
+});
 try
 {
     if (ShouldReseedData)
