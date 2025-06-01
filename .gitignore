@@ -8,6 +8,7 @@ PROTOCOL.md
 PROJECT_STRUCTURE.md
 SMS_VERIFICATION_SETUP.md
 FIREBASE_SETUP.md
+FIREBASE_ADMIN_SDK_GUIDE.md
 **/Keys
 Gigbuds_BE.Infrastructure/Migrations
 # Ignore appsetttings.json
