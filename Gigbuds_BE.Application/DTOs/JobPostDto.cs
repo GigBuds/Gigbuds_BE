@@ -1,4 +1,4 @@
-namespace Gigbuds_BE.Application.DTOs.ApplicationUsers
+namespace Gigbuds_BE.Application.DTOs
 {
     public class JobPostDto
     {

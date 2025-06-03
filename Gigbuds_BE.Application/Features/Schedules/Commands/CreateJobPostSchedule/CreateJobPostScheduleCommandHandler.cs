@@ -1,5 +1,4 @@
 ﻿using Gigbuds_BE.Application.Interfaces.Repositories;
-using DomainJobShift = Gigbuds_BE.Domain.Entities.Jobs;
 using Microsoft.Extensions.Logging;
 using MediatR;
 using Gigbuds_BE.Application.Features.Schedules.JobShifts.Commands.CreateJobShift;
@@ -41,7 +40,7 @@ namespace Gigbuds_BE.Application.Features.Schedules.Commands.CreateJobPostSchedu
                 _logger.LogInformation("Added {RowsAdded} rows to the database, from {RowsProvided} rows provided", rowsAdded, command.JobShifts.Count);
 
                 await _mediator.Publish(
-                    new CreateJobShiftsCommand
+                    new CreateJobPostShiftsCommand
                     {
                         JobPostId = command.JobPostId,
                         JobShifts = command.JobShifts

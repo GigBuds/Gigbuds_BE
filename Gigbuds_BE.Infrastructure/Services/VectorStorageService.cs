@@ -1,5 +1,4 @@
 ﻿using Gigbuds_BE.Application.Interfaces.Services;
-using Google.Protobuf.Collections;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Qdrant.Client;
@@ -66,11 +65,12 @@ namespace Gigbuds_BE.Infrastructure.Services
         {
             await CreateCollectionIfNotExists(collectionName);
 
-            var newId = Guid.NewGuid();
-            List<PointStruct> pointStructs = Enumerable.Range(0, vectorWithPayloads.Count - 1).Select(index => {
+            List<PointStruct> pointStructs = Enumerable.Range(0, vectorWithPayloads.Count - 1).Select(index =>
+            {
+                var newId = BitConverter.GetBytes(vectorWithPayloads[index].Id);
                 var pointStruct = new PointStruct
                 {
-                    Id = PointId.Parser.ParseFrom(newId.ToByteArray()),
+                    Id = PointId.Parser.ParseFrom(newId),
                     Vectors = vectorWithPayloads[index].Vector.ToArray(),
                 };
                 pointStruct.Payload.Add(UsePayloadAdapter(vectorWithPayloads[index].Payload));
@@ -81,7 +81,7 @@ namespace Gigbuds_BE.Infrastructure.Services
 
             await qdrantClient.UpsertAsync(collectionName, pointStructs);
 
-            _logger.LogInformation("Upserted {Count} points to collection '{CollectionName}' with base ID '{BaseId}'.", pointStructs.Count, collectionName, newId);
+            _logger.LogInformation("Upserted {Count} points to collection '{CollectionName}'.", pointStructs.Count, collectionName);
         }
         private async Task CreateCollectionIfNotExists(string collectionName)
         {

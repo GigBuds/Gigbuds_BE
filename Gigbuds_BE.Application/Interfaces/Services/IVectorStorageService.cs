@@ -3,7 +3,8 @@
     public interface IVectorStorageService
     {
         /// <summary>
-        /// Upserts a single vector point with associated payload into the specified collection.
+        /// Upserts a single or multiple vector points with associated payload into the specified collection. 
+        /// Duplicate id will overwrite the old points.
         /// </summary>
         /// <param name="collectionName">The name of the collection to upsert into</param>
         /// <param name="vector">The vector data to be stored</param>
@@ -36,6 +37,10 @@
     /// </summary>
     public record class VectorWithPayload
     {
+        /// <summary>
+        /// The id of the vector.
+        /// </summary>
+        public int Id { get; init; }
         /// <summary>
         /// The vector data to be stored or processed.
         /// </summary>

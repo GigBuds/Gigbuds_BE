@@ -1,5 +1,5 @@
 using System;
-using Gigbuds_BE.Application.DTOs.ApplicationUsers;
+using Gigbuds_BE.Application.DTOs;
 using MediatR;
 
 namespace Gigbuds_BE.Application.Features.JobPosts.Queries.GetJobPosts;

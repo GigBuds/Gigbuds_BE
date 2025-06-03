@@ -7,6 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Features\JobPosts\Commands\JobApplication\**" />
+    <Compile Remove="Features\JobPosts\Commands\SearchJobPosts\**" />
+    <EmbeddedResource Remove="Features\JobPosts\Commands\JobApplication\**" />
+    <EmbeddedResource Remove="Features\JobPosts\Commands\SearchJobPosts\**" />
+    <None Remove="Features\JobPosts\Commands\JobApplication\**" />
+    <None Remove="Features\JobPosts\Commands\SearchJobPosts\**" />
+  </ItemGroup>
+
+  <ItemGroup>
 	<PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
 	<PackageReference Include="MediatR" Version="12.5.0" />
 	  <PackageReference Include="AutoMapper" Version="14.0.0" />
@@ -32,8 +41,6 @@
   <ItemGroup>
     <Folder Include="Extensions\" />
     <Folder Include="BackgroundJobs\" />
-    <Folder Include="Features\JobPosts\Commands\JobApplication\" />
-    <Folder Include="Features\JobPosts\Commands\SearchJobPosts\" />
   </ItemGroup>
 
   <ItemGroup>

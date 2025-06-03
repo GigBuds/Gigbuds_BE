@@ -1,4 +1,6 @@
 using System;
+using Gigbuds_BE.Application.DTOs.ApplicationUsers;
+using Gigbuds_BE.Application.Features.Utils;
 using Gigbuds_BE.Application.Interfaces.Services;
 using Gigbuds_BE.Domain.Entities.Constants;
 using Gigbuds_BE.Domain.Entities.Identity;
@@ -30,6 +32,7 @@ public class RegisterForUserHandler(
         };
         await applicationUserService.InsertAsync(user, request.Password);
         await applicationUserService.AssignRoleAsync(user, UserRoles.JobSeeker);
+
         try
         {
             var verificationCode = await verificationCodeService.GenerateVerificationCodeAsync(request.PhoneNumber);
