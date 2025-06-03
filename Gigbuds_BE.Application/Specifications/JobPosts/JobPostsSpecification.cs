@@ -58,4 +58,17 @@ namespace Gigbuds_BE.Application.Specifications.JobPosts
             AddInclude(x => x.JobPostSchedule.JobShifts);
         }
     }
+
+    public class ActiveJobPostsSpecification : BaseSpecification<JobPost>
+    {
+        public ActiveJobPostsSpecification() : base(j =>
+            j.IsEnabled &&
+            j.JobPostStatus == JobPostStatus.Open &&
+            j.ExpireTime > DateTime.UtcNow)
+        {
+            AddInclude(j => j.Account.EmployerProfile);
+            AddInclude(j => j.JobPostSchedule.JobShifts);
+            AddInclude(j => j.JobPosition);
+        }
+    }
 }
