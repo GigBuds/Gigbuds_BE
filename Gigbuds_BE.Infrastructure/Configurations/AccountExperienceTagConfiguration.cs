@@ -18,7 +18,7 @@ internal class AccountExperienceTagConfiguration : IEntityTypeConfiguration<Acco
             .IsRequired();
 
         builder.Property(e => e.EmployerId)
-            .IsRequired();
+            .IsRequired(false);
 
         builder.Property(e => e.JobPosition)
             .HasMaxLength(255)
