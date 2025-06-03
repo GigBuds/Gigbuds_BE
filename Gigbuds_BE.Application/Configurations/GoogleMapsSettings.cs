@@ -26,7 +26,7 @@ public class GoogleMapsSettings
 
     public string FieldMask { get; set; } = "originIndex,destinationIndex,status,condition,distanceMeters,duration,localizedValues.distance,localizedValues.duration";
 
-    public string TravelMode { get; set; } = "DRIVE";
+    public string TravelMode { get; set; } = "TWO_WHEELER";
 
     public string RoutingPreference { get; set; } = "TRAFFIC_UNAWARE";
 
