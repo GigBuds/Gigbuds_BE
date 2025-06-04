@@ -21,16 +21,29 @@
         /// <param name="queryVector">The query vector to compare against stored vectors.</param>
         /// <param name="payloadInclude">List of payload fields to include in the search results.</param>
         /// <param name="payloadExclude">List of payload fields to exclude from the search results.</param>
-        /// <param name="limit">The maximum number of results to return. Default is 0 (no limit).</param>
-        /// <param name="offset">The number of results to skip before returning results. Default is 0.</param>
-        /// <returns>A list of string identifiers for the found points.</returns>
-        Task<List<string>> SearchBySemanticsAsync(
+        /// <param name="resultLimits">The maximum number of results to return. Default is 0 (no limit).</param>
+        /// <param name="resultOffset">The number of results to skip before returning results. Default is 0.</param>
+        /// <returns>A list of tuples containing the id and payload fields for the found points.</returns>
+        Task<List<(string, string)>> SearchBySemanticsAsync(
             string collectionName,
-            float[] queryVector,
-            List<string> payloadInclude,
-            List<string> payloadExclude,
-            int limit = 0,
-            int offset = 0);
+            ReadOnlyMemory<float> queryVector,
+            QueryFilter? queryFilter = null,
+            List<string>? payloadInclude = null,
+            List<string>? payloadExclude = null,
+            int resultLimits = 0,
+            int resultOffset = 0);
+    }
+    public record class QueryCondition
+    {
+        public string FieldName { get; init; } = string.Empty;
+        public object Value { get; init; } = null!;
+    }
+    public record class QueryFilter
+    {
+        public List<QueryCondition>? Must { get; init; }
+        public List<QueryCondition>? MustNot { get; init; }
+        public List<QueryCondition>? Should { get; init; }
+        public List<QueryCondition>? MinShould { get; init; }
     }
     /// <summary>
     /// Represents a vector along with its associated payload metadata.
@@ -44,7 +57,7 @@
         /// <summary>
         /// The vector data to be stored or processed.
         /// </summary>
-        public ReadOnlyMemory<float> Vector { get; init; } 
+        public ReadOnlyMemory<float> Vector { get; init; }
 
         /// <summary>
         /// Additional metadata to be stored with the vector.

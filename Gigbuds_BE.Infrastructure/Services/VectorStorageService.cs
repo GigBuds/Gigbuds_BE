@@ -14,50 +14,71 @@ namespace Gigbuds_BE.Infrastructure.Services
 
         public VectorStorageService(ILogger<VectorStorageService> logger, IConfiguration configuration)
         {
-            this._logger = logger;
+            _logger = logger;
             this.configuration = configuration;
             qdrantClient = new QdrantClient(configuration["Qdrant:Host"]!, configuration.GetValue<int>("Qdrant:Port"), https: true);
         }
 
-        public async Task<List<string>> SearchBySemanticsAsync(
+        public async Task<List<(string, string)>> SearchBySemanticsAsync(
             string collectionName,
-            float[] queryVector,
-            List<string> payloadInclude,
-            List<string> payloadExclude,
+            ReadOnlyMemory<float> queryVector,
+            QueryFilter? queryFilter = null,
+            List<string>? payloadInclude = null,
+            List<string>? payloadExclude = null,
             int resultLimits = 0,
             int resultOffset = 0)
         {
-            var payloadIncludeSelector = new PayloadIncludeSelector
+            // TODO: apply builder pattern for must, should, mustNot, minShould
+            Filter? filter = null;
+            if (queryFilter != null
+                && queryFilter.Must != null
+                && queryFilter.Must.Count != 0)
             {
-                Fields = { payloadInclude }
-            };
-            var payloadExcludeSelector = new PayloadExcludeSelector
+                filter = new Filter
+                {
+                    Must = {
+                        queryFilter.Must.Select(condition => new Condition
+                        {
+                            Field = new FieldCondition
+                            {
+                                Key = condition.FieldName,
+                                Match = new Match
+                                {
+                                    Keyword = condition.Value.ToString()
+                                }
+                            }
+                        })
+                    }
+                };
+            }
+
+            var payloadSelector = new WithPayloadSelector
             {
-                Fields = { payloadExclude }
+                Enable = true,
+                Include = payloadInclude != null ? new PayloadIncludeSelector { Fields = { payloadInclude } } : null,
+                Exclude = payloadExclude != null ? new PayloadExcludeSelector { Fields = { payloadExclude } } : null
             };
 
-            IReadOnlyList<ScoredPoint> results = await qdrantClient.SearchAsync(
+            IReadOnlyList<ScoredPoint> results = await qdrantClient.QueryAsync(
             collectionName,
-            queryVector,
+            queryVector.ToArray(),
+            filter: filter,
             limit: (ulong)resultLimits,
             offset: (ulong)resultOffset,
             searchParams: new SearchParams
             {
                 Exact = false,
             },
-            payloadSelector: new WithPayloadSelector
-            {
-                Enable = true,
-                Include = payloadIncludeSelector,
-                Exclude = payloadExcludeSelector
-            });
+            payloadSelector: payloadSelector);
 
             return results.Select(point =>
             {
+                // TODO: Implement return payload fields
                 _logger.LogInformation("Found point with ID: {Id}, Score: {Score}, Payload: {Payload}", point.Id, point.Score, point.Payload);
-                point.Payload.TryGetValue("db-id", out var idValue);
+                point.Payload.TryGetValue(configuration["Qdrant:DefaultPointId"], out var idValue);
+                point.Payload.TryGetValue("location", out var locationValue);
 
-                return idValue.StringValue;
+                return (idValue.StringValue, locationValue.StringValue);
             }).ToList();
         }
 
@@ -119,5 +140,14 @@ namespace Gigbuds_BE.Infrastructure.Services
             }
             return payloadDict;
         }
+
+        //private static IReadOnlyList<PrefetchQuery> UsePrefetchQueryAdapter(Dictionary<string, object> prefetchDict)
+        //{
+        //    return prefetchDict.Select(kvp => new PrefetchQuery
+        //    {
+        //         = kvp.Key,
+        //        Ids = new[] { PointId.Parser.ParseFrom(Encoding.UTF8.GetBytes(kvp.Value.ToString()!)) }
+        //    }).ToList();
+        //}
     }
 }

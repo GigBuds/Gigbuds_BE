@@ -24,7 +24,7 @@ namespace Gigbuds_BE.Infrastructure.Extensions
     {
         public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            
+
 
             // Add sql server
             services.AddDbContextPool<GigbudsDbContext>(options =>
@@ -47,10 +47,10 @@ namespace Gigbuds_BE.Infrastructure.Extensions
 
             // Configure Redis settings
             services.Configure<RedisSettings>(configuration.GetSection(RedisSettings.SectionName));
-            
+
             // Configure Abenla SMS settings (replacing SpeedSMS)
             services.Configure<AbenlaSmsSettings>(configuration.GetSection(AbenlaSmsSettings.SectionName));
-            
+
             // Configure Firebase settings
             services.Configure<FirebaseSettings>(configuration.GetSection(FirebaseSettings.SectionName));
 
@@ -90,7 +90,7 @@ namespace Gigbuds_BE.Infrastructure.Extensions
             services.AddScoped<IIdentitySeeder, IdentitySeeder>();
             services.AddScoped(typeof(IApplicationUserService<>), typeof(ApplicationUserService<>));
             services.AddScoped<IUserTokenService, UserTokenService>();
-            
+
             // Add SMS and File Storage services
             services.AddHttpClient<ISmsService, AbenlaSmsService>();
             services.AddScoped<IVerificationCodeService, RedisVerificationCodeService>();
@@ -98,7 +98,10 @@ namespace Gigbuds_BE.Infrastructure.Extensions
 
             // Add Google Maps service
             services.AddHttpClient<IGoogleMapsService, GoogleMapsService>();
-            
+
+            services.AddScoped<IVectorStorageService, VectorStorageService>();
+            services.AddScoped<ITextEmbeddingService, TextEmbeddingService>();
+
             // Add Job Recommendation service
             services.AddScoped<IJobRecommendationService, JobRecommendationService>();
         }
