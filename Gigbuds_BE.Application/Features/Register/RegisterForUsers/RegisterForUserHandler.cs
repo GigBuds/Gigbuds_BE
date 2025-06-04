@@ -1,6 +1,4 @@
 using System;
-using Gigbuds_BE.Application.DTOs.ApplicationUsers;
-using Gigbuds_BE.Application.Features.Utils;
 using Gigbuds_BE.Application.Interfaces.Services;
 using Gigbuds_BE.Domain.Entities.Constants;
 using Gigbuds_BE.Domain.Entities.Identity;

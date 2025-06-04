@@ -1,6 +1,4 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
-
-namespace Gigbuds_BE.Application.Commons.Utils
+﻿namespace Gigbuds_BE.Application.Commons.Utils
 {
     public static class ConvertIntDayToString
     {

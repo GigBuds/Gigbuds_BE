@@ -21,6 +21,7 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
         public required string DistrictCode { get; set; }
         public required string ProvinceCode { get; set; }
         public required bool IsOutstandingPost { get; set; }
+        public required int JobPositionId { get; set; }
         [JsonPropertyName("JobSchedule")]
         public required CreateJobPostScheduleCommand ScheduleCommand { get; set; }
     }

@@ -1,4 +1,4 @@
-namespace Gigbuds_BE.Application.DTOs
+namespace Gigbuds_BE.Application.DTOs.ApplicationUsers
 {
     public class JobScheduleDto
     {

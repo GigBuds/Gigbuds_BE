@@ -15,6 +15,7 @@ using Gigbuds_BE.Application.Features.JobPosts.Queries.GetJobPosts;
 using Gigbuds_BE.Application.DTOs.JobRecommendations;
 using Microsoft.AspNetCore.Authorization;
 using Gigbuds_BE.Application.Features.JobPosts.Queries.GetJobRecommendations;
+using Gigbuds_BE.Application.Features.JobPosts.Queries.GetAllJobPosts;
 
 namespace Gigbuds_BE.API.Controllers
 {
