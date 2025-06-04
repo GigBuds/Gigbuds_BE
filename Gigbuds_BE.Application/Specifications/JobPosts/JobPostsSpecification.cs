@@ -22,6 +22,7 @@ namespace Gigbuds_BE.Application.Specifications.JobPosts
                     || j.JobRequirement.ToLower().Contains(queryParams.SearchTerm.ToLower())
                     || j.JobLocation.ToLower().Contains(queryParams.SearchTerm.ToLower())))
         {
+            AddInclude(x => x.JobPosition);
             AddPaging(queryParams.PageSize * (queryParams.PageIndex - 1), queryParams.PageSize);
         }
     }

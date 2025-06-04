@@ -23,9 +23,11 @@ public class SearchJobPostDto
     public bool IsMale { get; set; }
     public int? AgeRequirement { get; set; }
     public int JobPositionId { get; set; }
+    public string JobPositionName { get; set; }
     public string DistrictCode { get; set; }
     public string ProvinceCode { get; set; }
     public int PriorityLevel { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
+    
 }
