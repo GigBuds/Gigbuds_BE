@@ -16,7 +16,6 @@ using Gigbuds_BE.Application.Features.JobPosts.Queries.GetJobPosts;
 using Gigbuds_BE.Application.DTOs.JobRecommendations;
 using Microsoft.AspNetCore.Authorization;
 using Gigbuds_BE.Application.Features.JobPosts.Queries.GetJobRecommendations;
-using Gigbuds_BE.Application.Features.JobPosts.Queries.GetAllJobPosts;
 
 namespace Gigbuds_BE.API.Controllers
 {
@@ -148,5 +147,48 @@ namespace Gigbuds_BE.API.Controllers
             var jobPost = await mediator.Send(new GetJobPostByIdQuery(id));
             return Ok(jobPost);
         }
+
+        /// <summary>
+        /// Get job recommendations for a job seeker based on their schedule and location with pagination
+        /// </summary>
+        /// <param name="jobSeekerId">The ID of the job seeker</param>
+        /// <param name="queryParams">The recommendation request parameters with pagination</param>
+        /// <returns>A paginated list of recommended jobs with scores</returns>
+        [HttpGet("recommendations/{jobSeekerId}")]
+        [ProducesResponseType(typeof(Pagination<JobRecommendationDto>), 200)]
+        public async Task<ActionResult<Pagination<JobRecommendationDto>>> GetJobRecommendations(
+            int jobSeekerId,
+            [FromQuery] GetJobRecommendationsQueryParams queryParams)
+        {
+            try
+            {
+                var query = new GetJobRecommendationsQuery
+                {
+                    JobSeekerId = jobSeekerId,
+                    CurrentLocation = queryParams.CurrentLocation,
+                    PageIndex = queryParams.PageIndex,
+                    PageSize = queryParams.PageSize,
+                    IncludeScheduleMatching = queryParams.IncludeScheduleMatching,
+                    IncludeDistanceCalculation = queryParams.IncludeDistanceCalculation
+                };
+
+                var result = await mediator.Send(query);
+
+                return ResultWithPagination(
+                    result.Data,
+                    result.Count,
+                    queryParams.PageIndex,
+                    queryParams.PageSize);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
     }
 }

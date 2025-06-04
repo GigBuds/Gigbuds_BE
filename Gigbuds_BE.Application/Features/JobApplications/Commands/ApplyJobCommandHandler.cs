@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Gigbuds_BE.Application.Commons.Constants;
 using Gigbuds_BE.Application.DTOs.Files;
 using Gigbuds_BE.Application.DTOs.JobApplications;
 using Gigbuds_BE.Application.DTOs.SkillTags;
@@ -39,10 +40,8 @@ namespace Gigbuds_BE.Application.Features.JobApplications.Commands
             {
                 var jobSeekerSpec = new JobSeekerByIdSpecification(request.JobApplication.AccountId);
                 var jobSeeker = await _applicationUserService.GetUserWithSpec(jobSeekerSpec);
-                if(jobSeeker.AvailableJobApplication == 0)
-                {
-                    throw new InvalidOperationException("You have reached the maximum number of job applications");
-                }
+                var checkMembership = await CheckMembership(jobSeeker);
+                
 
                 var getJobApplicationSpec = new GetJobSpecificationById(request.JobApplication.JobPostId, request.JobApplication.AccountId);
                 var existingApplication = await _unitOfWork.Repository<JobApplication>().GetBySpecificationAsync(getJobApplicationSpec);
@@ -111,6 +110,23 @@ namespace Gigbuds_BE.Application.Features.JobApplications.Commands
                     request.JobApplication.JobPostId, request.JobApplication.AccountId);
                 throw;
             }
+        }
+
+        private async Task<bool> CheckMembership(ApplicationUser jobSeeker)
+        {
+            if(jobSeeker.AvailableJobApplication == 0 
+            &&
+            !jobSeeker.AccountMemberships.Any(am => am.Membership.Title == ProjectConstant.Premium_Tier_Job_Application_Title))
+            {
+                throw new InvalidOperationException("You have reached the maximum number of job applications");
+            }
+
+            var jobSeekerMembership = jobSeeker.AccountMemberships.FirstOrDefault(am => am.Membership.Title == ProjectConstant.Premium_Tier_Job_Application_Title);
+            if(jobSeekerMembership != null && jobSeekerMembership.EndDate < DateTime.UtcNow) {
+                throw new InvalidOperationException("You have reached the maximum number of job applications");
+            }
+
+            return true;
         }
     }
 }

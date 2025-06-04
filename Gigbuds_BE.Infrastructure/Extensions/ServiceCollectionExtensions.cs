@@ -54,6 +54,9 @@ namespace Gigbuds_BE.Infrastructure.Extensions
             // Configure Firebase settings
             services.Configure<FirebaseSettings>(configuration.GetSection(FirebaseSettings.SectionName));
 
+            // Configure Google Maps settings
+            services.Configure<GoogleMapsSettings>(configuration.GetSection(GoogleMapsSettings.SectionName));
+
             // Add Quartz
             services.AddQuartz(q =>
             {
@@ -92,7 +95,13 @@ namespace Gigbuds_BE.Infrastructure.Extensions
             services.AddHttpClient<ISmsService, AbenlaSmsService>();
             services.AddScoped<IVerificationCodeService, RedisVerificationCodeService>();
             services.AddScoped<IFileStorageService, FirebaseStorageService>();
+
+            // Add Google Maps service
+            services.AddHttpClient<IGoogleMapsService, GoogleMapsService>();
             
+            // Add Job Recommendation service
+            services.AddScoped<IJobRecommendationService, JobRecommendationService>();
+            services.AddScoped<IMembershipsService, MembershipsServices>();
         }
     }
 }
