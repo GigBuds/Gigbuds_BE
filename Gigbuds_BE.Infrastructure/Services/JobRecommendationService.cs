@@ -139,7 +139,7 @@ public class JobRecommendationService : IJobRecommendationService
         return recommendation;
     }
 
-    private (int Score, string Reason) CalculateScheduleScore(
+    public (int Score, string Reason) CalculateScheduleScore(
         ICollection<JobSeekerShift>? jobSeekerShifts,
         ICollection<JobShift>? jobShifts)
     {
