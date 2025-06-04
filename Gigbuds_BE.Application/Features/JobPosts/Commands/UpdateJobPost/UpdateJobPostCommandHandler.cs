@@ -24,6 +24,7 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.UpdateJobPost
             ?? throw new NotFoundException(nameof(JobPost), request.JobPostId);
 
             jobPost.JobTitle = request.JobTitle;
+            jobPost.AgeRequirement = request.AgeRequirement;
             jobPost.JobDescription = request.JobDescription;
             jobPost.JobRequirement = request.JobRequirement;
             jobPost.ExperienceRequirement = request.ExperienceRequirement;
@@ -33,7 +34,10 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.UpdateJobPost
             jobPost.ExpireTime = request.ExpireTime.ToUniversalTime();
             jobPost.Benefit = request.Benefit;
             jobPost.VacancyCount = request.VacancyCount;
+            jobPost.DistrictCode = request.DistrictCode;
+            jobPost.ProvinceCode = request.ProvinceCode;
             jobPost.IsOutstandingPost = request.IsOutstandingPost;
+            jobPost.JobPositionId = request.JobPositionId;
 
             _unitOfWork.Repository<JobPost>().Update(jobPost);
             _logger.LogInformation("Job post with id {JobPostId} updated successfully", request.JobPostId);
