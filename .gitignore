@@ -4,11 +4,11 @@
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
 # Add migrations folder to gitignore
-PROTOCOL.md
-PROJECT_STRUCTURE.md
-SMS_VERIFICATION_SETUP.md
-FIREBASE_SETUP.md
-FIREBASE_ADMIN_SDK_GUIDE.md
+/PROTOCOL.md
+/PROJECT_STRUCTURE.md
+/SMS_VERIFICATION_SETUP.md
+/FIREBASE_SETUP.md
+/FIREBASE_ADMIN_SDK_GUIDE.md
 **/Keys
 Gigbuds_BE.Infrastructure/Migrations
 # Ignore appsetttings.json
@@ -420,7 +420,4 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
-PROJECT_STRUCTURE.md
 ACTION_PLAN.md
-PROJECT_STRUCTURE.md
-PROJECT_STRUCTURE.md
