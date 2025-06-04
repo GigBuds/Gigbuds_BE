@@ -17,5 +17,7 @@ namespace Gigbuds_BE.Application.DTOs
         public required int VacancyCount { get; set; }
         public required bool IsOutstandingPost { get; set; }
         public required JobScheduleDto JobSchedule { get; set; }
+        public required string JobPositionName { get; set; }
+        public required string JobPositionId { get; set; }
     }
 }
