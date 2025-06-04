@@ -5,6 +5,9 @@ namespace Gigbuds_BE.Application.DTOs
     public class JobPostDto
     {
         public int Id { get; set; }
+        public required string CompanyName { get; set; }
+        public required string CompanyLogo { get; set; }
+        public required string AccountId { get; set; }
         public required string JobTitle { get; set; }
         public required string JobDescription { get; set; }
         public required string JobRequirement { get; set; }
@@ -18,6 +21,6 @@ namespace Gigbuds_BE.Application.DTOs
         public required bool IsOutstandingPost { get; set; }
         public required JobScheduleDto JobSchedule { get; set; }
         public required string JobPositionName { get; set; }
-        public required string JobPositionId { get; set; }
+        public required int JobPositionId { get; set; }
     }
 }

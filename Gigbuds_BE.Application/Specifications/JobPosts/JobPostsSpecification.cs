@@ -57,6 +57,7 @@ namespace Gigbuds_BE.Application.Specifications.JobPosts
             AddInclude(x => x.Account);
             AddInclude(x => x.JobPosition);
             AddInclude(x => x.JobPostSchedule.JobShifts);
+            AddInclude(x => x.Account.EmployerProfile);
         }
     }
 
