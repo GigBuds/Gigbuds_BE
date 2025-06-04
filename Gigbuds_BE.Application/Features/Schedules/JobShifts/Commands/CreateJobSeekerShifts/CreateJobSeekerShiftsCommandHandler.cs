@@ -3,10 +3,11 @@ using Gigbuds_BE.Domain.Entities.Jobs;
 using Microsoft.Extensions.Logging;
 using Gigbuds_BE.Domain.Exceptions;
 using MediatR;
+using Gigbuds_BE.Domain.Entities.Schedule;
 
 namespace Gigbuds_BE.Application.Features.Schedules.JobShifts.Commands.CreateJobShift
 {
-    public class CreateJobShiftsCommandHandler : INotificationHandler<CreateJobShiftsCommand>
+    public class CreateJobShiftsCommandHandler : INotificationHandler<CreateJobSeekerShiftsCommand>
     {
         private readonly ILogger<CreateJobShiftsCommandHandler> _logger;
         private readonly IUnitOfWork _unitOfWork;
@@ -19,21 +20,19 @@ namespace Gigbuds_BE.Application.Features.Schedules.JobShifts.Commands.CreateJob
             _unitOfWork = unitOfWork;
         }
 
-        public async Task Handle(CreateJobShiftsCommand command, CancellationToken cancellationToken)
+        public async Task Handle(CreateJobSeekerShiftsCommand command, CancellationToken cancellationToken)
         {
-            List<JobShift> newJobShifts = new();
             foreach (var js in command.JobShifts)
             {
-                JobShift newJobShift = new()
+                JobSeekerShift newJobShift = new()
                 {
-                    JobPostScheduleId = command.JobPostId,
+                    JobSeekerScheduleId = command.JobSeekerId,
                     StartTime = js.StartTime,
                     EndTime = js.EndTime,
                     DayOfWeek = js.DayOfWeek,
                 };
                 _logger.LogInformation("New job shift: {JobShift}", newJobShift);
-                _unitOfWork.Repository<JobShift>().Insert(newJobShift);
-                newJobShifts.Add(newJobShift);
+                _unitOfWork.Repository<JobSeekerShift>().Insert(newJobShift);
             }
 
             try
