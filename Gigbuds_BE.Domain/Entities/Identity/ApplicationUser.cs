@@ -21,6 +21,7 @@ namespace Gigbuds_BE.Domain.Entities.Identity
         public int AvailableJobApplication { get; set; }
         public bool IsEnabled { get; set; } = true;
         public string? RefreshToken { get; set; }
+        public string? CurrentLocation { get; set; }
         public string AvatarUrl { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;

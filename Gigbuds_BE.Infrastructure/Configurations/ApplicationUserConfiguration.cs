@@ -49,7 +49,10 @@ internal class ApplicationUserConfiguration : IEntityTypeConfiguration<Applicati
             .HasDefaultValueSql("NOW()");
 
         builder.Property(a => a.AvatarUrl)
-            .IsRequired(false);    
+            .IsRequired(false); 
+            
+        builder.Property(a => a.CurrentLocation)
+            .IsRequired(false);
         // Relationships with Roles handled by Identity framework
     }
 } 
