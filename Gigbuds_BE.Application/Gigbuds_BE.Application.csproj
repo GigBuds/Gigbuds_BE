@@ -32,15 +32,10 @@
 	  <PackageReference Include="System.Formats.Asn1" Version="9.0.5" />
 	  <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.1" />
 
-	  <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.14.0" />
-	  <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.14.0" />
-	  <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.14.0" />
-	  <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.14.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Extensions\" />
-    <Folder Include="BackgroundJobs\" />
     <Folder Include="Features\JobPosts\Commands\JobApplication\" />
     <Folder Include="Features\JobPosts\Commands\SearchJobPosts\" />
     <Folder Include="Features\JobRecommendations\Queries\" />

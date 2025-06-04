@@ -1,6 +1,7 @@
 ﻿
 using Gigbuds_BE.Application.DTOs.ApplicationUsers;
 using Gigbuds_BE.Application.Features.Utils;
+using Gigbuds_BE.Application.Features.Embedding.JobSeekerEmbedding;
 using Gigbuds_BE.Application.Interfaces.Repositories;
 using Gigbuds_BE.Application.Interfaces.Services;
 using Gigbuds_BE.Domain.Entities.Identity;

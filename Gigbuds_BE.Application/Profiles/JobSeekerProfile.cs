@@ -11,10 +11,10 @@ namespace Gigbuds_BE.Application.Profiles
     {
         public JobSeekerProfile()
         {
-            CreateMap<ApplicationUser, JobSeekerDto>()
-                .ForMember(dest => dest.accountExperienceTags, opt => opt.MapFrom(src => src.AccountExperienceTags))
-                .ForMember(dest => dest.SkillTags, opt => opt.MapFrom(src => src.SkillTags))
-                .ForMember(dest => dest.EducationalLevels, opt => opt.MapFrom(src => src.EducationalLevels));
+            //CreateMap<ApplicationUser, JobSeekerEmbeddingDto>()
+            //    .ForMember(dest => dest.accountExperienceTags, opt => opt.MapFrom(src => src.AccountExperienceTags))
+            //    .ForMember(dest => dest.SkillTags, opt => opt.MapFrom(src => src.SkillTags))
+            //    .ForMember(dest => dest.EducationalLevels, opt => opt.MapFrom(src => src.EducationalLevels));
             
             CreateMap<SkillTag, SkillTagDto>()
                 .ReverseMap();

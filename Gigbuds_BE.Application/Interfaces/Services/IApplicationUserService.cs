@@ -4,6 +4,7 @@ namespace Gigbuds_BE.Application.Interfaces.Services
 {
     public interface IApplicationUserService<T> where T : ApplicationUser
     {
+        #region Core methods
         /// <summary>
         /// Retrieves all users asynchronously.
         /// </summary>
@@ -81,11 +82,13 @@ namespace Gigbuds_BE.Application.Interfaces.Services
         Task<string> GetUserRoleAsync(T user);
 
         /// <summary>
-        /// Retrieves a user by their ID asynchronously.
+        /// Retrieves a user by their ID asynchronously, with optional navigation property includes.
         /// </summary>
         /// <param name="userId">The ID of the user to retrieve.</param>
+        /// <param name="includes">A list of navigation property names to include, or null to disable includes.</param>
+        /// <param name="isTracking">Whether to use tracking or not.</param>
         /// <returns>The user with the specified ID, or null if not found.</returns>
-        Task<ApplicationUser?> GetByIdAsync(int userId);
+        Task<ApplicationUser?> GetByIdAsync(int userId, List<string>? includes = null, bool isTracking = false);
 
         /// <summary>
         /// Inserts a new user with the specified password asynchronously.
@@ -93,5 +96,9 @@ namespace Gigbuds_BE.Application.Interfaces.Services
         /// <param name="user">The user to insert.</param>
         /// <param name="password">The password for the new user.</param>
         Task InsertAsync(ApplicationUser user, string password);
+        #endregion
+
+        Task<string> GetJobSeekerMembershipLevelAsync(int userId);
+        Task<string> GetEmployerMembershipLevelAsync(int userId);
     }
 }
