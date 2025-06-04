@@ -58,27 +58,27 @@ namespace Gigbuds_BE.Infrastructure.Extensions
             services.Configure<GoogleMapsSettings>(configuration.GetSection(GoogleMapsSettings.SectionName));
 
             // Add Quartz
-            services.AddQuartz(q =>
-            {
-                q.UseSimpleTypeLoader();
-                q.UseDefaultThreadPool(tp =>
-                {
-                    tp.MaxConcurrency = 10;
-                });
+            // services.AddQuartz(q =>
+            // {
+            //     q.UseSimpleTypeLoader();
+            //     q.UseDefaultThreadPool(tp =>
+            //     {
+            //         tp.MaxConcurrency = 10;
+            //     });
 
-                q.UsePersistentStore(store =>
-                {
-                    store.UseProperties = true;
-                    store.UsePostgres(postgres =>
-                    {
-                        ArgumentException.ThrowIfNullOrEmpty(configuration.GetConnectionString("GigbudsDb"));
-                        postgres.ConnectionString = configuration.GetConnectionString("GigbudsDb")!;
-                        postgres.TablePrefix = "public.qrtz_";
-                    });
-                    store.UseSystemTextJsonSerializer();
-                });
-            });
-            services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
+            //     q.UsePersistentStore(store =>
+            //     {
+            //         store.UseProperties = true;
+            //         store.UsePostgres(postgres =>
+            //         {
+            //             ArgumentException.ThrowIfNullOrEmpty(configuration.GetConnectionString("GigbudsDb"));
+            //             postgres.ConnectionString = configuration.GetConnectionString("GigbudsDb")!;
+            //             postgres.TablePrefix = "public.qrtz_";
+            //         });
+            //         store.UseSystemTextJsonSerializer();
+            //     });
+            // });
+            // services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
 
             // Add UOW

@@ -21,14 +21,13 @@ public class MembershipsServices : IMembershipsService
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IApplicationUserService<ApplicationUser> _applicationUserService;
-    private readonly ISchedulerFactory _schedulerFactory;
+    //private readonly ISchedulerFactory _schedulerFactory;
     private readonly ILogger<MembershipsServices> _logger;
-    public MembershipsServices(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork, IApplicationUserService<ApplicationUser> applicationUserService, ISchedulerFactory schedulerFactory, ILogger<MembershipsServices> logger)
+    public MembershipsServices(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork, IApplicationUserService<ApplicationUser> applicationUserService, ILogger<MembershipsServices> logger)
     {
         _userManager = userManager;
         _unitOfWork = unitOfWork;
         _applicationUserService = applicationUserService;
-        _schedulerFactory = schedulerFactory;
         _logger = logger;
     }
     public async Task<bool> CreateMemberShipBenefitsAsync(int accountId, Membership membership) {
@@ -117,32 +116,32 @@ public class MembershipsServices : IMembershipsService
 
     public async Task ScheduleMembershipExpirationAsync(int accountId, Membership membership)
     {
-        try{
-            var scheduler = await _schedulerFactory.GetScheduler();
+        //try{
+        //    var scheduler = await _schedulerFactory.GetScheduler();
 
-            var jobKey = new JobKey($"MembershipExpiration_{accountId}_{membership.Id}", "MembershipExpiration");
-            var triggerKey = new TriggerKey($"MembershipExpirationTrigger_{accountId}_{membership.Id}", "MembershipExpiration");
+        //    var jobKey = new JobKey($"MembershipExpiration_{accountId}_{membership.Id}", "MembershipExpiration");
+        //    var triggerKey = new TriggerKey($"MembershipExpirationTrigger_{accountId}_{membership.Id}", "MembershipExpiration");
 
-            var job = JobBuilder.Create<MembershipExpirationJob>()
-            .WithIdentity(jobKey)
-            .WithDescription("Membership expiration job")
-            .UsingJobData("accountId", accountId)
-            .UsingJobData("membershipId", membership.Id)
-            .Build();
+        //    var job = JobBuilder.Create<MembershipExpirationJob>()
+        //    .WithIdentity(jobKey)
+        //    .WithDescription("Membership expiration job")
+        //    .UsingJobData("accountId", accountId)
+        //    .UsingJobData("membershipId", membership.Id)
+        //    .Build();
 
-            var trigger = TriggerBuilder.Create()
-            .WithIdentity(triggerKey)
-            .WithDescription("Membership expiration trigger")
-            .StartAt(DateTime.UtcNow.AddDays(membership.Duration))
-            .Build();
+        //    var trigger = TriggerBuilder.Create()
+        //    .WithIdentity(triggerKey)
+        //    .WithDescription("Membership expiration trigger")
+        //    .StartAt(DateTime.UtcNow.AddDays(membership.Duration))
+        //    .Build();
             
-            await scheduler.ScheduleJob(job, trigger);
+        //    await scheduler.ScheduleJob(job, trigger);
             
-            _logger.LogInformation("Scheduled membership expiration job for User {UserId}, Membership {MembershipId}", 
-                accountId, membership.Id);
-        } catch(Exception ex){
-            throw new Exception("Failed to schedule membership expiration", ex);
-        }
+        //    _logger.LogInformation("Scheduled membership expiration job for User {UserId}, Membership {MembershipId}", 
+        //        accountId, membership.Id);
+        //} catch(Exception ex){
+        //    throw new Exception("Failed to schedule membership expiration", ex);
+        //}
         
     }
 
@@ -153,41 +152,50 @@ public class MembershipsServices : IMembershipsService
 
         var deleteAccountMembership = await _unitOfWork.Repository<AccountMembership>().GetBySpecificationAsync(new GetAccountMembershipByAccountIdAndMembershipIdSpecification(accountId, membershipId));
 
-            if(deleteAccountMembership != null) {
-                _unitOfWork.Repository<AccountMembership>().Delete(deleteAccountMembership);
-            }
-            await _unitOfWork.CompleteAsync();
+        if (deleteAccountMembership != null)
+        {
+            _unitOfWork.Repository<AccountMembership>().Delete(deleteAccountMembership);
+        }
+        await _unitOfWork.CompleteAsync();
 
-        if(membership.MembershipType == MembershipType.JobSeeker) {
+        if (membership.MembershipType == MembershipType.JobSeeker)
+        {
 
             var accountMembershipSpec = new GetAccountMembershipForRevokeSpecification(accountId, membershipId, MembershipType.JobSeeker);
 
-            var accountMembership = await _unitOfWork.Repository<AccountMembership>().GetBySpecificationAsync(accountMembershipSpec,false);
+            var accountMembership = await _unitOfWork.Repository<AccountMembership>().GetBySpecificationAsync(accountMembershipSpec, false);
 
-            if(accountMembership != null) {
+            if (accountMembership != null)
+            {
                 accountMembership.StartDate = DateTime.UtcNow;
                 accountMembership.EndDate = DateTime.UtcNow.AddDays(membership.Duration);
-            } else {
+            }
+            else
+            {
                 throw new Exception("Free tier membership not found");
             }
             await _unitOfWork.CompleteAsync();
         }
 
-        if(membership.MembershipType == MembershipType.Employer) {
+        if (membership.MembershipType == MembershipType.Employer)
+        {
 
             var accountMembershipSpec = new GetAccountMembershipForRevokeSpecification(accountId, membershipId, MembershipType.Employer);
 
-            var accountMembership = await _unitOfWork.Repository<AccountMembership>().GetBySpecificationAsync(accountMembershipSpec,false);
+            var accountMembership = await _unitOfWork.Repository<AccountMembership>().GetBySpecificationAsync(accountMembershipSpec, false);
 
-            if(accountMembership != null) {
+            if (accountMembership != null)
+            {
                 accountMembership.StartDate = DateTime.UtcNow;
                 accountMembership.EndDate = DateTime.UtcNow.AddDays(membership.Duration);
-            } else {
+            }
+            else
+            {
                 throw new Exception("Free tier membership not found");
             }
             await _unitOfWork.CompleteAsync();
         }
-        
-        
+
+
     }
 }
