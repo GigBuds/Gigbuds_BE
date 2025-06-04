@@ -5,7 +5,6 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Gigbuds_BE.Application.Features.JobPosts.Queries;
 using Gigbuds_BE.Application.DTOs;
-using Gigbuds_BE.Application.DTOs.ApplicationUsers;
 using Gigbuds_BE.Application.Features.JobPosts.Commands.RemoveJobPost;
 using Gigbuds_BE.Application.Features.JobPosts.Commands.UpdateJobPostStatus;
 using Gigbuds_BE.Application.Features.JobPosts.Queries.GetSearchJobPosts;

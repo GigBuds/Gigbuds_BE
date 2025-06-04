@@ -1,5 +1,6 @@
 ﻿
 using Gigbuds_BE.Application.DTOs.ApplicationUsers;
+using Gigbuds_BE.Application.Features.Utils;
 using Gigbuds_BE.Application.Features.Embedding.JobSeekerEmbedding;
 using Gigbuds_BE.Application.Interfaces.Repositories;
 using Gigbuds_BE.Application.Interfaces.Services;
@@ -26,13 +27,17 @@ namespace Gigbuds_BE.Application.Features.Accounts.JobSeekers.Commands.UpdateJob
 
             await _mediator.Publish(new JobSeekerEmbeddingRequest
             {
-                Id = request.JobSeekerId,
-                Dob = DateOnly.FromDateTime(jobSeeker!.Dob),
-                IsMale = jobSeeker.IsMale,
-                IsEnabled = jobSeeker.IsEnabled,
-                SkillTags = request.SkillTags,
-                EducationalLevels = request.EducationalLevels,
-                AccountExperienceTags = request.AccountExperienceTags
+                JobSeeker = new JobSeekerDto
+                {
+                    Id = request.JobSeekerId,
+                    Dob = DateOnly.FromDateTime(jobSeeker!.Dob),
+                    IsMale = jobSeeker.IsMale,
+                    IsEnabled = jobSeeker.IsEnabled,
+                    SkillTags = request.SkillTags,
+                    EducationalLevels = request.EducationalLevels,
+                    JobSeekerShifts = request.JobSeekerShifts,
+                    accountExperienceTags = request.AccountExperienceTags
+                }
             }, cancellationToken);
         }
     }

@@ -8,6 +8,7 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
     {
         public required int AccountId { get; set; }
         public required string JobTitle { get; set; }
+        public required int AgeRequirement { get; set; }
         public required string JobDescription { get; set; }
         public required string JobRequirement { get; set; }
         public required string ExperienceRequirement { get; set; }

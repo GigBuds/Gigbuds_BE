@@ -38,6 +38,7 @@ namespace Gigbuds_BE.Domain.Entities.Identity
         public virtual ICollection<JobPost> JobPosts { get; set; }
         public virtual ICollection<EducationalLevel> EducationalLevels { get; set; }
         public virtual ICollection<SkillTag> SkillTags { get; set; }
+        public virtual ICollection<AccountExperienceTag> AccountExperienceTags { get; set; }
 
         // One-to-one navigation property
         public virtual EmployerProfile EmployerProfile { get; set; }

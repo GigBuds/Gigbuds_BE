@@ -44,6 +44,7 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
                 SalaryUnit = Enum.Parse<SalaryUnit>(command.SalaryUnit),
                 JobLocation = command.JobLocation,
                 ExpireTime = command.ExpireTime,
+                AgeRequirement = command.AgeRequirement,
                 Benefit = command.Benefit,
                 VacancyCount = command.VacancyCount,
                 DistrictCode = command.DistrictCode,

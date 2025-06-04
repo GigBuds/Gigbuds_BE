@@ -3,10 +3,10 @@ using System.Text.Json.Serialization;
 using MediatR;
 namespace Gigbuds_BE.Application.Features.Schedules.JobShifts.Commands.CreateJobShift
 {
-    public class CreateJobShiftsCommand : INotification
+    public class CreateJobSeekerShiftsCommand : INotification
     {
         [JsonIgnore]
-        public required int JobPostId { get; set; }
+        public required int JobSeekerId { get; set; }
         public required IReadOnlyList<JobShift> JobShifts { get; set; } = [];
     }
 }

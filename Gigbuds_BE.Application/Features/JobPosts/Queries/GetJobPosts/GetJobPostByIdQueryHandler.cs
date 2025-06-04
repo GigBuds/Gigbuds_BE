@@ -1,6 +1,6 @@
 using System;
 using AutoMapper;
-using Gigbuds_BE.Application.DTOs.ApplicationUsers;
+using Gigbuds_BE.Application.DTOs;
 using Gigbuds_BE.Application.Interfaces.Repositories;
 using Gigbuds_BE.Application.Specifications.JobPosts;
 using Gigbuds_BE.Domain.Entities.Jobs;

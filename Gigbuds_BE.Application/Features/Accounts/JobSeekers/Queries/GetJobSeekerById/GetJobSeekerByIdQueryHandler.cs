@@ -7,7 +7,7 @@ using MediatR;
 
 namespace Gigbuds_BE.Application.Features.Accounts.JobSeekers.Queries.GetJobSeekerById
 {
-    internal class GetJobSeekerByIdQueryHandler : IRequestHandler<GetJobSeekerByIdQuery>
+    internal class GetJobSeekerByIdQueryHandler : IRequestHandler<GetJobSeekerByIdQuery, JobSeekerDto>
     {
         private readonly IApplicationUserService<ApplicationUser> _applicationUserService;
         private readonly IMapper _mapper;
@@ -17,10 +17,10 @@ namespace Gigbuds_BE.Application.Features.Accounts.JobSeekers.Queries.GetJobSeek
             _applicationUserService = applicationUserService;
             _mapper = mapper;
         }
-        public async Task Handle(GetJobSeekerByIdQuery request, CancellationToken cancellationToken)
+        public async Task<JobSeekerDto> Handle(GetJobSeekerByIdQuery request, CancellationToken cancellationToken)
         {
             var jobSeeker = await _applicationUserService.GetByIdAsync(request.Id);
-            // Return job seeker as dto
+            return _mapper.Map<JobSeekerDto>(jobSeeker);
         }
     }
 }

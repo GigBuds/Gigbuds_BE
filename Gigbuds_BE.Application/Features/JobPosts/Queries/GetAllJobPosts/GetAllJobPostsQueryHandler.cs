@@ -1,17 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using Gigbuds_BE.Application.DTOs;
-using Gigbuds_BE.Application.DTOs.ApplicationUsers;
 using Gigbuds_BE.Application.Interfaces.Repositories;
 using Gigbuds_BE.Application.Specifications.JobPosts;
 using Gigbuds_BE.Domain.Entities.Jobs;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace Gigbuds_BE.Application.Features.JobPosts.Queries
+namespace Gigbuds_BE.Application.Features.JobPosts.Queries.GetAllJobPosts
 {
     public class GetAllJobPostsQueryHandler : IRequestHandler<GetAllJobPostsQuery, PagedResultDto<JobPostDto>>
     {
