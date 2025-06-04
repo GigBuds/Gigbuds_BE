@@ -1,4 +1,6 @@
 using Gigbuds_BE.Application.DTOs.JobRecommendations;
+using Gigbuds_BE.Application.Features.Schedules.Commands.CreateJobPostSchedule;
+using Gigbuds_BE.Domain.Entities.Schedule;
 
 namespace Gigbuds_BE.Application.Interfaces.Services;
 
