@@ -8,4 +8,7 @@ public interface IJobRecommendationService
         int jobSeekerId, 
         string currentLocation, 
         int maxResults = 50);
+    Task<(int score, string reason)> CalculateScheduleScore(
+        ICollection<JobSeekerShift>? jobSeekerShifts,
+        ICollection<JobShift>? jobShifts);
 } 

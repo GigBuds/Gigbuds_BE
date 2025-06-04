@@ -30,6 +30,9 @@ internal class JobApplicationConfiguration : IEntityTypeConfiguration<JobApplica
         builder.Property(ja => ja.ApplicationStatus)
             .IsRequired();
 
+        builder.Property(ja => ja.PriorityLevel)
+            .HasDefaultValue(0);
+
         builder.Property(ja => ja.ApplicationStatus)
             .HasConversion(
                 convertToProviderExpression: s => s.ToString(),
