@@ -116,12 +116,12 @@ namespace Gigbuds_BE.Application.Features.JobApplications.Commands
         {
             if(jobSeeker.AvailableJobApplication == 0 
             &&
-            !jobSeeker.AccountMemberships.Any(am => am.Membership.Title == ProjectConstant.Premium_Tier_Job_Application_Title))
+            !jobSeeker.AccountMemberships.Any(am => am.Membership.Title == ProjectConstant.MembershipLevel.Premium_Tier_Job_Application_Title))
             {
                 throw new InvalidOperationException("You have reached the maximum number of job applications");
             }
 
-            var jobSeekerMembership = jobSeeker.AccountMemberships.FirstOrDefault(am => am.Membership.Title == ProjectConstant.Premium_Tier_Job_Application_Title);
+            var jobSeekerMembership = jobSeeker.AccountMemberships.FirstOrDefault(am => am.Membership.Title == ProjectConstant.MembershipLevel.Premium_Tier_Job_Application_Title);
             if(jobSeekerMembership != null && jobSeekerMembership.EndDate < DateTime.UtcNow) {
                 throw new InvalidOperationException("You have reached the maximum number of job applications");
             }
