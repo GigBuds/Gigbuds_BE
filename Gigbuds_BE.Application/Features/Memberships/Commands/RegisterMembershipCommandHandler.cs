@@ -48,7 +48,7 @@ public class RegisterMembershipCommandHandler : IRequestHandler<RegisterMembersh
             throw new Exception("Failed to create member ship benefits");
         }
 
-        await ScheduleMembershipExpirationAsync(request.UserId, membership);
+        //await ScheduleMembershipExpirationAsync(request.UserId, membership);
 
         return _mapper.Map<MembershipResponseDto>(accountMembership);
     }

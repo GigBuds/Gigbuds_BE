@@ -101,6 +101,7 @@ namespace Gigbuds_BE.Infrastructure.Extensions
             
             // Add Job Recommendation service
             services.AddScoped<IJobRecommendationService, JobRecommendationService>();
+            services.AddScoped<IMembershipsService, MembershipsServices>();
         }
     }
 }

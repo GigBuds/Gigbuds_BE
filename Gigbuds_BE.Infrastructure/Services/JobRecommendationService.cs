@@ -1,5 +1,6 @@
 using AutoMapper;
 using Gigbuds_BE.Application.DTOs.ApplicationUsers;
+using Gigbuds_BE.Application.DTOs.JobPosts;
 using Gigbuds_BE.Application.DTOs.JobRecommendations;
 using Gigbuds_BE.Application.Interfaces.Repositories;
 using Gigbuds_BE.Application.Interfaces.Services;
@@ -58,11 +59,10 @@ public class JobRecommendationService : IJobRecommendationService
             _logger.LogInformation("Found {JobPostCount} active job posts to analyze", jobPosts.Count);
 
             // 3. Calculate schedule scores for all job posts
-            var jobRecommendations = jobPosts.Select(jp => CreateJobRecommendationDto(jp, jobSeekerSchedule))
-                .ToList();
+            var jobRecommendations = await Task.WhenAll(jobPosts.Select(async jp => await CreateJobRecommendationDto(jp, jobSeekerSchedule)));
 
             // 4. Calculate distance scores using Google Maps
-            await CalculateDistanceScoresAsync(jobRecommendations, currentLocation);
+            await CalculateDistanceScoresAsync(jobRecommendations.ToList(), currentLocation);
 
             // 5. Calculate total scores and sort
             foreach (var recommendation in jobRecommendations)
@@ -106,7 +106,7 @@ public class JobRecommendationService : IJobRecommendationService
         return jobPosts.ToList();
     }
 
-    private JobRecommendationDto CreateJobRecommendationDto(JobPost jobPost, JobSeekerSchedule jobSeekerSchedule)
+    private async Task<JobRecommendationDto> CreateJobRecommendationDto(JobPost jobPost, JobSeekerSchedule jobSeekerSchedule)
     {
         var recommendation = new JobRecommendationDto
         {
@@ -132,21 +132,24 @@ public class JobRecommendationService : IJobRecommendationService
         };
 
         // Calculate schedule score
-        var scheduleScore = CalculateScheduleScore(jobSeekerSchedule.JobShifts, jobPost.JobPostSchedule?.JobShifts);
+        var scheduleScore = await CalculateScheduleScore(jobSeekerSchedule.JobShifts, jobPost.JobPostSchedule?.JobShifts);
         recommendation.ScheduleScore = scheduleScore.Score;
         recommendation.ScheduleMatchReason = scheduleScore.Reason;
 
         return recommendation;
     }
 
-    public (int Score, string Reason) CalculateScheduleScore(
+    public async Task<JobPostScoreDto> CalculateScheduleScore(
         ICollection<JobSeekerShift>? jobSeekerShifts,
         ICollection<JobShift>? jobShifts)
     {
         if (jobSeekerShifts == null || !jobSeekerShifts.Any() || 
             jobShifts == null || !jobShifts.Any())
         {
-            return (0, "No schedule information available");
+            return new JobPostScoreDto {
+                Score = 0,
+                Reason = "No schedule information available"
+            };
         }
 
         var matchingShifts = 0;
@@ -174,15 +177,24 @@ public class JobRecommendationService : IJobRecommendationService
 
         if (matchPercentage >= 1.0)
         {
-            return (3, $"Perfect schedule match - all {totalJobShifts} shifts available");
+            return new JobPostScoreDto {
+                Score = 3,
+                Reason = $"Perfect schedule match - all {totalJobShifts} shifts available"
+            };
         }
         else if (matchPercentage >= 0.5)
         {
-            return (1, $"Partial schedule match - {matchingShifts} of {totalJobShifts} shifts available");
+            return new JobPostScoreDto {
+                Score = 1,
+                Reason = $"Partial schedule match - {matchingShifts} of {totalJobShifts} shifts available"
+            };
         }
         else
         {
-            return (0, $"Poor schedule match - only {matchingShifts} of {totalJobShifts} shifts available");
+            return new JobPostScoreDto {
+                Score = 0,
+                Reason = $"Poor schedule match - only {matchingShifts} of {totalJobShifts} shifts available"
+            };
         }
     }
 
