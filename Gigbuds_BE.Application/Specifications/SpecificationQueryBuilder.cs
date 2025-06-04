@@ -29,6 +29,11 @@ namespace Gigbuds_BE.Application.Specifications
                 query = specification.Includes.Aggregate(query, (current, include) => current.Include(include));
             }
 
+            if (specification.IncludeStrings.Count > 0)
+            {
+                query = specification.IncludeStrings.Aggregate(query, (current, include) => current.Include(include));
+            }
+
             if (specification.Top != null)
             {
                 query = query.Take(specification.Top.Value);

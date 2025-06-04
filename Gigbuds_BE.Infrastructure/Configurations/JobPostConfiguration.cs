@@ -78,7 +78,7 @@ internal class JobPostConfiguration : IEntityTypeConfiguration<JobPost>
             .IsRequired();
             
         builder.Property(jp => jp.PriorityLevel)
-            .IsRequired().HasDefaultValue(ProjectConstant.Default_Priority_Level);
+            .IsRequired().HasDefaultValue(ProjectConstant.EmployerMembership.Default_Priority_Level);
         // Relationships
         builder.HasOne(jp => jp.Account)
             .WithMany(a => a.JobPosts)
