@@ -421,3 +421,5 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 ACTION_PLAN.md
+SMS_VERIFICATION_SETUP.md
+FIREBASE_ADMIN_SDK_GUIDE.md
