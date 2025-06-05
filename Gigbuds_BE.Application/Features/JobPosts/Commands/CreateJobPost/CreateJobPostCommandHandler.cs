@@ -6,6 +6,7 @@ using MediatR;
 using Gigbuds_BE.Application.Interfaces.Services;
 using Gigbuds_BE.Domain.Entities.Identity;
 using static Gigbuds_BE.Application.Commons.Constants.ProjectConstant;
+using Gigbuds_BE.Application.Features.Notifications;
 
 namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
 {
@@ -51,6 +52,7 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
                 JobPositionId = command.JobPositionId,
                 IsOutstandingPost = command.IsOutstandingPost,
                 PriorityLevel = EmployerMembership.GetPriorityLevel(jobSeekerMembership),
+                IsMale = command.IsMale
             };
 
             _logger.LogInformation("New job post: {JobPost}", newJobPost);
@@ -64,7 +66,17 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
                 command.ScheduleCommand.JobPostId = newJobPost.Id;
                 await _mediator.Publish(command.ScheduleCommand, cancellationToken);
 
-                // add job post to embedding
+                await _mediator.Publish(new NotifyJobSeekersRequest
+                {
+                    JobPostId = newJobPost.Id,
+                    JobPostLocation = newJobPost.JobLocation,
+                    MinAgeRequirement = newJobPost.AgeRequirement ?? 0,
+                    JobTitle = newJobPost.JobTitle,
+                    JobDescription = newJobPost.JobDescription,
+                    JobRequirement = newJobPost.JobRequirement,
+                    ExperienceRequirement = newJobPost.ExperienceRequirement,
+                    IsMaleRequired = newJobPost.IsMale,
+                }, cancellationToken);
                 return newJobPost.Id;
             }
             catch (Exception ex)
