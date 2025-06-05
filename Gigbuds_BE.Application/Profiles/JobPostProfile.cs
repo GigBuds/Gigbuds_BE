@@ -41,11 +41,11 @@ namespace Gigbuds_BE.Application.Profiles
                 .ForMember(dest => dest.JobPositionName, opt => opt.MapFrom(src => src.JobPosition.JobPositionName))
                 .ForMember(dest => dest.JobPositionId, opt => opt.MapFrom(src => src.JobPositionId))
                 .ForMember(dest => dest.CompanyLogo, opt => opt.MapFrom(src => src.Account.EmployerProfile.CompanyLogo))
-                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Account.EmployerProfile.CompanyName))
-                .ForMember(dest => dest.JobSchedule, opt => opt.MapFrom(src => src.JobPostSchedule));
+                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Account.EmployerProfile.CompanyName));
                 
             //Projection
             CreateProjection<JobPost, SearchJobPostDto>()
+                .ForMember(dest => dest.JobPostId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.CompanyLogo, opt => opt.MapFrom(src => src.Account.EmployerProfile.CompanyLogo))
                 .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Account.EmployerProfile.CompanyName))
                 .ForMember(dest => dest.JobPositionName, opt => opt.MapFrom(src => src.JobPosition.JobPositionName))
