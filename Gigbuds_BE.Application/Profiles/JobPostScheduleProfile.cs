@@ -19,7 +19,8 @@ namespace Gigbuds_BE.Application.Profiles
             CreateMap<JobScheduleDto, JobPostSchedule>()
                 .ForMember(dest => dest.ShiftCount, opt => opt.MapFrom(src => src.ShiftCount))
                 .ForMember(dest => dest.MinimumShift, opt => opt.MapFrom(src => src.MinimumShift))
-                .ForMember(dest => dest.JobShifts, opt => opt.MapFrom(src => src.JobShifts));
+                .ForMember(dest => dest.JobShifts, opt => opt.MapFrom(src => src.JobShifts))
+                .ReverseMap();
 
         }
     }
