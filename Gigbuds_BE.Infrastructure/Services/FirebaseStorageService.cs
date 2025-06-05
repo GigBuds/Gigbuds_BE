@@ -16,6 +16,7 @@ using Microsoft.Extensions.Hosting;
 using FirebaseAdmin;
 using FirebaseAdmin.Auth;
 using Google.Apis.Auth.OAuth2;
+using System.Text.Json;
 
 namespace Gigbuds_BE.Infrastructure.Services;
 
@@ -31,23 +32,39 @@ public class FirebaseStorageService : IFileStorageService
         _logger = logger;
         
         // Initialize Firebase Admin SDK
-        InitializeFirebaseAdmin(environment);
+        // InitializeFirebaseAdmin(environment);
+
+        if (environment.IsDevelopment())
+        {
+           //Development environment
+           if (File.Exists(_settings.ServiceAccountKeyPath))
+           {
+
+               Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", _settings.ServiceAccountKeyPath);
+
+               _logger.LogInformation("Using Firebase credentials from file: {Path}", _settings.ServiceAccountKeyPath);
+           }
+           else
+           {
+
+               _logger.LogWarning("Firebase credentials file not found at: {Path}", _settings.ServiceAccountKeyPath);
         
-        if(environment.IsDevelopment()) {
-            //Development environment
-            if (File.Exists(_settings.ServiceAccountKeyPath)) {
-
-                Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", _settings.ServiceAccountKeyPath);
-
-                _logger.LogInformation("Using Firebase credentials from file: {Path}", _settings.ServiceAccountKeyPath);
-            } else {
-
-                _logger.LogWarning("Firebase credentials file not found at: {Path}", _settings.ServiceAccountKeyPath);
-
+           }
+        }
+        else
+        {
+           //Production environment
+           var serviceAccountJson = _settings.ServiceAccountJson;
+            
+            if (!string.IsNullOrEmpty(serviceAccountJson))
+            {
+                // Create a temporary file with the JSON content
+                var tempFilePath = Path.Combine(Path.GetTempPath(), $"firebase-service-account-{Guid.NewGuid()}.json");
+                File.WriteAllText(tempFilePath, serviceAccountJson);
+                
+                Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", tempFilePath);
+                _logger.LogInformation("Using Firebase credentials from temporary file created from appsettings");
             }
-        } else if(string.IsNullOrEmpty(Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS"))){
-            //Production environment
-            _logger.LogWarning("GOOGLE_APPLICATION_CREDENTIALS is not set. Please set it in your environment variables.");
         }
 
         _storageClient = StorageClient.Create();
@@ -61,13 +78,18 @@ public class FirebaseStorageService : IFileStorageService
             {
                 GoogleCredential credential;
                 
-                if (environment.IsDevelopment() && File.Exists(_settings.ServiceAccountKeyPath))
+                if (environment.IsDevelopment())
                 {
-                    credential = GoogleCredential.FromFile(_settings.ServiceAccountKeyPath);
+                    //credential = GoogleCredential.FromFile(_settings.ServiceAccountKeyPath);
+                    //_logger.LogInformation("Using Firebase credentials from file: {Path}", _settings.ServiceAccountKeyPath);
+                    var serviceAccountJson = _settings.ServiceAccountJson;
+                    credential = GoogleCredential.FromJson(serviceAccountJson);
+                    _logger.LogInformation("Using Firebase credentials from appsettings.json");
                 }
                 else
                 {
-                    credential = GoogleCredential.GetApplicationDefault();
+                    credential = GoogleCredential.FromFile(_settings.ServiceAccountKeyPath);
+                    _logger.LogInformation("Using Firebase credentials from file: {Path}", _settings.ServiceAccountKeyPath);
                 }
 
                 FirebaseApp.Create(new AppOptions()
