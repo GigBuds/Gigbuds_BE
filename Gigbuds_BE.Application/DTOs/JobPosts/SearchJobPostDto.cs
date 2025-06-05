@@ -5,6 +5,7 @@ namespace Gigbuds_BE.Application.DTOs.JobPosts;
 
 public class SearchJobPostDto
 {
+    public int JobPostId { get; set; }
     public int AccountId { get; set; }
     public string CompanyLogo { get; set; }
     public string CompanyName { get; set; }
