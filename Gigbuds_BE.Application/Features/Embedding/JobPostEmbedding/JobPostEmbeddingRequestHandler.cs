@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Gigbuds_BE.Application.Features.Embedding.JobPostEmbedding
 {
-    internal class JobPostEmbeddingRequestHandler : IRequestHandler<JobPostEmbeddingRequest>
+    internal class JobPostEmbeddingRequestHandler : IRequestHandler<JobPostEmbeddingRequest, List<(string, string)>>
     {
         private readonly ILogger<JobPostEmbeddingRequestHandler> _logger;
         private readonly ITextEmbeddingService _textEmbeddingService;
@@ -24,7 +24,7 @@ namespace Gigbuds_BE.Application.Features.Embedding.JobPostEmbedding
             _vectorStorageService = vectorStorageService;
             _configuration = configuration;
         }
-        public async Task Handle(JobPostEmbeddingRequest request, CancellationToken cancellationToken)
+        public async Task<List<(string, string)>> Handle(JobPostEmbeddingRequest request, CancellationToken cancellationToken)
         {
             StringBuilder promptDescription = new();
             ConvertObjectToStringDescription();
@@ -32,43 +32,38 @@ namespace Gigbuds_BE.Application.Features.Embedding.JobPostEmbedding
 
             var embeddings = await _textEmbeddingService.GenerateEmbeddingsAsync(promptDescription.ToString());
 
-            await _vectorStorageService.SearchBySemanticsAsync(
-                _configuration["VectorDb:JobSeekerCollection"]!, embeddings, null, null);
+            QueryFilter queryFilter = new()
+            {
+                Must =
+                [
+                    new() { FieldName = "age", GreaterThan = request.MinAgeRequirement },
+                    new() { FieldName = "isMale", MatchBoolValue = request.IsMaleRequired },
+                    new() { FieldName = "isEnabled", MatchBoolValue = true }
+                ]
+            };
 
+            var jobSeekersWithLocation = await _vectorStorageService.SearchBySemanticsAsync(
+                _configuration["VectorDb:JobSeekerCollection"]!, embeddings, queryFilter);
+
+            _logger.LogInformation("Found {Count} job seekers matching the job post requirements", jobSeekersWithLocation.Count);
+            return jobSeekersWithLocation;
 
             void ConvertObjectToStringDescription()
             {
-                //promptDescription.Append("Age: ");
-                //promptDescription.AppendFormat("{0} years of age", (DateTime.Now.Year - request.Dob.Year).ToString());
+                promptDescription.AppendFormat("Thông tin về công việc cần tuyển, tên công việc: {0}. ", request.JobTitle);
 
-                //promptDescription.Append(';');
-                //promptDescription.Append("Skills: ");
-                //foreach (var skillTag in request.SkillTags)
-                //{
-                //    promptDescription.AppendFormat("Able to {0}, ", skillTag.SkillName);
-                //}
+                promptDescription.Append("Tại đây, ứng viên cần phải ");
+                promptDescription.Append(request.JobDescription.ToLower());
+                promptDescription.Append(". ");
 
-                //promptDescription.Append(';');
-                //promptDescription.Append("Experience: ");
-                //foreach (var experienceTag in request.AccountExperienceTags)
-                //{
-                //    promptDescription.AppendFormat("Has {0} years of experience in {1}, ",
-                //        experienceTag.EndDate.Year - experienceTag.StartDate.Year,
-                //        experienceTag.JobPosition);
-                //}
+                promptDescription.Append("Yêu cầu công việc bao gồm ");
+                promptDescription.Append(request.JobRequirement.ToLower());
+                promptDescription.Append(". ");
 
-                //promptDescription.Append(';');
-                //promptDescription.Append("Education: ");
-                //foreach (var educationLevel in request.EducationalLevels)
-                //{
-                //    promptDescription.AppendFormat("Majored in {0} at {1}, from {2} to {3}, ",
-                //        educationLevel.Major,
-                //        educationLevel.SchoolName,
-                //        educationLevel.StartDate.ToString("yyyy-MM-dd"), // yyyy-MM-dd for readability
-                //        educationLevel.EndDate.ToString("yyyy-MM-dd"));
-                //}
+                promptDescription.Append("Về yêu cầu kinh nghiệm, ");
+                promptDescription.Append(request.ExperienceRequirement.ToLower());
+                promptDescription.Append('.');
             }
-
         }
     }
 }

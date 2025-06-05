@@ -30,6 +30,7 @@ namespace Gigbuds_BE.Application.Features.Accounts.JobSeekers.Commands.UpdateJob
                 Dob = DateOnly.FromDateTime(jobSeeker!.Dob),
                 IsMale = jobSeeker.IsMale,
                 IsEnabled = jobSeeker.IsEnabled,
+                Location = request.Location,
                 SkillTags = request.SkillTags,
                 EducationalLevels = request.EducationalLevels,
                 AccountExperienceTags = request.AccountExperienceTags

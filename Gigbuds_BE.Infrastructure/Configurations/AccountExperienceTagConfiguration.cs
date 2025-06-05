@@ -15,6 +15,7 @@ internal class AccountExperienceTagConfiguration : IEntityTypeConfiguration<Acco
             .HasColumnName("AccountExperienceTagId");
 
         builder.Property(e => e.AccountId)
+            .HasColumnName("AccountId")
             .IsRequired();
 
         builder.Property(e => e.EmployerId)
@@ -32,9 +33,9 @@ internal class AccountExperienceTagConfiguration : IEntityTypeConfiguration<Acco
 
         // Foreign key relationship with Account
         builder.HasOne(e => e.Account)
-            .WithMany()
+            .WithMany(a => a.AccountExperienceTags)
             .HasForeignKey(e => e.AccountId)
+            .HasConstraintName("FK_AccountExperienceTags_Accounts_AccountId")
             .OnDelete(DeleteBehavior.Cascade);
-
     }
 }

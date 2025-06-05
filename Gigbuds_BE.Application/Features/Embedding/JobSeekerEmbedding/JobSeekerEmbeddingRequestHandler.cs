@@ -39,10 +39,11 @@ namespace Gigbuds_BE.Application.Features.Embedding.JobSeekerEmbedding
                     Vector = embeddings,
                     Payload = new Dictionary<string, object>
                     {
-                        { _configuration["Qdrant:DefaultPointId"]!, request.Id },
+                        { _configuration["VectorDb:DefaultPointId"]!, request.Id },
                         { "isMale", request.IsMale },
+                        { "age", DateTime.Now.Year - request.Dob.Year },
                         { "isEnabled", request.IsEnabled },
-                        { "location", request.Location }
+                        { "location", request.Location },
                     }
                 }
             };
@@ -51,43 +52,51 @@ namespace Gigbuds_BE.Application.Features.Embedding.JobSeekerEmbedding
 
             void ConvertObjectToStringDescription()
             {
-                promptDescription.Append("Age: ");
-                promptDescription.AppendFormat("{0} years of age", (DateTime.Now.Year - request.Dob.Year).ToString());
-
-                promptDescription.Append(';');
-                promptDescription.Append("Skills: ");
-                if (request.SkillTags != null)
+                if (request.SkillTags != null && request.SkillTags.Count > 0)
                 {
+                    promptDescription.Append("Ứng viên có các kỹ năng sau: ");
                     foreach (var skillTag in request.SkillTags)
                     {
-                        promptDescription.AppendFormat("Able to {0}, ", skillTag.SkillName);
+                        promptDescription.AppendFormat("{0}, ", skillTag.SkillName);
                     }
+                    promptDescription.Append(". ");
+                }
+                else
+                {
+                    promptDescription.Append("Ứng viên chưa cung cấp thông tin về kỹ năng. ");
                 }
 
-                promptDescription.Append(';');
-                promptDescription.Append("Experience: ");
-                if (request.AccountExperienceTags != null)
+                if (request.AccountExperienceTags != null && request.AccountExperienceTags.Count > 0)
                 {
+                    promptDescription.Append("Ứng viên có kinh nghiệm làm việc tại ");
                     foreach (var experienceTag in request.AccountExperienceTags)
                     {
-                        promptDescription.AppendFormat("Has {0} years of experience in {1}, ",
+                        promptDescription.AppendFormat("{0} năm với vị trí {1}, ",
                             experienceTag.EndDate.Year - experienceTag.StartDate.Year,
                             experienceTag.JobPosition);
                     }
+                    promptDescription.Append(". ");
+                }
+                else
+                {
+                    promptDescription.Append("Ứng viên chưa có kinh nghiệm làm việc. ");
                 }
 
-                promptDescription.Append(';');
-                promptDescription.Append("Education: ");
-                if (request.EducationalLevels != null)
+                if (request.EducationalLevels != null && request.EducationalLevels.Count > 0)
                 {
+                    promptDescription.Append("Về trình độ học vấn, ứng viên đã ");
                     foreach (var educationLevel in request.EducationalLevels)
                     {
-                        promptDescription.AppendFormat("Majored in {0} at {1}, from {2} to {3}, ",
+                        promptDescription.AppendFormat("Học chuyên ngành {0} tại {1} từ {2} đến {3}. ",
                             educationLevel.Major,
                             educationLevel.SchoolName,
-                            educationLevel.StartDate.ToString("yyyy-MM-dd"), // yyyy-MM-dd for readability
-                            educationLevel.EndDate.ToString("yyyy-MM-dd"));
+                            educationLevel.StartDate.ToString("dd/MM/yyyy"),
+                            educationLevel.EndDate.ToString("dd/MM/yyyy"));
                     }
+                }
+                else
+                {
+                    promptDescription.Append("Ứng viên chưa cung cấp thông tin về học vấn. ");
                 }
             }
         }

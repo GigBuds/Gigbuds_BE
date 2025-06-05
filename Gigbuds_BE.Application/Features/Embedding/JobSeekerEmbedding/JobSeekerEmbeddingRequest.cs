@@ -12,7 +12,7 @@ namespace Gigbuds_BE.Application.Features.Embedding.JobSeekerEmbedding
         public bool IsEnabled { get; init; }
         public string Location { get; init; } = string.Empty;
         public List<SkillTagDto>? SkillTags { get; init; } = [];
-        public List<EducationalLevelDto>? EducationalLevels { get; init; } = [];
         public List<AccountExperienceTagDto>? AccountExperienceTags { get; init; } = [];
+        public List<EducationalLevelDto>? EducationalLevels { get; init; } = [];
     }
 }

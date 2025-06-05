@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
 using Gigbuds_BE.Domain.Entities.Identity;
 using Gigbuds_BE.Domain.Entities.Notifications;
-using Gigbuds_BE.Domain.Entities.Schedule;
 
 namespace Gigbuds_BE.Domain.Entities.Jobs;
 

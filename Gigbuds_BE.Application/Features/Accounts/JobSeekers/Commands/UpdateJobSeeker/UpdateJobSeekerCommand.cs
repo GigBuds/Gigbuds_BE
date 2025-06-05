@@ -6,7 +6,8 @@ namespace Gigbuds_BE.Application.Features.Accounts.JobSeekers.Commands.UpdateJob
 {
     public class UpdateJobSeekerCommand : IRequest
     {
-        public required int JobSeekerId { get; set; } 
+        public required int JobSeekerId { get; set; }
+        public required string Location { get; set; }
         public List<SkillTagDto>? SkillTags { get; set; }
         public List<AccountExperienceTagDto>? AccountExperienceTags { get; set; }
         public List<EducationalLevelDto>? EducationalLevels { get; set; }

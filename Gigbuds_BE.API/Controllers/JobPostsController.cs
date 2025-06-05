@@ -13,7 +13,6 @@ using Gigbuds_BE.API.Helpers.RequestHelpers;
 using Gigbuds_BE.Application.Specifications.JobPosts;
 using Gigbuds_BE.Application.Features.JobPosts.Queries.GetJobPosts;
 using Gigbuds_BE.Application.DTOs.JobRecommendations;
-using Microsoft.AspNetCore.Authorization;
 using Gigbuds_BE.Application.Features.JobPosts.Queries.GetJobRecommendations;
 using Gigbuds_BE.Application.Features.JobPosts.Queries.GetAllJobPosts;
 

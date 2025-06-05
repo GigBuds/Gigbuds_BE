@@ -33,26 +33,26 @@ public class MembershipsServices : IMembershipsService
     public async Task<bool> CreateMemberShipBenefitsAsync(int accountId, Membership membership) {
 
         if (membership.MembershipType == MembershipType.JobSeeker
-        && membership.Title == ProjectConstant.Basic_Tier_Job_Application_Title) {
+        && membership.Title == ProjectConstant.MembershipLevel.Basic_Tier_Job_Application_Title) {
             return true;
         }
 
         if (membership.MembershipType == MembershipType.JobSeeker
-        && membership.Title == ProjectConstant.Premium_Tier_Job_Application_Title) {
+        && membership.Title == ProjectConstant.MembershipLevel.Premium_Tier_Job_Application_Title) {
             return await ActivatePremiumTierJobSeekerMembershipAsync(accountId, membership);
         }
 
         if(membership.MembershipType == MembershipType.Employer
-        && membership.Title == ProjectConstant.Free_Tier_Job_Application_Title) {
+        && membership.Title == ProjectConstant.MembershipLevel.Free_Tier_Job_Application_Title) {
             return true;
         }
 
         if(membership.MembershipType == MembershipType.Employer
-        && membership.Title == ProjectConstant.Basic_Tier_Job_Application_Title) {
+        && membership.Title == ProjectConstant.MembershipLevel.Basic_Tier_Job_Application_Title) {
             return await ActivateBasicTierEmployerMembershipAsync(accountId, membership);
         }
 
-        if(membership.MembershipType == MembershipType.Employer && membership.Title == ProjectConstant.Premium_Tier_Job_Application_Title) {
+        if(membership.MembershipType == MembershipType.Employer && membership.Title == ProjectConstant.MembershipLevel.Premium_Tier_Job_Application_Title) {
             return await ActivatePremiumTierEmployerMembershipAsync(accountId, membership);
         }
         return false;

@@ -1,10 +1,11 @@
 ﻿using MediatR;
 
-namespace Gigbuds_BE.Application.Features.Embedding.JobPostEmbedding
+namespace Gigbuds_BE.Application.Features.Notifications
 {
-    public class JobPostEmbeddingRequest : IRequest<List<(string, string)>>
+    internal class NotifyJobSeekersRequest : INotification
     {
         public required int JobPostId { get; init; }
+        public required string JobPostLocation { get; init; }
         public required int MinAgeRequirement { get; init; }
         public required string JobTitle { get; init; }
         public required string JobDescription { get; init; }
@@ -12,4 +13,5 @@ namespace Gigbuds_BE.Application.Features.Embedding.JobPostEmbedding
         public required string ExperienceRequirement { get; init; }
         public required bool IsMaleRequired { get; init; }
     }
+
 }

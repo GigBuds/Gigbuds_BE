@@ -122,8 +122,9 @@ namespace Gigbuds_BE.Infrastructure.Services
             var query = _userManager.Users.AsQueryable();
             if (includes != null)
             {
-                query = includes.Aggregate(query, (current, include) => current.Include(include));
+                query = includes.Aggregate(query, (current, include) => current.Include(include.ToString()));
             }
+
             return isTracking ? await query.FirstOrDefaultAsync(u => u.Id == userId) : await query.AsNoTracking().FirstOrDefaultAsync(u => u.Id == userId);
         }
 
