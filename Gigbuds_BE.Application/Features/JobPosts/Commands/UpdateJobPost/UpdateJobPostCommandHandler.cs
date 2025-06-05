@@ -36,6 +36,7 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.UpdateJobPost
             jobPost.VacancyCount = request.VacancyCount;
             jobPost.DistrictCode = request.DistrictCode;
             jobPost.ProvinceCode = request.ProvinceCode;
+            jobPost.IsMale = request.IsMale;
             jobPost.IsOutstandingPost = request.IsOutstandingPost;
             jobPost.JobPositionId = request.JobPositionId;
 
