@@ -28,7 +28,7 @@ public class JobRecommendationDto
     public string CompanyLogo { get; set; } = string.Empty;
 
     // Job Schedule
-    public JobScheduleDto? JobSchedule { get; set; }
+    public JobRecommendationScheduleDto? JobSchedule { get; set; }
 
     // Recommendation Scoring
     public int TotalScore { get; set; }

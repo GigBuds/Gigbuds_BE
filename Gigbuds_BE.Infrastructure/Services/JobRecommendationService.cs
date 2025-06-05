@@ -128,7 +128,7 @@ public class JobRecommendationService : IJobRecommendationService
             ProvinceCode = jobPost.ProvinceCode,
             CompanyName = jobPost.Account?.EmployerProfile?.CompanyName ?? "Unknown Company",
             CompanyLogo = jobPost.Account?.EmployerProfile?.CompanyLogo ?? "",
-            JobSchedule = jobPost.JobPostSchedule != null ? _mapper.Map<JobScheduleDto>(jobPost.JobPostSchedule) : null
+            JobSchedule = jobPost.JobPostSchedule != null ? _mapper.Map<JobRecommendationScheduleDto>(jobPost.JobPostSchedule) : null
         };
 
         // Calculate schedule score
