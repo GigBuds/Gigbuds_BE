@@ -2,8 +2,15 @@ namespace Gigbuds_BE.Application.Commons.Constants;
 
 public static class ProjectConstant
 {
-    public const int Free_Tier_Job_Application = 10;
+    
     public const int Default_Priority_Level = 0;
+
+    public static class JobSeekerMembership
+    {
+        public static int Basic_Job_Application_Priority_Level = 1;
+        public const int Free_Tier_Job_Application = 10;
+    }
+
     public static class MembershipLevel
     {
         public const string Free_Tier_Job_Application_Title = "Gói Miễn phí";
@@ -16,6 +23,7 @@ public static class ProjectConstant
         public const int Basic_Post_Priority_Level = 1;
         public const int Premium_Post_Priority_Level = 2;
         public static int Free_Tier_Job_Post = 1;
+        public static int Basic_Tier_Job_Post = 10;
         /// <summary>
         /// Returns the post priority level for a given membership level string.
         /// </summary>

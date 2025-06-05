@@ -117,7 +117,7 @@ namespace Gigbuds_BE.Application.Features.JobApplications.Commands
         {
             if(jobSeeker.AvailableJobApplication == 0 
             &&
-            jobSeeker.AccountMemberships.Any(am => am.Membership.Title == ProjectConstant.Free_Tier_Job_Application_Title && am.Status == AccountMembershipStatus.Active))
+            jobSeeker.AccountMemberships.Any(am => am.Membership.Title == ProjectConstant.MembershipLevel.Free_Tier_Job_Application_Title && am.Status == AccountMembershipStatus.Active))
             {
                 throw new InvalidOperationException("You have reached the maximum number of job applications");
             }

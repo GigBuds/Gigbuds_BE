@@ -37,7 +37,7 @@ internal class ApplicationUserConfiguration : IEntityTypeConfiguration<Applicati
             .HasDefaultValue(true);
 
         builder.Property(a => a.AvailableJobApplication)
-            .HasDefaultValue(ProjectConstant.Free_Tier_Job_Application);
+            .HasDefaultValue(ProjectConstant.JobSeekerMembership.Free_Tier_Job_Application);
 
         builder.Property(a => a.IsEnabled)
             .HasDefaultValue(true);
