@@ -10,6 +10,7 @@ using Gigbuds_BE.Application.Specifications.JobApplications;
 using Gigbuds_BE.Application.Specifications.JobPosts;
 using Gigbuds_BE.Domain.Entities.Identity;
 using Gigbuds_BE.Domain.Entities.Jobs;
+using Gigbuds_BE.Domain.Entities.Memberships;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -116,13 +117,8 @@ namespace Gigbuds_BE.Application.Features.JobApplications.Commands
         {
             if(jobSeeker.AvailableJobApplication == 0 
             &&
-            !jobSeeker.AccountMemberships.Any(am => am.Membership.Title == ProjectConstant.Premium_Tier_Job_Application_Title))
+            jobSeeker.AccountMemberships.Any(am => am.Membership.Title == ProjectConstant.Free_Tier_Job_Application_Title && am.Status == AccountMembershipStatus.Active))
             {
-                throw new InvalidOperationException("You have reached the maximum number of job applications");
-            }
-
-            var jobSeekerMembership = jobSeeker.AccountMemberships.FirstOrDefault(am => am.Membership.Title == ProjectConstant.Premium_Tier_Job_Application_Title);
-            if(jobSeekerMembership != null && jobSeekerMembership.EndDate < DateTime.UtcNow) {
                 throw new InvalidOperationException("You have reached the maximum number of job applications");
             }
 

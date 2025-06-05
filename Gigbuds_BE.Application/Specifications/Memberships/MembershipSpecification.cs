@@ -14,12 +14,21 @@ public class GetAccountMembershipByAccountIdAndMembershipIdSpecification : BaseS
 {
     public GetAccountMembershipByAccountIdAndMembershipIdSpecification(int accountId, int membershipId) : base(am => am.AccountId == accountId && am.MembershipId == membershipId)
     {
+        AddInclude(am => am.Membership);
     }
 }
 
-public class GetAccountMembershipForRevokeSpecification : BaseSpecification<AccountMembership>
+public class GetAccountMembershipByAccountIdAndMembershipTypeSpecification : BaseSpecification<AccountMembership>
 {
-    public GetAccountMembershipForRevokeSpecification(int accountId, int membershipId, MembershipType membershipType) : base(am => am.AccountId == accountId && am.MembershipId == membershipId && am.Membership.MembershipType == membershipType)
+    public GetAccountMembershipByAccountIdAndMembershipTypeSpecification(int accountId, MembershipType membershipType) : base(am => am.AccountId == accountId && am.Membership.MembershipType == membershipType)
     {
+        AddInclude(am => am.Membership);
     }
 }
+
+// public class GetAccountMembershipByTypeAndTitleSpecification : BaseSpecification<AccountMembership>
+// {
+//     public GetAccountMembershipByTypeAndTitleSpecification(int accountId, int membershipId, MembershipType membershipType, string title) : base(am => am.AccountId == accountId && am.MembershipId == membershipId && am.Membership.MembershipType == membershipType && am.Membership.Title == title)
+//     {
+//     }
+// }
