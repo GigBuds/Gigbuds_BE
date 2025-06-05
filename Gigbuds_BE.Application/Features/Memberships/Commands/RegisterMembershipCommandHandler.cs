@@ -32,24 +32,10 @@ public class RegisterMembershipCommandHandler : IRequestHandler<RegisterMembersh
             throw new NotFoundException("Membership not found");
         }
         
-        var accountMembership = new AccountMembership
-        {
-            AccountId = request.UserId,
-            MembershipId = request.MembershipId,
-            StartDate = DateTime.UtcNow,
-            EndDate = DateTime.UtcNow.AddDays(membership.Duration),
-        };
-        _unitOfWork.Repository<AccountMembership>().Insert(accountMembership);
-        await _unitOfWork.CompleteAsync();
+        var accountMembership = await _membershipsService.CreateMemberShipBenefitsAsync(request.UserId, membership);
 
-        var createMemberShipBenefits = await _membershipsService.CreateMemberShipBenefitsAsync(request.UserId, membership);
-        if (!createMemberShipBenefits)
-        {
-            throw new Exception("Failed to create member ship benefits");
-        }
+        await _membershipsService.ScheduleMembershipExpirationAsync(request.UserId, membership);
 
-        //await ScheduleMembershipExpirationAsync(request.UserId, membership);
-
-        return _mapper.Map<MembershipResponseDto>(accountMembership);
+        return accountMembership;
     }
 }

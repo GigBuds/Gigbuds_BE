@@ -15,7 +15,7 @@ public static class ProjectConstant
         public const int Default_Priority_Level = 0;
         public const int Basic_Post_Priority_Level = 1;
         public const int Premium_Post_Priority_Level = 2;
-
+        public static int Free_Tier_Job_Post = 1;
         /// <summary>
         /// Returns the post priority level for a given membership level string.
         /// </summary>

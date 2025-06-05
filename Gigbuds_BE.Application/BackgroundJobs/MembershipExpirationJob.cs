@@ -17,10 +17,10 @@ public class MembershipExpirationJob : IJob
     }
     public async Task Execute(IJobExecutionContext context)
     {
-        var accountId = context.JobDetail.JobDataMap.GetInt("accountId");
-        var membershipId = context.JobDetail.JobDataMap.GetInt("membershipId");
+        var accountId = int.Parse(context.JobDetail.JobDataMap.GetString("accountId"));
+        var membershipId = int.Parse(context.JobDetail.JobDataMap.GetString("membershipId"));
         try{
-            
+            _logger.LogInformation("Revoking membership for User {UserId}, Membership {MembershipId}", accountId, membershipId);
             await _membershipsService.RevokeMembershipAsync(accountId, membershipId);
 
         }catch(Exception ex){
