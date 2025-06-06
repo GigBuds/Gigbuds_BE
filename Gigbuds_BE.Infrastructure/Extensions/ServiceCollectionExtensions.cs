@@ -8,15 +8,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
 using Quartz;
 using StackExchange.Redis;
 using Gigbuds_BE.Application.Interfaces.Services.AuthenticationServices;
 using Gigbuds_BE.Infrastructure.Services.AuthenticationServices;
 using Gigbuds_BE.Application.Configurations;
 using Gigbuds_BE.Infrastructure.Seeder;
-using Gigbuds_BE.Application.Interfaces;
-using Gigbuds_BE.Infrastructure.Repositories;
+using Gigbuds_BE.Infrastructure.Services.SignalR;
+using Gigbuds_BE.Application.Interfaces.Services.NotificationServices;
 
 namespace Gigbuds_BE.Infrastructure.Extensions
 {
@@ -99,8 +98,13 @@ namespace Gigbuds_BE.Infrastructure.Extensions
             // Add Google Maps service
             services.AddHttpClient<IGoogleMapsService, GoogleMapsService>();
 
+            // Add Vector storage and text embedding services
             services.AddScoped<IVectorStorageService, VectorStorageService>();
             services.AddScoped<ITextEmbeddingService, TextEmbeddingService>();
+
+            // Add SignalR service
+            services.AddSignalR();
+            services.AddScoped<INotificationService, NotificationService>();
 
             // Add Job Recommendation service
             services.AddScoped<IJobRecommendationService, JobRecommendationService>();

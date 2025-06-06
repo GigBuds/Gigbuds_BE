@@ -6,6 +6,4 @@ public class JobPositionDto
     public string JobPositionName { get; set; } = string.Empty;
     public int JobTypeId { get; set; }
     public string JobTypeName { get; set; } = string.Empty;
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
 } 
