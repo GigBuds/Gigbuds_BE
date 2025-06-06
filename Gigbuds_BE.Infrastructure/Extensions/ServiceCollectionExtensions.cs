@@ -106,6 +106,9 @@ namespace Gigbuds_BE.Infrastructure.Extensions
             services.AddSignalR();
             services.AddScoped<INotificationService, NotificationService>();
 
+            // Add templating service
+            services.AddScoped(typeof(ITemplatingService), typeof(TemplatingService));
+
             // Add Job Recommendation service
             services.AddScoped<IJobRecommendationService, JobRecommendationService>();
             services.AddScoped<IMembershipsService, MembershipsServices>();
