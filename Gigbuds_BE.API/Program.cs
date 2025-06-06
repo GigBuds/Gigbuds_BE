@@ -5,6 +5,7 @@ using Gigbuds_BE.Application.Interfaces.Utilities.Seeding;
 using Gigbuds_BE.Infrastructure.Extensions;
 using Gigbuds_BE.Infrastructure.Persistence;
 using Gigbuds_BE.Infrastructure.Seeder;
+using Gigbuds_BE.Infrastructure.Services.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,11 +42,12 @@ app.UseHttpsRedirection();
 
 app.MapGroup("api/identities")
     .WithTags("Identities");
-    
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<NotificationHub>("/hub/notifications");
 
 using var scope = app.Services.CreateScope();
 var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
