@@ -76,6 +76,8 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
                     JobRequirement = newJobPost.JobRequirement,
                     ExperienceRequirement = newJobPost.ExperienceRequirement,
                     IsMaleRequired = newJobPost.IsMale,
+
+                    JobDeadline = DateOnly.FromDateTime(newJobPost.ExpireTime),
                 }, cancellationToken);
                 return newJobPost.Id;
             }
