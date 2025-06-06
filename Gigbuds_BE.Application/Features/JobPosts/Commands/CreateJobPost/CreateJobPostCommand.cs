@@ -8,6 +8,7 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
     {
         public required int AccountId { get; set; }
         public required string JobTitle { get; set; }
+        public required int AgeRequirement { get; set; }
         public required string JobDescription { get; set; }
         public required string JobRequirement { get; set; }
         public required string ExperienceRequirement { get; set; }
@@ -19,8 +20,9 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
         public required int VacancyCount { get; set; }
         public required string DistrictCode { get; set; }
         public required string ProvinceCode { get; set; }
-        public required string Membership { get; set; }
         public required bool IsOutstandingPost { get; set; }
+        public required int JobPositionId { get; set; }
+        public required bool IsMale { get; set; }
         [JsonPropertyName("JobSchedule")]
         public required CreateJobPostScheduleCommand ScheduleCommand { get; set; }
     }

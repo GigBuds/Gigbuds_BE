@@ -30,6 +30,7 @@ public class RegisterForUserHandler(
         };
         await applicationUserService.InsertAsync(user, request.Password);
         await applicationUserService.AssignRoleAsync(user, UserRoles.JobSeeker);
+
         try
         {
             var verificationCode = await verificationCodeService.GenerateVerificationCodeAsync(request.PhoneNumber);

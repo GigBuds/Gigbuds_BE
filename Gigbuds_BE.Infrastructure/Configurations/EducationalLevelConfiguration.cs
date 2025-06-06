@@ -13,6 +13,7 @@ internal class EducationalLevelConfiguration : IEntityTypeConfiguration<Educatio
 
         // Properties
         builder.Property(e => e.AccountId)
+            .HasColumnName("AccountId")
             .IsRequired();
 
         builder.Property(e => e.Level)
@@ -40,6 +41,7 @@ internal class EducationalLevelConfiguration : IEntityTypeConfiguration<Educatio
         builder.HasOne(e => e.Account)
             .WithMany(a => a.EducationalLevels)
             .HasForeignKey(e => e.AccountId)
+            .HasConstraintName("FK_EducationalLevels_Accounts_AccountId")
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

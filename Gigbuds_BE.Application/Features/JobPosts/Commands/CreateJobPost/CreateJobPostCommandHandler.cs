@@ -1,9 +1,12 @@
-using Gigbuds_BE.Application.Features.Schedules.Commands.CreateJobPostSchedule;
 using Gigbuds_BE.Application.Interfaces.Repositories;
 using Gigbuds_BE.Domain.Entities.Jobs;
 using Gigbuds_BE.Domain.Exceptions;
 using Microsoft.Extensions.Logging;
 using MediatR;
+using Gigbuds_BE.Application.Interfaces.Services;
+using Gigbuds_BE.Domain.Entities.Identity;
+using static Gigbuds_BE.Application.Commons.Constants.ProjectConstant;
+using Gigbuds_BE.Application.Features.Notifications;
 
 namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
 {
@@ -12,23 +15,29 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
         private readonly ILogger<CreateJobPostCommandHandler> _logger;
         private readonly IMediator _mediator;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IApplicationUserService<ApplicationUser> _applicationUserService;
 
         public CreateJobPostCommandHandler(
             ILogger<CreateJobPostCommandHandler> logger,
             IMediator mediator,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IApplicationUserService<ApplicationUser> applicationUserService)
         {
             _logger = logger;
             _mediator = mediator;
             _unitOfWork = unitOfWork;
+            _applicationUserService = applicationUserService;
         }
 
         public async Task<int> Handle(CreateJobPostCommand command, CancellationToken cancellationToken)
         {
+            var jobSeekerMembership = await _applicationUserService.GetJobSeekerMembershipLevelAsync(command.AccountId);
+
             JobPost newJobPost = new()
             {
                 AccountId = command.AccountId,
                 JobTitle = command.JobTitle,
+                AgeRequirement = command.AgeRequirement,
                 JobDescription = command.JobDescription,
                 JobRequirement = command.JobRequirement,
                 ExperienceRequirement = command.ExperienceRequirement,
@@ -38,12 +47,12 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
                 ExpireTime = command.ExpireTime,
                 Benefit = command.Benefit,
                 VacancyCount = command.VacancyCount,
-                IsOutstandingPost = command.IsOutstandingPost,
                 DistrictCode = command.DistrictCode,
                 ProvinceCode = command.ProvinceCode,
-
-                // TODO: add check memberhsip type -> if not premium, priority level high, else low
-                //PriorityLevel = command.Membership == "Premium" ? 1 : 2, // Assuming 1 is high priority and 2 is low priority
+                JobPositionId = command.JobPositionId,
+                IsOutstandingPost = command.IsOutstandingPost,
+                PriorityLevel = EmployerMembership.GetPriorityLevel(jobSeekerMembership),
+                IsMale = command.IsMale
             };
 
             _logger.LogInformation("New job post: {JobPost}", newJobPost);
@@ -56,6 +65,18 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
 
                 command.ScheduleCommand.JobPostId = newJobPost.Id;
                 await _mediator.Publish(command.ScheduleCommand, cancellationToken);
+
+                await _mediator.Publish(new NotifyJobSeekersRequest
+                {
+                    JobPostId = newJobPost.Id,
+                    JobPostLocation = newJobPost.JobLocation,
+                    MinAgeRequirement = newJobPost.AgeRequirement ?? 0,
+                    JobTitle = newJobPost.JobTitle,
+                    JobDescription = newJobPost.JobDescription,
+                    JobRequirement = newJobPost.JobRequirement,
+                    ExperienceRequirement = newJobPost.ExperienceRequirement,
+                    IsMaleRequired = newJobPost.IsMale,
+                }, cancellationToken);
                 return newJobPost.Id;
             }
             catch (Exception ex)

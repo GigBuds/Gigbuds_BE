@@ -29,9 +29,9 @@ public class MembershipsServices : IMembershipsService
     {
         _unitOfWork = unitOfWork;
         _applicationUserService = applicationUserService;
-        _schedulerFactory = schedulerFactory;
         _logger = logger;
         _mapper = mapper;
+        _schedulerFactory = schedulerFactory;
     }
     public async Task<MembershipResponseDto> CreateMemberShipBenefitsAsync(int accountId, Membership membership)
     {
@@ -49,30 +49,30 @@ public class MembershipsServices : IMembershipsService
         await _unitOfWork.CompleteAsync();
 
         if (membership.MembershipType == MembershipType.JobSeeker
-        && membership.Title == ProjectConstant.Basic_Tier_Job_Application_Title)
+        && membership.Title == ProjectConstant.MembershipLevel.Basic_Tier_Job_Application_Title)
         {
             _logger.LogInformation("Basic tier job seeker membership activated");
         }
 
         if (membership.MembershipType == MembershipType.JobSeeker
-        && membership.Title == ProjectConstant.Premium_Tier_Job_Application_Title)
+        && membership.Title == ProjectConstant.MembershipLevel.Premium_Tier_Job_Application_Title)
         {
             await ActivatePremiumTierJobSeekerMembershipAsync(accountId, membership);
         }
 
         if (membership.MembershipType == MembershipType.Employer
-        && membership.Title == ProjectConstant.Free_Tier_Job_Application_Title)
+        && membership.Title == ProjectConstant.MembershipLevel.Free_Tier_Job_Application_Title)
         {
             _logger.LogInformation("Free tier job seeker membership activated");
         }
 
         if (membership.MembershipType == MembershipType.Employer
-        && membership.Title == ProjectConstant.Basic_Tier_Job_Application_Title)
+        && membership.Title == ProjectConstant.MembershipLevel.Basic_Tier_Job_Application_Title)
         {
             await ActivateBasicTierEmployerMembershipAsync(accountId, membership);
         }
 
-        if (membership.MembershipType == MembershipType.Employer && membership.Title == ProjectConstant.Premium_Tier_Job_Application_Title)
+        if (membership.MembershipType == MembershipType.Employer && membership.Title == ProjectConstant.MembershipLevel.Premium_Tier_Job_Application_Title)
         {
             await ActivatePremiumTierEmployerMembershipAsync(accountId, membership);
         }
@@ -96,7 +96,7 @@ public class MembershipsServices : IMembershipsService
 
         foreach (var jobPost in jobPosts)
         {
-            jobPost.PriorityLevel = 2;
+            jobPost.PriorityLevel = ProjectConstant.EmployerMembership.GetPriorityLevel(ProjectConstant.MembershipLevel.Premium_Tier_Job_Application_Title);
             _unitOfWork.Repository<JobPost>().Update(jobPost);
         }
         await _unitOfWork.CompleteAsync();
@@ -129,7 +129,7 @@ public class MembershipsServices : IMembershipsService
 
         foreach (var jobApplication in jobApplications)
         {
-            jobApplication.PriorityLevel = 1;
+            jobApplication.PriorityLevel = ProjectConstant.JobSeekerMembership.Basic_Job_Application_Priority_Level;
         }
 
         await _unitOfWork.CompleteAsync();
@@ -146,7 +146,7 @@ public class MembershipsServices : IMembershipsService
             return false;
         }
 
-        employer.EmployerProfile.NumOfAvailablePost = 10;
+        employer.EmployerProfile.NumOfAvailablePost = ProjectConstant.EmployerMembership.Basic_Tier_Job_Post;
         employer.EmployerProfile.IsUnlimitedPost = false;
 
         var jobPostSpec = new GetJobPostByEmployerIdSpecification(accountId);
@@ -154,7 +154,7 @@ public class MembershipsServices : IMembershipsService
 
         foreach (var jobPost in jobPosts)
         {
-            jobPost.PriorityLevel = 1;
+            jobPost.PriorityLevel = ProjectConstant.EmployerMembership.GetPriorityLevel(ProjectConstant.MembershipLevel.Basic_Tier_Job_Application_Title);
         }
 
         await _unitOfWork.CompleteAsync();
@@ -244,7 +244,7 @@ public class MembershipsServices : IMembershipsService
             throw new Exception("Account not found");
         }
 
-        account.EmployerProfile.NumOfAvailablePost = ProjectConstant.Free_Tier_Job_Post;
+        account.EmployerProfile.NumOfAvailablePost = ProjectConstant.EmployerMembership.Free_Tier_Job_Post;
         account.EmployerProfile.IsUnlimitedPost = false;
     }
 
@@ -264,6 +264,6 @@ public class MembershipsServices : IMembershipsService
             throw new Exception("Account not found");
         }
 
-        account.AvailableJobApplication = ProjectConstant.Free_Tier_Job_Application;
+        account.AvailableJobApplication = ProjectConstant.JobSeekerMembership.Free_Tier_Job_Application;
     }
 }

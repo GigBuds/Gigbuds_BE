@@ -5,7 +5,6 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Gigbuds_BE.Application.Features.JobPosts.Queries;
 using Gigbuds_BE.Application.DTOs;
-using Gigbuds_BE.Application.DTOs.ApplicationUsers;
 using Gigbuds_BE.Application.Features.JobPosts.Commands.RemoveJobPost;
 using Gigbuds_BE.Application.Features.JobPosts.Commands.UpdateJobPostStatus;
 using Gigbuds_BE.Application.Features.JobPosts.Queries.GetSearchJobPosts;
@@ -14,8 +13,8 @@ using Gigbuds_BE.API.Helpers.RequestHelpers;
 using Gigbuds_BE.Application.Specifications.JobPosts;
 using Gigbuds_BE.Application.Features.JobPosts.Queries.GetJobPosts;
 using Gigbuds_BE.Application.DTOs.JobRecommendations;
-using Microsoft.AspNetCore.Authorization;
 using Gigbuds_BE.Application.Features.JobPosts.Queries.GetJobRecommendations;
+using Gigbuds_BE.Application.Features.JobPosts.Queries.GetAllJobPosts;
 
 namespace Gigbuds_BE.API.Controllers
 {

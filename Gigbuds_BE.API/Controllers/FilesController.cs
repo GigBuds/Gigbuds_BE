@@ -49,9 +49,7 @@ public class FilesController : ControllerBase
             FileUploadResult result;
 
             // Handle image files (avatars, company logos, general images)
-            if (IsImageFile(file.ContentType) || 
-                folder.ToString().Equals(FolderType.Files.ToString(), StringComparison.OrdinalIgnoreCase) ||
-                folder.ToString().Equals(FolderType.Images.ToString(), StringComparison.OrdinalIgnoreCase))
+            if (IsImageFile(file.ContentType))
             {
                 result = await _fileStorageService.PrepareUploadImageAsync(file, folder.ToString());
             }
