@@ -12,7 +12,8 @@ public class JobApplicationProfile : Profile
     {
         //Mapping
         CreateMap<JobApplicationDto, JobApplication>();
-        CreateMap<JobApplication, JobApplicationResponseDto>();
+        CreateMap<JobApplication, JobApplicationResponseDto>()
+        .ForMember(dest => dest.AppliedAt, opt => opt.MapFrom(src => src.CreatedAt));
 
         //Projection
         CreateProjection<JobApplication, JobApplicationForJobPostDto>()
