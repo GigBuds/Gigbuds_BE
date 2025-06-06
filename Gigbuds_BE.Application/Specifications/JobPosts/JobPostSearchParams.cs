@@ -9,7 +9,6 @@ public class JobPostSearchParams : BasePagingParams
     public string? JobName { get; set; }
     public decimal? SalaryFrom { get; set; }
     public decimal? SalaryTo { get; set; }
-    public bool? IsMale { get; set; }
     public DateTime? JobTimeFrom { get; set; }
     public DateTime? JobTimeTo { get; set; }
     public SalaryUnit? SalaryUnit { get; set; }

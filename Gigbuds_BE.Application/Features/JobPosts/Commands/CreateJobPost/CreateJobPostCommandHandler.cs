@@ -52,7 +52,6 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
                 JobPositionId = command.JobPositionId,
                 IsOutstandingPost = command.IsOutstandingPost,
                 PriorityLevel = EmployerMembership.GetPriorityLevel(jobSeekerMembership),
-                IsMale = command.IsMale
             };
 
             _logger.LogInformation("New job post: {JobPost}", newJobPost);
