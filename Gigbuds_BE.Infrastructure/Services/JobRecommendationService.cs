@@ -132,7 +132,7 @@ public class JobRecommendationService : IJobRecommendationService
         };
 
         // Calculate schedule score
-        var scheduleScore = await CalculateScheduleScore(jobSeekerSchedule.JobShifts, jobPost.JobPostSchedule?.JobShifts);
+        var scheduleScore = await CalculateScheduleScore(jobSeekerSchedule.JobShifts, jobPost.JobPostSchedule?.JobShifts, jobPost.JobPostSchedule?.MinimumShift ?? 0);
         recommendation.ScheduleScore = scheduleScore.Score;
         recommendation.ScheduleMatchReason = scheduleScore.Reason;
 
@@ -141,7 +141,7 @@ public class JobRecommendationService : IJobRecommendationService
 
     public async Task<JobPostScoreDto> CalculateScheduleScore(
         ICollection<JobSeekerShift>? jobSeekerShifts,
-        ICollection<JobShift>? jobShifts)
+        ICollection<JobShift>? jobShifts, int minimumShift)
     {
         if (jobSeekerShifts == null || !jobSeekerShifts.Any() || 
             jobShifts == null || !jobShifts.Any())
@@ -168,7 +168,13 @@ public class JobRecommendationService : IJobRecommendationService
                 matchingShifts++;
             }
         }
-
+        if(matchingShifts < minimumShift)
+        {
+            return new JobPostScoreDto {
+                Score = 0,
+                Reason = $"Minimum shift requirement not met - only {matchingShifts} while require at least {minimumShift} shifts"
+            };
+        }
         // Scoring logic:
         // - All shifts match: 3 points
         // - Half or more shifts match: 1 point

@@ -13,5 +13,5 @@ public interface IJobRecommendationService
         int maxResults = 50);
     Task<JobPostScoreDto> CalculateScheduleScore(
         ICollection<JobSeekerShift>? jobSeekerShifts,
-        ICollection<JobShift>? jobShifts);
+        ICollection<JobShift>? jobShifts, int minimumShift);
 } 
