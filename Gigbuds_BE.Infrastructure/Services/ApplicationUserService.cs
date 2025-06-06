@@ -1,4 +1,5 @@
-﻿using Gigbuds_BE.Application.Interfaces;
+﻿using Gigbuds_BE.Application.Commons.Constants;
+using Gigbuds_BE.Application.Interfaces;
 using Gigbuds_BE.Application.Interfaces.Repositories;
 using Gigbuds_BE.Application.Interfaces.Services;
 using Gigbuds_BE.Application.Specifications;
@@ -166,6 +167,7 @@ namespace Gigbuds_BE.Infrastructure.Services
                         IsUnlimitedPost = false,
                     };
                     _unitOfWork.Repository<EmployerProfile>().Insert(emptyEmployerProfileForExistingUser);
+                    user.Id = existingUserByPhoneNumber.Id;
                     await _unitOfWork.CompleteAsync();
                     await _userManager.AddToRoleAsync(existingUserByPhoneNumber, UserRoles.Employer);
                     return;
@@ -182,6 +184,12 @@ namespace Gigbuds_BE.Infrastructure.Services
             if (existingUserBySocialSecurityNumber != null)
             {
                 throw new DuplicateUserException($"A user with the social security number {user.SocialSecurityNumber} already exists.");
+            }
+
+            var existingByCompanyEmail = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == companyEmail);
+            if (existingByCompanyEmail != null)
+            {
+                throw new DuplicateUserException($"A user with the company email {companyEmail} already exists.");
             }
 
             var result = await _userManager.CreateAsync(user, password);

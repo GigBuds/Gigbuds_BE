@@ -24,6 +24,8 @@
 	  </PackageReference>
 	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+	  <PackageReference Include="OpenAI" Version="2.1.0" />
+	  <PackageReference Include="Qdrant.Client" Version="1.14.0" />
 	  <PackageReference Include="Quartz" Version="3.14.0" />
 	  <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.14.0" />
 	  <PackageReference Include="Quartz.Extensions.Hosting" Version="3.14.0" />
