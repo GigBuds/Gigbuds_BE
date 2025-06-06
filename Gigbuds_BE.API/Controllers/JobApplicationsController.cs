@@ -91,7 +91,7 @@ namespace Gigbuds_BE.API.Controllers
             return Ok(new List<JobApplicationResponseDto>());
         }
 
-        [HttpPost("check-job-application/{jobPostId}/{accountId}")]
+        [HttpGet("check-job-application/{jobPostId}/{accountId}")]
         public async Task<IActionResult> CheckJobApplication(int jobPostId, int accountId)
         {
             var command = new CheckJobApplicationCommand(accountId, jobPostId);
