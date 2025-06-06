@@ -48,6 +48,14 @@ public class MembershipsServices : IMembershipsService
         _unitOfWork.Repository<AccountMembership>().Insert(accountMembership);
         await _unitOfWork.CompleteAsync();
 
+        if(membership.MembershipType == MembershipType.JobSeeker && membership.Title == ProjectConstant.MembershipLevel.Free_Tier_Job_Application_Title) {
+            await ActivateJobSeekerFreeTierMembershipAsync(accountId);
+        }
+        
+        if(membership.MembershipType == MembershipType.Employer && membership.Title == ProjectConstant.MembershipLevel.Free_Tier_Job_Application_Title) {
+            await ActivateEmployerFreeTierMembershipAsync(accountId);
+        }
+
         if (membership.MembershipType == MembershipType.JobSeeker
         && membership.Title == ProjectConstant.MembershipLevel.Basic_Tier_Job_Application_Title)
         {
@@ -266,4 +274,5 @@ public class MembershipsServices : IMembershipsService
 
         account.AvailableJobApplication = ProjectConstant.JobSeekerMembership.Free_Tier_Job_Application;
     }
+
 }
