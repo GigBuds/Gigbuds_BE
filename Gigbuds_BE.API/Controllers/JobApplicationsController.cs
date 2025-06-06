@@ -90,5 +90,20 @@ namespace Gigbuds_BE.API.Controllers
             // TODO: Implement GetJobApplicationsByUserQuery
             return Ok(new List<JobApplicationResponseDto>());
         }
+
+        [HttpPost("check-job-application/{jobPostId}/{accountId}")]
+        public async Task<IActionResult> CheckJobApplication(int jobPostId, int accountId)
+        {
+            var command = new CheckJobApplicationCommand(accountId, jobPostId);
+            var result = await _mediator.Send(command);
+            if (result)
+            {
+                return Ok(new { message = "Job application is available" });
+            }
+            else
+            {
+                return Conflict(new { message = "Job application is already applied" });
+            }
+        }
     }
 }
