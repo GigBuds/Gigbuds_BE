@@ -2,7 +2,7 @@
 
 namespace Gigbuds_BE.Application.Features.Embedding.JobPostEmbedding
 {
-    public class JobPostEmbeddingRequest : IRequest<List<(string, string)>>
+    public class JobPostEmbeddingRequest : IRequest<List<(int, string)>>
     {
         public required int JobPostId { get; init; }
         public required int MinAgeRequirement { get; init; }

@@ -15,27 +15,27 @@ namespace Gigbuds_BE.Infrastructure.Services.SignalR
             _hubContext = hubContext;
         }
 
-        public async Task NotifyOneJobSeeker(MethodInfo method, object payload, string jobSeekerId)
+        public async Task NotifyOneJobSeeker(MethodInfo method, string jobSeekerId, object payload, object? additionalPayload = null)
         {
-            await _hubContext.Clients.Group(jobSeekerId).NotifyJobSeeker(method.Name, payload);
+            await _hubContext.Clients.User(jobSeekerId).NotifyJobSeeker(method.Name, payload, additionalPayload);
         }
 
-        public async Task NotifyOneEmployer(MethodInfo method, object payload, string employerId)
+        public async Task NotifyOneEmployer(MethodInfo method, string employerId, object payload, object? additionalPayload = null)
         {
-            await _hubContext.Clients.User(employerId).NotifyEmployer(method.Name, payload);
+            await _hubContext.Clients.User(employerId).NotifyEmployer(method.Name, payload, additionalPayload);
         }
 
-        public async Task NotifyAllJobSeekers(MethodInfo method, object payload)
+        public async Task NotifyAllJobSeekers(MethodInfo method, object payload, object? additionalPayload = null)
         {
-            await _hubContext.Clients.Group(UserRoles.JobSeeker).NotifyJobSeeker(method.Name, payload);
+            await _hubContext.Clients.Group(UserRoles.JobSeeker).NotifyJobSeeker(method.Name, payload, additionalPayload);
         }
 
-        public async Task NotifyAllEmployers(MethodInfo method, object payload)
+        public async Task NotifyAllEmployers(MethodInfo method, object payload, object? additionalPayload = null)
         {
-            await _hubContext.Clients.Group(UserRoles.Employer).NotifyEmployer(method.Name, payload);
+            await _hubContext.Clients.Group(UserRoles.Employer).NotifyEmployer(method.Name, payload, additionalPayload);
         }
 
-        public async Task NotifyAllUsers(MethodInfo method, object payload)
+        public async Task NotifyAllUsers(MethodInfo method, object payload, object? additionalPayload = null)
         {
             await _hubContext.Clients.Group(UserRoles.JobSeeker).NotifyJobSeeker(method.Name, payload);
             await _hubContext.Clients.Group(UserRoles.Employer).NotifyEmployer(method.Name, payload);

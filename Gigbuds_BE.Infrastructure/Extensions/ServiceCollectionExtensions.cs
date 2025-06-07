@@ -102,12 +102,14 @@ namespace Gigbuds_BE.Infrastructure.Extensions
             services.AddScoped<IVectorStorageService, VectorStorageService>();
             services.AddScoped<ITextEmbeddingService, TextEmbeddingService>();
 
+
             // Add SignalR service
             services.AddSignalR();
+            services.AddSingleton<IConnectionManager, ConnectionManager>();
             services.AddScoped<INotificationService, NotificationService>();
 
             // Add templating service
-            services.AddScoped(typeof(ITemplatingService), typeof(TemplatingService));
+            services.AddScoped<ITemplatingService, TemplatingService>();
 
             // Add Job Recommendation service
             services.AddScoped<IJobRecommendationService, JobRecommendationService>();

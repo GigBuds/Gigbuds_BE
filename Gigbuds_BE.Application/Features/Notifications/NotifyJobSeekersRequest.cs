@@ -17,7 +17,8 @@ namespace Gigbuds_BE.Application.Features.Notifications
         // Data for notification template
         public required int EmployerId { get; init; }
         public required DateOnly JobDeadline { get; init; }
-        public required string JobCompany { get; init; }
+        public required string DistrictCode { get; init; }
+        public required string ProvinceCode { get; init; }
     }
 
 }

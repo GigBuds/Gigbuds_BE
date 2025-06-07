@@ -1,9 +1,10 @@
 ﻿using Fluid;
 using Fluid.Values;
+using Gigbuds_BE.Application.Interfaces.Services;
 
 namespace Gigbuds_BE.Infrastructure.Services
 {
-    internal class TemplatingService
+    internal class TemplatingService : ITemplatingService
     {
         private readonly FluidParser _parser;
 
@@ -19,7 +20,7 @@ namespace Gigbuds_BE.Infrastructure.Services
                 throw new InvalidOperationException($"Template parsing failed: {error}");
             }
 
-            var context = new TemplateContext();
+            var context = new TemplateContext(model);
             context.SetValue("model", new ObjectValue(model));
 
             return fluidTemplate.Render(context);

@@ -24,4 +24,6 @@ public record NewJobPostMatchingTemplateModel()
     public required string JobTitle { get; set; }
     public required string JobCompany { get; set; }
     public required DateOnly JobDeadline { get; set; }
+    public required string DistrictCode { get; set; }
+    public required string ProvinceCode { get; set; }
 }

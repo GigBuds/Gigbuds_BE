@@ -22,6 +22,7 @@ namespace Gigbuds_BE.Application.Features.Notifications
         private readonly INotificationService _notificationService;
         private readonly ITemplatingService _templatingService;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IConnectionManager _connectionManager;
 
         public NotifyJobSeekersRequestHandler(
             ILogger<NotifyJobSeekersRequestHandler> logger,
@@ -30,7 +31,8 @@ namespace Gigbuds_BE.Application.Features.Notifications
             IConfiguration configuration,
             INotificationService notificationService,
             ITemplatingService templatingService,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IConnectionManager connectionManager)
         {
             _logger = logger;
             _mediator = mediator;
@@ -39,6 +41,7 @@ namespace Gigbuds_BE.Application.Features.Notifications
             _notificationService = notificationService;
             _templatingService = templatingService;
             _unitOfWork = unitOfWork;
+            _connectionManager = connectionManager;
         }
 
         public async Task Handle(NotifyJobSeekersRequest request, CancellationToken cancellationToken)
@@ -64,23 +67,26 @@ namespace Gigbuds_BE.Application.Features.Notifications
                     new GetEmployerProfleByAccountIdSpecification(request.EmployerId)
                 );
 
-                return _templatingService.ParseTemplate<NewJobPostMatchingTemplateModel>(template, new NewJobPostMatchingTemplateModel
+                return _templatingService.ParseTemplate(template, new NewJobPostMatchingTemplateModel
                 {
                     JobTitle = request.JobTitle,
                     JobCompany = employerCompany!.CompanyName,
-                    JobDeadline = request.JobDeadline
+                    JobDeadline = request.JobDeadline,
+                    DistrictCode = request.DistrictCode,
+                    ProvinceCode = request.ProvinceCode
                 });
             }
             async Task SendNotificationToJobSeekers()
             {
-                List<Task> tasks = new();
+                List<Task> tasks = [];
                 foreach (var jobSeeker in jobSeekers)
                 {
-                    _logger.LogInformation("Sending notification to job seeker {JobSeekerId} with distance {Distance}", jobSeeker.Item1, jobSeeker.Item2);
+                    _logger.LogInformation("Sending notification to job seeker {JobSeekerId} with distance {Distance}", 
+                    jobSeeker.Item1, jobSeeker.Item2);
                     tasks.Add(_notificationService.NotifyOneJobSeeker(
                         typeof(INotificationForJobSeekers).GetMethod(nameof(INotificationForJobSeekers.NotifyNewJobPostMatching))!,
-                        parsedTemplate,
-                        jobSeeker.Item1
+                        jobSeeker.Item1.ToString(),
+                        parsedTemplate
                     ));
                 }
 
@@ -88,7 +94,7 @@ namespace Gigbuds_BE.Application.Features.Notifications
 
                 _logger.LogInformation("Sent notification to {Count} job seekers", jobSeekers.Count());
             }
-            async Task<IEnumerable<(string, string)>> FilterJobSeekersByDistance()
+            async Task<IEnumerable<(int, string)>> FilterJobSeekersByDistance()
             {
                 var jobSeekersWithLocation = await _mediator.Send(new JobPostEmbeddingRequest
                 {

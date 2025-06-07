@@ -41,7 +41,7 @@
         /// Notifies job seekers about new job posts that match their criteria
         /// </summary>
         /// <param name="notification">The notification message to be sent</param>
-        public Task NotifyNewJobPostMatching(string notification);
+        public Task NotifyNewJobPostMatching(string notification, object? additionalPayload = null);
 
         /// <summary>
         /// Notifies job seekers when their profile has been viewed by an employer
