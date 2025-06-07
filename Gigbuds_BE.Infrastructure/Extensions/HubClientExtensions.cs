@@ -7,7 +7,8 @@ namespace Gigbuds_BE.Infrastructure.Extensions
         public static async Task NotifyEmployer(
             this INotificationForUser clients,
             string methodName,
-            object payload
+            object payload,
+            object? additionalPayload = null
         )
         {
             switch (methodName)
@@ -38,7 +39,8 @@ namespace Gigbuds_BE.Infrastructure.Extensions
         public static async Task NotifyJobSeeker(
             this INotificationForUser clients,
             string methodName,
-            object payload
+            object payload,
+            object? additionalPayload = null
         )
         {
             switch (methodName)
@@ -65,7 +67,7 @@ namespace Gigbuds_BE.Infrastructure.Extensions
                     await clients.NotifyJobCompleted();
                     break;
                 case nameof(INotificationForJobSeekers.NotifyNewJobPostMatching):
-                    await clients.NotifyNewJobPostMatching(payload as string);
+                    await clients.NotifyNewJobPostMatching(payload as string, additionalPayload);
                     break;
                 case nameof(INotificationForJobSeekers.NotifyProfileViewedByEmployer):
                     await clients.NotifyProfileViewedByEmployer();

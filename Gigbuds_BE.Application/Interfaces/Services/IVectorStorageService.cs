@@ -24,7 +24,7 @@
         /// <param name="resultLimits">The maximum number of results to return. Default is 0 (no limit).</param>
         /// <param name="resultOffset">The number of results to skip before returning results. Default is 0.</param>
         /// <returns>A list of tuples containing the id and payload fields for the found points.</returns>
-        Task<List<(string, string)>> SearchBySemanticsAsync(
+        Task<List<(int, string)>> SearchBySemanticsAsync(
             string collectionName,
             ReadOnlyMemory<float> queryVector,
             QueryFilter? queryFilter = null,

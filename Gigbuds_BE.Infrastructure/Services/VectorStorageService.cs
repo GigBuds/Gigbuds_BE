@@ -19,7 +19,7 @@ namespace Gigbuds_BE.Infrastructure.Services
             qdrantClient = new QdrantClient(configuration["VectorDb:Host"]!, apiKey: configuration["VectorDb:ApiKey"], https: true);
         }
 
-        public async Task<List<(string, string)>> SearchBySemanticsAsync(
+        public async Task<List<(int, string)>> SearchBySemanticsAsync(
             string collectionName,
             ReadOnlyMemory<float> queryVector,
             QueryFilter? queryFilter = null,
@@ -76,30 +76,45 @@ namespace Gigbuds_BE.Infrastructure.Services
                 filter.Must.AddRange(mustConditions);
             }
             WithPayloadSelector? payloadSelector;
-            if (payloadExclude != null || payloadInclude != null)
+
+            if (payloadInclude == null && payloadExclude == null)
             {
-                payloadSelector = new()
+                payloadSelector = null;
+            }
+            else
+            {
+                payloadSelector = new WithPayloadSelector();
+            }
+
+            if (payloadInclude != null && payloadInclude.Count > 0)
+            {
+                payloadSelector.Include = new PayloadIncludeSelector
                 {
-                    Enable = true,
-                    Include = payloadInclude != null ? new PayloadIncludeSelector { Fields = { payloadInclude } } : null,
-                    Exclude = payloadExclude != null ? new PayloadExcludeSelector { Fields = { payloadExclude } } : null
+                    Fields = { payloadInclude }
                 };
             }
-            else payloadSelector = null;
+            if (payloadExclude != null && payloadExclude.Count > 0)
+            {
+                payloadSelector.Exclude = new PayloadExcludeSelector
+                {
+                    Fields = { payloadExclude }
+                };
+            }
 
             var results = await qdrantClient.SearchAsync(
                 collectionName,
                 queryVector.ToArray(),
                 limit: (ulong)resultLimits,
-                scoreThreshold: null);
+                payloadSelector: payloadSelector,
+                scoreThreshold: 0.6f);
 
             return results.Select(point =>
             {
                 _logger.LogInformation("Found point with ID: {Id}, Score: {Score}, Payload: {Payload}", point.Id, point.Score, point.Payload);
-                point.Payload.TryGetValue(configuration["VectorDb:DefaultPointId"]!, out var idValue);
+                point.Payload.TryGetValue("db-id"!, out var idValue);
                 point.Payload.TryGetValue("location", out var locationValue);
 
-                return (idValue?.StringValue ?? string.Empty, locationValue?.StringValue ?? string.Empty);
+                return (((int)idValue?.IntegerValue!), locationValue?.StringValue ?? string.Empty);
             }).ToList();
         }
 

@@ -9,4 +9,13 @@ namespace Gigbuds_BE.Application.Specifications.EmployerProfiles
         {
         }
     }
+
+    public class GetEmployerProfleByAccountIdSpecification : BaseSpecification<EmployerProfile>
+    {
+        public GetEmployerProfleByAccountIdSpecification(int accountId) 
+            : base(ep => ep.Account.Id == accountId && ep.IsEnabled)
+        {
+            AddInclude(ep => ep.Account);
+        }
+    }
 } 

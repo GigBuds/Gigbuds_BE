@@ -1,37 +1,47 @@
 ﻿using Gigbuds_BE.Application.Interfaces.Services.NotificationServices;
 using Microsoft.AspNetCore.SignalR;
-using System.Security.Claims;
 
 namespace Gigbuds_BE.Infrastructure.Services.SignalR
 {
     public class NotificationHub : Hub<INotificationForUser>
     {
+        private readonly IConnectionManager _connectionManager;
+
+        public NotificationHub(IConnectionManager connectionManager)
+        {
+            _connectionManager = connectionManager;
+        }
+
         // ==============================
         // === Methods
         // ==============================
-
         public override async Task OnConnectedAsync()
         {
-            var user = Context.User;
-            if (user == null) return;
-
-            var userRole = user.FindFirst(ClaimTypes.Role)!.Value;
-            if (userRole == null) return;
-
-            await Groups.AddToGroupAsync(Context.ConnectionId, userRole);
+            var userId = Context.UserIdentifier ?? "Anonymous";
+            _connectionManager.AddConnection(userId, Context.ConnectionId);
             await base.OnConnectedAsync();
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
-            var user = Context.User;
-            if (user == null) return;
-
-            var userRole = user.FindFirst(ClaimTypes.Role)!.Value;
-            if (userRole == null) return;
-
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, userRole);
+            var userId = Context.UserIdentifier ?? "Anonymous";
+            _connectionManager.RemoveConnection(userId);
             await base.OnDisconnectedAsync(exception);
+        }
+
+        public async Task AddToGroup(string groupName)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+        }
+
+        public async Task RemoveFromGroup(string groupName)
+        {
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
+        }
+
+        public string GetConnectionId(string userId)
+        {
+            return _connectionManager.GetConnectionId(userId);
         }
     }
 }

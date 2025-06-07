@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Gigbuds_BE.Application.Features.Embedding.JobPostEmbedding
 {
-    internal class JobPostEmbeddingRequestHandler : IRequestHandler<JobPostEmbeddingRequest, List<(string, string)>>
+    internal class JobPostEmbeddingRequestHandler : IRequestHandler<JobPostEmbeddingRequest, List<(int, string)>>
     {
         private readonly ILogger<JobPostEmbeddingRequestHandler> _logger;
         private readonly ITextEmbeddingService _textEmbeddingService;
@@ -24,7 +24,7 @@ namespace Gigbuds_BE.Application.Features.Embedding.JobPostEmbedding
             _vectorStorageService = vectorStorageService;
             _configuration = configuration;
         }
-        public async Task<List<(string, string)>> Handle(JobPostEmbeddingRequest request, CancellationToken cancellationToken)
+        public async Task<List<(int, string)>> Handle(JobPostEmbeddingRequest request, CancellationToken cancellationToken)
         {
             StringBuilder promptDescription = new();
             ConvertObjectToStringDescription();
@@ -43,7 +43,7 @@ namespace Gigbuds_BE.Application.Features.Embedding.JobPostEmbedding
             };
 
             var jobSeekersWithLocation = await _vectorStorageService.SearchBySemanticsAsync(
-                _configuration["VectorDb:JobSeekerCollection"]!, embeddings, queryFilter);
+                _configuration["VectorDb:JobSeekerCollection"]!, embeddings, queryFilter, payloadInclude: ["db-id", "location"]);
 
             _logger.LogInformation("Found {Count} job seekers matching the job post requirements", jobSeekersWithLocation.Count);
             return jobSeekersWithLocation;
