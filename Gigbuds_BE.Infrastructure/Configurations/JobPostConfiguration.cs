@@ -79,6 +79,12 @@ internal class JobPostConfiguration : IEntityTypeConfiguration<JobPost>
             
         builder.Property(jp => jp.PriorityLevel)
             .IsRequired().HasDefaultValue(ProjectConstant.EmployerMembership.Default_Priority_Level);
+
+        builder.Property(jp => jp.StartDate)
+        .IsRequired().HasDefaultValueSql("NOW()");
+    
+        builder.Property(jp => jp.EndDate)
+            .IsRequired().HasDefaultValueSql("NOW() + INTERVAL '5 days'");
         // Relationships
         builder.HasOne(jp => jp.Account)
             .WithMany(a => a.JobPosts)

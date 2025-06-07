@@ -1,7 +1,10 @@
+using Gigbuds_BE.Application.DTOs;
+using Gigbuds_BE.Application.DTOs.ApplicationUsers;
 using Gigbuds_BE.Application.DTOs.JobApplicationDto;
 using Gigbuds_BE.Application.DTOs.JobApplications;
 using Gigbuds_BE.Application.Features.JobApplications.Commands;
 using Gigbuds_BE.Application.Features.JobApplications.Queries;
+using Gigbuds_BE.Application.Features.JobPosts.Queries.GetJobSeekerMyJob;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -104,6 +107,13 @@ namespace Gigbuds_BE.API.Controllers
             {
                 return Conflict(new { message = "Job application is already applied" });
             }
+        }
+
+        [HttpGet("my-job")]
+        public async Task<ActionResult<PagedResultDto<JobPostDto>>> GetJobSeekerMyJob([FromQuery] JobSeekerMyJobRequestDto requestDto)
+        {
+            var jobPosts = await _mediator.Send(new GetJobSeekerMyJobQuery(requestDto));
+            return ResultWithPagination(jobPosts.Data, jobPosts.Count, requestDto.PageIndex, requestDto.PageSize);
         }
     }
 }

@@ -24,6 +24,8 @@ public class JobPost : BaseEntity
     public string DistrictCode { get; set; }
     public string ProvinceCode { get; set; }
     public int PriorityLevel { get; set; }
+    public DateTime? StartDate { get; set; }
+    public DateTime? EndDate { get; set; }  
 
     // Navigation properties
     public virtual ApplicationUser Account { get; set; }
@@ -45,6 +47,7 @@ public enum JobPostStatus
 {
     Closed,
     Open,
-    Expired
+    Expired,
+    Finished
 }
 

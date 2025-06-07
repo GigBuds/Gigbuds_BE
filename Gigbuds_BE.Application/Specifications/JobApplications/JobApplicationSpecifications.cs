@@ -1,4 +1,5 @@
 using System;
+using Gigbuds_BE.Application.DTOs.ApplicationUsers;
 using Gigbuds_BE.Domain.Entities.Jobs;
 
 namespace Gigbuds_BE.Application.Specifications.JobApplications;
@@ -33,5 +34,17 @@ public class GetJobApplicationsByAccountIdSpecification : BaseSpecification<JobA
     public GetJobApplicationsByAccountIdSpecification(int accountId)
         : base(x => x.AccountId == accountId)
     {
+    }
+}
+
+public class GetJobSeekerMyJobSpecification : BaseSpecification<JobApplication>
+{
+    public GetJobSeekerMyJobSpecification(JobSeekerMyJobRequestDto requestDto) : base(j => j.AccountId == requestDto.JobSeekerId
+        && ((requestDto.MyJobType == MyJobType.AppliedJob && j.ApplicationStatus == JobApplicationStatus.Pending)
+        || (requestDto.MyJobType == MyJobType.AcceptedJob && j.ApplicationStatus == JobApplicationStatus.Approved)
+        || (requestDto.MyJobType == MyJobType.JobHistory && (j.ApplicationStatus == JobApplicationStatus.Removed || j.JobPost.JobPostStatus == JobPostStatus.Finished))
+        ))
+    {
+        AddInclude(j => j.JobPost);
     }
 }

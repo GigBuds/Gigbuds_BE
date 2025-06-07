@@ -9,4 +9,12 @@ namespace Gigbuds_BE.Application.Specifications.SkillTags
         {
         }
     }
+
+    public class GetAllSkillTagsSpecification : BaseSpecification<SkillTag>
+    {
+        public GetAllSkillTagsSpecification()
+            : base(st => st.IsEnabled)
+        {
+        }
+    }
 } 

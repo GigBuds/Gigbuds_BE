@@ -20,4 +20,12 @@ namespace Gigbuds_BE.Application.Specifications.ApplicationUsers
             AddInclude(x => x.EmployerProfile);
         }
     }
+
+    public class JobSeekerByAccountIdSpecification : BaseSpecification<ApplicationUser>
+    {
+        public JobSeekerByAccountIdSpecification(int accountId) : base(x => x.Id == accountId)
+        {
+            AddInclude(x => x.JobSeekerSchedule.JobShifts);
+        }
+    }
 }
