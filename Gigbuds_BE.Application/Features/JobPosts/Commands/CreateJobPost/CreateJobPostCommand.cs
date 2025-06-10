@@ -20,7 +20,6 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
         public required int VacancyCount { get; set; }
         public required string DistrictCode { get; set; }
         public required string ProvinceCode { get; set; }
-        public required bool IsOutstandingPost { get; set; }
         public required int JobPositionId { get; set; }
         public required DateTime StartDate { get; set; }
         public required DateTime EndDate { get; set; }

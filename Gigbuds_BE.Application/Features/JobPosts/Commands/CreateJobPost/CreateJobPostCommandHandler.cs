@@ -50,7 +50,6 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
                 DistrictCode = command.DistrictCode,
                 ProvinceCode = command.ProvinceCode,
                 JobPositionId = command.JobPositionId,
-                IsOutstandingPost = command.IsOutstandingPost,
                 PriorityLevel = EmployerMembership.GetPriorityLevel(jobSeekerMembership),
                 StartDate = command.StartDate,
                 EndDate = command.EndDate,
