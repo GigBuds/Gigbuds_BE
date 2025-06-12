@@ -104,6 +104,8 @@ namespace Gigbuds_BE.API.Extensions
                                         "https://localhost:3001",
                                         "http://localhost:7290",
                                         "http://localhost:8081"
+                                        //"http://172.16.16.7:3000",
+                                        //"https://172.16.16.7:3000"
                                         )
                         .AllowAnyHeader()
                         .AllowAnyMethod()
@@ -117,6 +119,15 @@ namespace Gigbuds_BE.API.Extensions
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .WithExposedHeaders("Content-Disposition");
+                });
+
+                options.AddPolicy("AllowAllOrigin", policy =>
+                {
+                    policy.SetIsOriginAllowed(_ => true)
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials()
+                    .WithExposedHeaders("Location");
                 });
             });
 

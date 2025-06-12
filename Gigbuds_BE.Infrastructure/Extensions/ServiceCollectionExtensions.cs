@@ -49,6 +49,7 @@ namespace Gigbuds_BE.Infrastructure.Extensions
 
             // Configure Abenla SMS settings (replacing SpeedSMS)
             services.Configure<AbenlaSmsSettings>(configuration.GetSection(AbenlaSmsSettings.SectionName));
+        services.Configure<PayOSSettings>(configuration.GetSection(PayOSSettings.SectionName));
 
             // Configure Firebase settings
             services.Configure<FirebaseSettings>(configuration.GetSection(FirebaseSettings.SectionName));
@@ -92,6 +93,7 @@ namespace Gigbuds_BE.Infrastructure.Extensions
 
             // Add SMS and File Storage services
             services.AddHttpClient<ISmsService, AbenlaSmsService>();
+            services.AddScoped<IPaymentService, PayOSService>();
             services.AddScoped<IVerificationCodeService, RedisVerificationCodeService>();
             services.AddScoped<IFileStorageService, FirebaseStorageService>();
 

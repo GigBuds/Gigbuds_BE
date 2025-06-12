@@ -1,4 +1,6 @@
 using Gigbuds_BE.Application.Features.Memberships.Commands;
+using Gigbuds_BE.Application.Features.Memberships.Commands.CreateMembershipPayment;
+using Gigbuds_BE.Application.Features.Memberships.Queries;
 using Gigbuds_BE.Application.Interfaces.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -22,6 +24,36 @@ namespace Gigbuds_BE.API.Controllers
         {
             var result = await _mediator.Send(command);
             return Ok(result);
+        }
+
+        /// <summary>
+        /// Creates a payment link for membership registration using PayOS
+        /// Supports both web and mobile applications
+        /// </summary>
+        /// <param name="command">Membership payment command</param>
+        /// <returns>Payment link with checkout URL and QR code</returns>
+        [HttpPost("payment")]
+        [Authorize]
+        public async Task<IActionResult> CreateMembershipPayment(CreateMembershipPaymentCommand command)
+        {
+            try
+            {
+                var result = await _mediator.Send(command);
+                return Ok(new
+                {
+                    success = true,
+                    data = result,
+                    message = "Payment link created successfully. Use checkoutUrl for web or qrCode for mobile payments."
+                });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { success = false, error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, error = "Internal server error" });
+            }
         }
 
         /// <summary>
@@ -57,6 +89,21 @@ namespace Gigbuds_BE.API.Controllers
             {
                 return BadRequest(new { error = ex.Message });
             }
+        }
+
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllMembership()
+        {
+            var query = new GetAllMembershipQuery();
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        [HttpGet("all/{accountId}")]
+        public async Task<IActionResult> GetAllMembershipByAccountId(int accountId) {
+            var query = new GetAllMembershipByAccountIdQuery(accountId);
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
     }
 }

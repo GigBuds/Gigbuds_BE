@@ -15,6 +15,8 @@ using Gigbuds_BE.Application.BackgroundJobs;
 using Gigbuds_BE.Application.Specifications.Memberships;
 using Gigbuds_BE.Application.DTOs.Memberships;
 using AutoMapper;
+using Gigbuds_BE.Domain.Entities.Transactions;
+using Gigbuds_BE.Application.Specifications.Transactions;
 
 namespace Gigbuds_BE.Infrastructure.Services;
 
@@ -275,4 +277,44 @@ public class MembershipsServices : IMembershipsService
         account.AvailableJobApplication = ProjectConstant.JobSeekerMembership.Free_Tier_Job_Application;
     }
 
+    public async Task<bool> ProcessMembershipPaymentSuccessAsync(long orderCode)
+    {
+        try
+        {
+            // Find the transaction
+            var transactions = await _unitOfWork.Repository<TransactionRecord>()
+                .GetAllWithSpecificationAsync(new TransactionByReferenceCodeSpecification(orderCode));
+
+            var transaction = transactions.FirstOrDefault();
+            if (transaction == null || !transaction.MembershipId.HasValue)
+            {
+                _logger.LogWarning("Transaction or membership not found for order code {OrderCode}", orderCode);
+                return false;
+            }
+
+            // Get membership details
+            var spec = new GetMembershipByIdSpecification(transaction.MembershipId.Value);
+            var membership = await _unitOfWork.Repository<Membership>().GetBySpecificationAsync(spec);
+
+            if (membership == null)
+            {
+                _logger.LogWarning("Membership not found for ID {MembershipId}", transaction.MembershipId.Value);
+                return false;
+            }
+
+            // Activate membership
+            await CreateMemberShipBenefitsAsync(transaction.AccountId, membership);
+            await ScheduleMembershipExpirationAsync(transaction.AccountId, membership);
+
+            _logger.LogInformation("Successfully activated membership for user {UserId}, membership {MembershipId}", 
+                transaction.AccountId, membership.Id);
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error processing membership payment success for order code {OrderCode}", orderCode);
+            return false;
+        }
+    }
 }

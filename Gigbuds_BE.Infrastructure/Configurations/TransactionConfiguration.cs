@@ -30,8 +30,7 @@ internal class TransactionConfiguration : IEntityTypeConfiguration<TransactionRe
             .IsRequired(false);
 
         builder.Property(t => t.ReferenceCode)
-            .HasMaxLength(100)
-            .IsRequired(false);
+            .IsRequired();
 
         builder.Property(t => t.MembershipId)
             .IsRequired(false);
