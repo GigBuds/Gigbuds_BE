@@ -46,5 +46,8 @@ public class GetJobSeekerMyJobSpecification : BaseSpecification<JobApplication>
         ))
     {
         AddInclude(j => j.JobPost);
+        AddInclude(j => j.JobPost.JobPosition);
+        AddInclude(j => j.Account.EmployerProfile);
+        AddInclude(j => j.JobPost.JobPosition);
     }
 }

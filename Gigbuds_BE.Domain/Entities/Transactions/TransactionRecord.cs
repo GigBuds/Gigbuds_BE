@@ -10,7 +10,7 @@ public class TransactionRecord : BaseEntity
     public TransactionStatus TransactionStatus { get; set; }
     public string Content { get; set; }
     public string Gateway { get; set; }
-    public string ReferenceCode { get; set; }
+    public long ReferenceCode { get; set; }
     public int? MembershipId { get; set; }
     public int AccountId { get; set; }
 

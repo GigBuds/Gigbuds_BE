@@ -26,9 +26,18 @@ public class GetAccountMembershipByAccountIdAndMembershipTypeSpecification : Bas
     }
 }
 
-// public class GetAccountMembershipByTypeAndTitleSpecification : BaseSpecification<AccountMembership>
-// {
-//     public GetAccountMembershipByTypeAndTitleSpecification(int accountId, int membershipId, MembershipType membershipType, string title) : base(am => am.AccountId == accountId && am.MembershipId == membershipId && am.Membership.MembershipType == membershipType && am.Membership.Title == title)
-//     {
-//     }
-// }
+public class GetAllMembershipSpecification : BaseSpecification<Membership>
+{
+    public GetAllMembershipSpecification() : base(m => m.IsEnabled == true)
+    {
+        AddOrderBy(m => m.Price);
+    }
+}
+
+public class GetAllMembershipByAccountIdSpecification : BaseSpecification<AccountMembership>
+{
+    public GetAllMembershipByAccountIdSpecification(int accountId) : base(am => am.AccountId == accountId && am.Status == AccountMembershipStatus.Active)
+    {
+        AddInclude(am => am.Membership);
+    }
+}

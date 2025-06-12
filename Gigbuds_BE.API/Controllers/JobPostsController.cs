@@ -15,6 +15,8 @@ using Gigbuds_BE.Application.Features.JobPosts.Queries.GetJobPosts;
 using Gigbuds_BE.Application.DTOs.JobRecommendations;
 using Gigbuds_BE.Application.Features.JobPosts.Queries.GetJobRecommendations;
 using Gigbuds_BE.Application.Features.JobPosts.Queries.GetAllJobPosts;
+using Gigbuds_BE.Application.Features.JobPosts.Queries.GetJobSeekerMyJob;
+using Gigbuds_BE.Application.DTOs.ApplicationUsers;
 
 namespace Gigbuds_BE.API.Controllers
 {

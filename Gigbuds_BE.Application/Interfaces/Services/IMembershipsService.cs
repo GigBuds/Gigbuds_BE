@@ -9,4 +9,5 @@ public interface IMembershipsService
     Task<MembershipResponseDto> CreateMemberShipBenefitsAsync(int accountId, Membership membership);
     Task RevokeMembershipAsync(int accountId, int membershipId);
     Task ScheduleMembershipExpirationAsync(int accountId, Membership membership);
+    Task<bool> ProcessMembershipPaymentSuccessAsync(long orderCode);
 }

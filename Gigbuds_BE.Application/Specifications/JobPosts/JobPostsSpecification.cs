@@ -1,6 +1,7 @@
 using Gigbuds_BE.Domain.Entities.Jobs;
 using Gigbuds_BE.Application.Specifications;
 using Gigbuds_BE.Application.Features.JobPosts.Queries;
+using Gigbuds_BE.Application.DTOs.ApplicationUsers;
 
 namespace Gigbuds_BE.Application.Specifications.JobPosts
 {
@@ -80,4 +81,5 @@ namespace Gigbuds_BE.Application.Specifications.JobPosts
         {
         }
     }
+
 }
