@@ -1,22 +1,49 @@
+﻿
 using Gigbuds_BE.Application.Interfaces.Services.NotificationServices;
 using System.Collections.Concurrent;
 
 namespace Gigbuds_BE.Infrastructure.Services.SignalR
 {
-    public class ConnectionManager : IConnectionManager
+    internal class ConnectionManager : IConnectionManager
     {
-        private readonly ConcurrentDictionary<string, string> _connections = new();
+        private ConcurrentDictionary<string, string> _connections;
+
+        public ConnectionManager()
+        {
+            _connections = new ConcurrentDictionary<string, string>();
+        }
 
         public void AddConnection(string userId, string connectionId)
-            => _connections[userId] = connectionId;
-
-        public void RemoveConnection(string userId)
-            => _connections.TryRemove(userId, out _);
-
-        public string? GetConnectionId(string userId)
-            => _connections.TryGetValue(userId, out var connId) ? connId : null;
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(connectionId))
+            {
+                throw new ArgumentException("UserId and ConnectionId cannot be null or empty.");
+            }
+            _connections[userId] = connectionId;
+        }
 
         public IReadOnlyDictionary<string, string> GetAllConnections()
-            => _connections;
+        {
+            return _connections.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+        }
+
+        public string? GetConnectionId(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new ArgumentException("UserId cannot be null or empty.");
+            }
+            _connections.TryGetValue(userId, out var connectionId);
+            return connectionId;
+        }
+
+        public void RemoveConnection(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new ArgumentException("UserId cannot be null or empty.");
+            }
+            _connections.TryRemove(userId, out _);
+        }
     }
 }

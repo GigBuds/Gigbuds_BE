@@ -13,10 +13,32 @@ public class Template : BaseEntity
 
 public enum ContentType
 {
+    #region General
     Email,
+    #endregion
+
+    #region User notification (Job seeker & Employer)
+    MembershipExpired,
+    #endregion
+
+    #region Employer notifications
+    NewJobApplicationReceived,
+    NewFeedbackReceived,
+    NewFollower,
+    JobPostExpired,
+    #endregion
+
+    #region Job seeker notifications
+    NewPostFromFollowedEmployer,
+    JobFeedbackReceived,
+    JobFeedbackSent,
+    JobApplicationAccepted,
+    JobApplicationRejected,
+    JobApplicationRemovedFromApproved,
+    JobCompleted,
     NewJobPostMatching,
-    FeedbackReceived,
-    MembershipExpiring,
+    ProfileViewedByEmployer,
+    #endregion
 }
 
 public record NewJobPostMatchingTemplateModel()

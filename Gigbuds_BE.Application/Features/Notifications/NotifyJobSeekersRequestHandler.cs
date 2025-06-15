@@ -1,10 +1,12 @@
 ﻿using Gigbuds_BE.Application.DTOs.Notifications;
 using Gigbuds_BE.Application.Features.Embedding.JobPostEmbedding;
+using Gigbuds_BE.Application.Features.Notifications.Commands.CreateNewNotification;
 using Gigbuds_BE.Application.Features.Templates.Queries;
 using Gigbuds_BE.Application.Interfaces.Repositories;
 using Gigbuds_BE.Application.Interfaces.Services;
 using Gigbuds_BE.Application.Interfaces.Services.NotificationServices;
 using Gigbuds_BE.Application.Specifications.EmployerProfiles;
+using Gigbuds_BE.Application.Specifications.Notifications;
 using Gigbuds_BE.Domain.Entities.Accounts;
 using Gigbuds_BE.Domain.Entities.Notifications;
 using MediatR;
@@ -22,7 +24,6 @@ namespace Gigbuds_BE.Application.Features.Notifications
         private readonly INotificationService _notificationService;
         private readonly ITemplatingService _templatingService;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IConnectionManager _connectionManager;
 
         public NotifyJobSeekersRequestHandler(
             ILogger<NotifyJobSeekersRequestHandler> logger,
@@ -31,8 +32,7 @@ namespace Gigbuds_BE.Application.Features.Notifications
             IConfiguration configuration,
             INotificationService notificationService,
             ITemplatingService templatingService,
-            IUnitOfWork unitOfWork,
-            IConnectionManager connectionManager)
+            IUnitOfWork unitOfWork)
         {
             _logger = logger;
             _mediator = mediator;
@@ -41,7 +41,6 @@ namespace Gigbuds_BE.Application.Features.Notifications
             _notificationService = notificationService;
             _templatingService = templatingService;
             _unitOfWork = unitOfWork;
-            _connectionManager = connectionManager;
         }
 
         public async Task Handle(NotifyJobSeekersRequest request, CancellationToken cancellationToken)
@@ -56,8 +55,6 @@ namespace Gigbuds_BE.Application.Features.Notifications
             var parsedTemplate = await RetrieveTemplate();
 
             await SendNotificationToJobSeekers();
-
-
 
             async Task<string> RetrieveTemplate()
             {
@@ -81,12 +78,29 @@ namespace Gigbuds_BE.Application.Features.Notifications
                 List<Task> tasks = [];
                 foreach (var jobSeeker in jobSeekers)
                 {
-                    _logger.LogInformation("Sending notification to job seeker {JobSeekerId} with distance {Distance}", 
+                    _logger.LogInformation("Sending notification to job seeker {JobSeekerId} with distance {Distance}",
                     jobSeeker.Item1, jobSeeker.Item2);
+
+                    var notificationDto = await _mediator.Send(new CreateNewNotificationCommand
+                    {
+                        UserId = jobSeeker.Item1,
+                        Message = parsedTemplate,
+                        ContentType = ContentType.NewJobPostMatching,
+                        JobPostId = request.JobPostId,
+                        CreatedAt = DateTime.UtcNow,
+                        AdditionalPayload = new Dictionary<string, string> {
+                            { "jobPostId", request.JobPostId.ToString() },
+                        }
+                    }, cancellationToken);
+
+                    var userDevices = await _unitOfWork.Repository<DevicePushNotifications>()
+                        .GetAllWithSpecificationAsync(new GetDevicesByUserSpecification(jobSeeker.Item1));
+
                     tasks.Add(_notificationService.NotifyOneJobSeeker(
                         typeof(INotificationForJobSeekers).GetMethod(nameof(INotificationForJobSeekers.NotifyNewJobPostMatching))!,
                         jobSeeker.Item1.ToString(),
-                        parsedTemplate
+                        userDevices.Select(d => {return (d.DeviceId, d.DeviceToken);} ).ToList(),
+                        notificationDto
                     ));
                 }
 

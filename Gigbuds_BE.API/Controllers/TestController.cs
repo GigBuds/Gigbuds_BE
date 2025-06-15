@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Gigbuds_BE.Infrastructure.Services.SignalR;
 using Gigbuds_BE.Application.Interfaces.Services.NotificationServices;
 using Microsoft.AspNetCore.SignalR;
+using Gigbuds_BE.Application.DTOs.Notifications;
 
 namespace Gigbuds_BE.API.Controllers
 {
@@ -73,21 +74,20 @@ namespace Gigbuds_BE.API.Controllers
         [HttpPost("notify-jobseeker-newjob/{id}")]
         public async Task<IActionResult> NotifyJobSeekerOfNewJobPost([FromBody] NewJobPostNotificationDto dto, string id)
         {
-            await _hubContext.Clients.User("2").NotifyNewJobPostMatching(dto.Notification, dto.AdditionalPayload);
+            await _hubContext.Clients.User(id).NotifyNewJobPostMatching(dto.Notification);
             return Ok(new { message = "Notification sent to all job seekers." });
         }
 
         [HttpPost("notify-jobseekers-newjob")]
         public async Task<IActionResult> NotifyJobSeekersOfNewJobPost([FromBody] NewJobPostNotificationDto dto)
         {
-            await _hubContext.Clients.All.NotifyNewJobPostMatching(dto.Notification, dto.AdditionalPayload);
+            await _hubContext.Clients.All.NotifyNewJobPostMatching(dto.Notification);
             return Ok(new { message = "Notification sent to all job seekers." });
         }
 
         public class NewJobPostNotificationDto
         {
-            public string Notification { get; set; }
-            public object? AdditionalPayload { get; set; }
+            public NotificationDto Notification { get; set; }
         }
     }
 }

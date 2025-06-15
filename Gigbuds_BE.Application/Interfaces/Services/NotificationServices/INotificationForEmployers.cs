@@ -1,12 +1,7 @@
 ﻿namespace Gigbuds_BE.Application.Interfaces.Services.NotificationServices
 {
-    public interface INotificationForEmployers 
+    public interface INotificationForEmployers
     {
-        /// <summary>
-        /// Sends a notification to employers about new job post suggestions
-        /// </summary>
-        public Task NotifyNewJobPostSuggestion();
-
         /// <summary>
         /// Sends a notification to employers when they receive a new job application
         /// </summary>

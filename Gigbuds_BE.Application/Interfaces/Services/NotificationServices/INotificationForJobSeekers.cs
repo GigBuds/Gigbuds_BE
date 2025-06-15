@@ -1,4 +1,6 @@
-﻿namespace Gigbuds_BE.Application.Interfaces.Services.NotificationServices
+﻿using Gigbuds_BE.Application.DTOs.Notifications;
+
+namespace Gigbuds_BE.Application.Interfaces.Services.NotificationServices
 {
     public interface INotificationForJobSeekers
     {
@@ -41,7 +43,7 @@
         /// Notifies job seekers about new job posts that match their criteria
         /// </summary>
         /// <param name="notification">The notification message to be sent</param>
-        public Task NotifyNewJobPostMatching(string notification, object? additionalPayload = null);
+        public Task NotifyNewJobPostMatching(NotificationDto notification);
 
         /// <summary>
         /// Notifies job seekers when their profile has been viewed by an employer

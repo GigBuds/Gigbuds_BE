@@ -1,3 +1,5 @@
+using System.Collections.Concurrent;
+
 namespace Gigbuds_BE.Application.Interfaces.Services.NotificationServices
 {
     public interface IConnectionManager

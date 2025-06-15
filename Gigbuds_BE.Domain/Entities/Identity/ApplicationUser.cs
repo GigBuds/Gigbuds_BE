@@ -44,5 +44,6 @@ namespace Gigbuds_BE.Domain.Entities.Identity
         // One-to-one navigation property
         public virtual EmployerProfile EmployerProfile { get; set; }
         public virtual ICollection<BusinessApplication> BusinessApplications { get; set; }
+        public virtual ICollection<DevicePushNotifications> DevicePushNotifications { get; set; }
     }
 }
