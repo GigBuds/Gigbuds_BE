@@ -20,13 +20,13 @@ namespace Gigbuds_BE.Application.Features.Notifications.Queries.GetDeviceToken
 
         public async Task<string?> Handle(GetDeviceTokenQuery request, CancellationToken cancellationToken)
         {
-            var deviceToken = await _unitOfWork.Repository<DevicePushNotifications>().GetBySpecificationAsync(new GetDeviceTokenSpecification(request.DeviceId));
-            if (deviceToken == null)
+            var device = await _unitOfWork.Repository<DevicePushNotifications>().GetBySpecificationAsync(new GetDeviceByDeviceIdSpecification(request.DeviceId));
+            if (device == null)
             {
                 _logger.LogWarning("No device token found for device {DeviceId}", request.DeviceId);
                 return null;
             }
-            return deviceToken.DeviceToken;
+            return device.DeviceToken;
         }
     }
 }

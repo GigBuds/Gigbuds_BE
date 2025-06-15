@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace Gigbuds_BE.Application.Specifications.Notifications
 {
-    public class GetDeviceTokenSpecification(string deviceId) : BaseSpecification<DevicePushNotifications>(
+    public class GetDeviceByDeviceIdSpecification(string deviceId) : BaseSpecification<DevicePushNotifications>(
         device => device.DeviceId.Equals(deviceId))
     {
     }

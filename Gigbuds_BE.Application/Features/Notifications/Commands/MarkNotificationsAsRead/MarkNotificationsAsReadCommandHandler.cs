@@ -24,7 +24,7 @@ namespace Gigbuds_BE.Application.Features.Notifications.Commands.MarkNotificatio
         }
         private async Task MarkNotificationAsRead(int notificationId)
         {
-            var notification = await _unitOfWork.Repository<Notification>().GetBySpecificationAsync(new NotificationSpecification(notificationId));
+            var notification = await _unitOfWork.Repository<Notification>().GetBySpecificationAsync(new GetNotificationByIdSpecification(notificationId));
             if (notification != null)
             {
                 notification.IsRead = true;

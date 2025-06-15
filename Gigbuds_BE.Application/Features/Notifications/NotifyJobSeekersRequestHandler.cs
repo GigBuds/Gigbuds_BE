@@ -99,7 +99,7 @@ namespace Gigbuds_BE.Application.Features.Notifications
                     tasks.Add(_notificationService.NotifyOneJobSeeker(
                         typeof(INotificationForJobSeekers).GetMethod(nameof(INotificationForJobSeekers.NotifyNewJobPostMatching))!,
                         jobSeeker.Item1.ToString(),
-                        userDevices.Select(d => {return (d.DeviceId, d.DeviceToken);} ).ToList(),
+                        userDevices.Select(d => d.DeviceToken).ToList(),
                         notificationDto
                     ));
                 }

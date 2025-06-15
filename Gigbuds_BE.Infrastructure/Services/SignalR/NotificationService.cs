@@ -27,7 +27,7 @@ namespace Gigbuds_BE.Infrastructure.Services.SignalR
             _connectionManager = connectionManager;
         }
 
-        public async Task NotifyOneJobSeeker(MethodInfo method, string jobSeekerId, List<(string, string)> deviceIdWithToken, NotificationDto notification)
+        public async Task NotifyOneJobSeeker(MethodInfo method, string jobSeekerId, List<string> deviceTokens, NotificationDto notification)
         {
             if (IsClientConnected(jobSeekerId))
             {
@@ -36,11 +36,11 @@ namespace Gigbuds_BE.Infrastructure.Services.SignalR
             else
             {
                 _logger.LogInformation("Client {JobSeekerId} is not connected, sending push notification", jobSeekerId);
-                if (deviceIdWithToken.Count > 0)
+                if (deviceTokens.Count > 0)
                 {
                     try
                     {
-                        await _pushNotificationService.SendPushNotificationAsync(deviceIdWithToken.Select(d => d.Item2).ToList(), "GigBuds", notification.Content, notification.AdditionalPayload);
+                        await _pushNotificationService.SendPushNotificationAsync(deviceTokens, "GigBuds", notification.Content, notification.AdditionalPayload);
                     }
                     catch (Exception ex)
                     {
@@ -50,7 +50,7 @@ namespace Gigbuds_BE.Infrastructure.Services.SignalR
 
                 try
                 {
-                    await _notificationStorageService.SaveNotificationAsync(deviceIdWithToken.Select(d => d.Item1).ToList(), notification);
+                    await _notificationStorageService.SaveNotificationAsync(jobSeekerId, notification);
                 }
                 catch (Exception ex)
                 {
@@ -61,7 +61,7 @@ namespace Gigbuds_BE.Infrastructure.Services.SignalR
             }
         }
 
-        public async Task NotifyOneEmployer(MethodInfo method, string employerId, List<(string, string)> deviceIdWithToken, NotificationDto notification)
+        public async Task NotifyOneEmployer(MethodInfo method, string employerId, List<string> deviceTokens, NotificationDto notification)
         {
             if (IsClientConnected(employerId))
             {
@@ -70,11 +70,11 @@ namespace Gigbuds_BE.Infrastructure.Services.SignalR
             else
             {
                 _logger.LogInformation("Client {EmployerId} is not connected, sending push notification", employerId);
-                if (deviceIdWithToken.Count > 0)
+                if (deviceTokens.Count > 0)
                 {
                     try
                     {
-                        await _pushNotificationService.SendPushNotificationAsync(deviceIdWithToken.Select(d => d.Item2).ToList(), "GigBuds", notification.Content, notification.AdditionalPayload);
+                        await _pushNotificationService.SendPushNotificationAsync(deviceTokens, "GigBuds", notification.Content, notification.AdditionalPayload);
                     }
                     catch (Exception ex)
                     {
@@ -84,7 +84,7 @@ namespace Gigbuds_BE.Infrastructure.Services.SignalR
 
                 try
                 {
-                    await _notificationStorageService.SaveNotificationAsync(deviceIdWithToken.Select(d => d.Item1).ToList(), notification);
+                    await _notificationStorageService.SaveNotificationAsync(employerId, notification);
                 }
                 catch (Exception ex)
                 {

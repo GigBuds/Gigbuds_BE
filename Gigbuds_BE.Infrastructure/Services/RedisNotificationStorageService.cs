@@ -21,31 +21,20 @@ namespace Gigbuds_BE.Infrastructure.Services
             _logger = logger;
         }
 
-        public Task ClearAllNotificationsAsync(string deviceId)
+        public Task ClearAllNotificationsAsync(string userId)
         {
-            return _db.KeyDeleteAsync(deviceId);
+            return _db.KeyDeleteAsync(userId);
         }
 
-        public async Task<List<NotificationDto>> GetNotificationsAsync(string deviceId)
+        public async Task<List<NotificationDto>> GetNotificationsAsync(string userId)
         {
-            var notifications = await _db.SetMembersAsync(deviceId);
+            var notifications = await _db.SetMembersAsync(userId);
             return notifications.Select(n => JsonSerializer.Deserialize<NotificationDto>(n!)!).ToList();
         }
 
-        public async Task SaveNotificationAsync(List<string> userDevicesIds, NotificationDto notificationDto)
+        public async Task SaveNotificationAsync(string userId, NotificationDto notificationDto)
         {
-            var tasks = new List<Task>();
-            foreach (var deviceId in userDevicesIds)
-            {
-                tasks.Add(_db.SetAddAsync(deviceId, JsonSerializer.Serialize(notificationDto)));
-            }
-            await Task.WhenAll(tasks);
+            await _db.SetAddAsync(userId, JsonSerializer.Serialize(notificationDto));
         }
-
-        private string GetKey(int userId)
-        {
-            return $"{_settings.Storage.RedisKeyPrefix}:{userId}";
-        }
-
     }
 }

@@ -17,7 +17,6 @@ namespace Gigbuds_BE.Application.Configurations
 
             public int RedisDatabase { get; set; } = 1;
 
-            public string RedisKeyPrefix { get; set; } = "Gigbuds:Notifications:User";
         }
 
         public StorageSettings Storage { get; set; } = new StorageSettings();

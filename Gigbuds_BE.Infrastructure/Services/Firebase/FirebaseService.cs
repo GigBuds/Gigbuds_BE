@@ -13,7 +13,7 @@ namespace Gigbuds_BE.Infrastructure.Services.Firebase
         {
             _app = FirebaseApp.Create(new AppOptions()
             {
-                Credential = GoogleCredential.FromFile(settings.Value.ServiceAccountKeyPath)
+                Credential = GoogleCredential.FromFile(settings.Value.NotificationServiceAccountKeyPath)
             });
         }
 

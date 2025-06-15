@@ -8,22 +8,22 @@ namespace Gigbuds_BE.Application.Interfaces.Services.NotificationServices
         /// <summary>
         /// Saves a notification for a specific user, appending it to the end of the list
         /// </summary>
-        /// <param name="userDevicesIds">The IDs of the devices to save the notification for</param>
+        /// <param name="userId">The ID of the user to save the notification for</param>
         /// <param name="notificationDto">The notification data to save</param>
         /// <returns>True if the notification was saved successfully, false otherwise</returns>
-        Task SaveNotificationAsync(List<string> userDevicesIds, NotificationDto notificationDto);
+        Task SaveNotificationAsync(string userId, NotificationDto notificationDto);
 
         /// <summary>
         /// Retrieves all notifications for a specific user
         /// </summary>
-        /// <param name="deviceId">The ID of the device to get notifications for</param>
+        /// <param name="userId">The ID of the user to get notifications for</param>
         /// <returns>A list of notifications for the specified user</returns>
-        Task<List<NotificationDto>> GetNotificationsAsync(string deviceId);
+        Task<List<NotificationDto>> GetNotificationsAsync(string userId);
 
         /// <summary>
         /// Removes all notifications for a specific user
         /// </summary>
-        /// <param name="deviceId">The ID of the device to clear notifications for</param>
-        Task ClearAllNotificationsAsync(string deviceId);
+        /// <param name="userId">The ID of the user to clear notifications for</param>
+        Task ClearAllNotificationsAsync(string userId);
     }
 }
