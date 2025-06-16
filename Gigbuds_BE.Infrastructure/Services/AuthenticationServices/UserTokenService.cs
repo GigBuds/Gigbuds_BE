@@ -1,8 +1,11 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Gigbuds_BE.Application.Interfaces.Services.AuthenticationServices;
 using Gigbuds_BE.Domain.Entities.Identity;
+using Gigbuds_BE.Domain.Entities.Memberships;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.JsonWebTokens;
@@ -54,6 +57,7 @@ public class UserTokenService(
 
             var audiences = jwtSettings.GetSection("Audience").Get<string[]>() ?? [];
 
+
             var claimsList = new List<Claim>()
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
@@ -68,6 +72,22 @@ public class UserTokenService(
                 new Claim("aud", audiences[1].ToString()),
                 new Claim("aud", audiences[2].ToString()),
             };
+
+            var activeMembership = user.AccountMemberships?.Where(am => am.Status == AccountMembershipStatus.Active && user.Id == am.AccountId).Select(am => new{
+                Id = am.Id,
+                Title = am.Membership.Title,
+                Type = am.Membership.MembershipType.ToString(),
+                StartDate = am.StartDate,
+                EndDate = am.EndDate,
+                Status = am.Status.ToString(),
+                MembershipId = am.MembershipId
+            }).ToList();
+
+            if(activeMembership?.Any() == true)
+            {
+                var membershipClaimsJson = JsonSerializer.Serialize(activeMembership);
+                claimsList.Add(new Claim("memberships", membershipClaimsJson));
+            }
 
             var tokenDescriptior = new SecurityTokenDescriptor
             {

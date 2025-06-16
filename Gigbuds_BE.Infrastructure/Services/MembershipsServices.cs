@@ -47,7 +47,7 @@ public class MembershipsServices : IMembershipsService
             EndDate = DateTime.UtcNow.AddDays(membership.Duration),
             Status = AccountMembershipStatus.Active
         };
-        _unitOfWork.Repository<AccountMembership>().Insert(accountMembership);
+         _unitOfWork.Repository<AccountMembership>().Insert(accountMembership);
         await _unitOfWork.CompleteAsync();
 
         if(membership.MembershipType == MembershipType.JobSeeker && membership.Title == ProjectConstant.MembershipLevel.Free_Tier_Job_Application_Title) {

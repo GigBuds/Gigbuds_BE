@@ -311,6 +311,13 @@ public class PayOSService : IPaymentService
                 return false;
             }
 
+            var paymentStatus = verifiedWebhookData.code switch
+            {
+                "00" => TransactionStatus.Completed, // PayOS success code
+                "01" => TransactionStatus.Failed,    // PayOS failure code
+                _ => TransactionStatus.Pending
+            };
+            
             // Update transaction status based on webhook data
             transaction.TransactionStatus = verifiedWebhookData.code switch
             {
@@ -377,15 +384,4 @@ public class PayOSService : IPaymentService
         return true;
     }
 }
-// Supporting DTOs for webhook (keeping existing ones for compatibility)
-public class PaymentWebhookDto
-{
-    public PaymentWebhookDataDto? Data { get; set; }
-}
 
-public class PaymentWebhookDataDto
-{
-    public int OrderCode { get; set; }
-    public decimal Amount { get; set; }
-    public string Status { get; set; } = string.Empty;
-} 
