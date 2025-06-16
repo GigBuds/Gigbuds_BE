@@ -50,7 +50,7 @@ public class LoginUserCommandHandler(
         /// <exception cref="BadHttpRequestException">Thrown when user is not found.</exception>
         private async Task<ApplicationUser> GetAndValidateUser(string identifier)
         {
-            ApplicationUser? user = await userManager.Users.FirstOrDefaultAsync(u=> u.PhoneNumber == identifier || u.Email == identifier);
+            ApplicationUser? user = await userManager.Users.Include(u => u.AccountMemberships).ThenInclude(am => am.Membership).FirstOrDefaultAsync(u=> u.PhoneNumber == identifier || u.Email == identifier);
             //TODO: Add check !user.EmailVerified)
             if (user is null)
             {

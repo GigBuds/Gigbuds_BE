@@ -4,6 +4,7 @@ using Gigbuds_BE.Application.Features.Authentication.Commands.Register.RegisterF
 using Gigbuds_BE.Application.Features.Authentication.Commands.Register.RegisterForEmployer;
 using Gigbuds_BE.Application.Features.Authentication.Commands.Register.RegisterForStaff;
 using Gigbuds_BE.Application.Features.Authentication.Commands.Register.RegisterForUsers;
+using Gigbuds_BE.Application.Features.Authentication.Commands.RenewTokens;
 using Gigbuds_BE.Application.Features.Authentication.Commands.SendVerificationCode;
 using Gigbuds_BE.Application.Features.Authentication.Commands.VerifyPhone;
 using Gigbuds_BE.Domain.Entities.Identity;
@@ -114,6 +115,20 @@ namespace Gigbuds_BE.API.Controllers
                 {
                     return BadRequest(new { message = "Invalid verification code" });
                 }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPost("renew-id-token")]
+        [AllowAnonymous]
+        public async Task<ActionResult<string>> RenewIdToken([FromBody] RenewIdTokenCommand command) {
+            try
+            {
+                var result = await mediator.Send(command);
+                return Ok(result);
             }
             catch (Exception ex)
             {
