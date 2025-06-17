@@ -1,4 +1,4 @@
-﻿using Gigbuds_BE.Domain.Entities.Notifications;
+using Gigbuds_BE.Domain.Entities.Notifications;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

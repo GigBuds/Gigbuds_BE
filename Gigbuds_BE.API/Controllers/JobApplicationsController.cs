@@ -5,6 +5,7 @@ using Gigbuds_BE.Application.DTOs.JobApplications;
 using Gigbuds_BE.Application.Features.JobApplications.Commands;
 using Gigbuds_BE.Application.Features.JobApplications.Queries;
 using Gigbuds_BE.Application.Features.JobPosts.Queries.GetJobSeekerMyJob;
+using Gigbuds_BE.Domain.Entities.Jobs;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -114,6 +115,21 @@ namespace Gigbuds_BE.API.Controllers
         {
             var jobPosts = await _mediator.Send(new GetJobSeekerMyJobQuery(requestDto));
             return ResultWithPagination(jobPosts.Data, jobPosts.Count, requestDto.PageIndex, requestDto.PageSize);
+        }
+
+        [HttpPost("update-status")]
+        public async Task<IActionResult> UpdateJobApplicationStatus(UpdateJobApplicationStatusCommand command)
+        {
+            if(!Enum.IsDefined(typeof(JobApplicationStatus), command.Status)) {
+                return BadRequest(new { error = "Invalid job application status", message = "Status must be one of the following: Pending, Approved, Rejected, Removed" });
+            }
+            
+            try {
+                var result = await _mediator.Send(command);
+                return Ok(new { message = $"Job application status with id: {command.JobApplicationId} updated successfully" });
+            } catch (Exception ex) {
+                return BadRequest(new { error = "Failed to update job application status", message = ex.Message });
+            }
         }
     }
 }

@@ -25,7 +25,7 @@ app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseHttpLogging();
 
 // Configure CORS
-app.UseCors("AllowFrontend");
+app.UseCors("AllowAllOrigin");
 // app.UseCors("AllowGemini");
 
 // Configure the HTTP request pipeline.

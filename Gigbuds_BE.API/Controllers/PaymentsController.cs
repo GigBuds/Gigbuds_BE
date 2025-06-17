@@ -314,15 +314,3 @@ public class PaymentsController : _BaseApiController
         }
     }
 }
-
-// Supporting DTO for cancellation request
-public class CancelPaymentRequestDto
-{
-    public string? CancellationReason { get; set; }
-}
-
-public class ProcessMobilePaymentRequestDto
-{
-    public string OrderCode { get; set; } = string.Empty;
-    public string Status { get; set; } = string.Empty;
-} 
