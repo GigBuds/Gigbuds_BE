@@ -13,9 +13,11 @@ namespace Gigbuds_BE.Application.Profiles
     {
         public MembershipsProfile()
         {
-            CreateMap<AccountMembership, MembershipResponseDto>();
+            CreateMap<AccountMembership, MembershipResponseDto>()
+            .ForMember(dest => dest.MembershipId, opt => opt.MapFrom(src => src.MembershipId));
 
-            CreateProjection<Membership, MembershipDetailResponseDto>();
+            CreateProjection<Membership, MembershipDetailResponseDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
 
             CreateProjection<AccountMembership, MemberShipByIdDto>()
                 .ForMember(dest => dest.MembershipType, opt => opt.MapFrom(src => src.Membership.MembershipType))
