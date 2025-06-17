@@ -6,7 +6,7 @@ namespace Gigbuds_BE.Infrastructure.Extensions
 {
     public static class HubClientExtensions
     {
-        public static async Task NotifyEmployer(
+        internal static async Task NotifyEmployer(
             this INotificationForUser clients,
             string methodName,
             NotificationDto notification
@@ -27,7 +27,7 @@ namespace Gigbuds_BE.Infrastructure.Extensions
                 case nameof(INotificationForEmployers.NotifyNewFollower):
                     notification.Type = NotificationType.follower.ToString();
                     notification.Title = "Có người theo dõi mới";
-                    await clients.NotifyNewFollower();
+                    await clients.NotifyNewFollower(notification);
                     break;
                 case nameof(INotificationForEmployers.NotifyJobPostExpired):
                     notification.Type = NotificationType.job.ToString();

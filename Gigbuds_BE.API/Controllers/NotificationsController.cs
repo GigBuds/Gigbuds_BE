@@ -4,6 +4,7 @@ using Gigbuds_BE.Application.Features.Notifications.Commands.RegisterNotificatio
 using Gigbuds_BE.Application.Features.Notifications.Queries.GetDeviceToken;
 using Gigbuds_BE.Application.Features.Notifications.Queries.GetNotifications;
 using Gigbuds_BE.Application.Features.Notifications.Queries.GetStoredNotifications;
+using Gigbuds_BE.Application.Features.Notifications.Queries.GetStoredNotificationsWeb;
 using Gigbuds_BE.Application.Specifications.Notifications;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -48,6 +49,13 @@ namespace Gigbuds_BE.API.Controllers
         public async Task<IActionResult> GetStoredNotifications([FromRoute] string deviceId)
         {
             var notifications = await _mediator.Send(new GetStoredNotificationQuery { DeviceId = deviceId });
+            return Ok(notifications);
+        }
+
+        [HttpGet("stored/web/{userId}")]
+        public async Task<IActionResult> GetStoredWebNotifications([FromRoute] int userId)
+        {
+            var notifications = await _mediator.Send(new GetStoredNotificationWebQuery { UserId = userId });
             return Ok(notifications);
         }
 

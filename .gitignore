@@ -425,3 +425,5 @@ SMS_VERIFICATION_SETUP.md
 FIREBASE_ADMIN_SDK_GUIDE.md
 firebase-service.json
 firebase-service1.json
+Gigbuds_BE.API/firebase-service-storage.json
+Gigbuds_BE.API/firebase-service-notification.json
