@@ -1,11 +1,10 @@
-using System;
 using Gigbuds_BE.Domain.Entities.Notifications;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Gigbuds_BE.Infrastructure.Configurations;
-
-internal class DevicePushNotificationConfiguration
+namespace Gigbuds_BE.Infrastructure.Configurations
+{
+    internal class DevicePushNotificationConfiguration
     {
         public void Configure(EntityTypeBuilder<DevicePushNotifications> builder)
         {
@@ -27,3 +26,4 @@ internal class DevicePushNotificationConfiguration
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }
+}

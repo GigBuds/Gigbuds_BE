@@ -16,6 +16,7 @@ using Gigbuds_BE.Application.Configurations;
 using Gigbuds_BE.Infrastructure.Seeder;
 using Gigbuds_BE.Infrastructure.Services.SignalR;
 using Gigbuds_BE.Application.Interfaces.Services.NotificationServices;
+using Gigbuds_BE.Infrastructure.Services.Firebase;
 
 namespace Gigbuds_BE.Infrastructure.Extensions
 {
@@ -47,9 +48,12 @@ namespace Gigbuds_BE.Infrastructure.Extensions
             // Configure Redis settings
             services.Configure<RedisSettings>(configuration.GetSection(RedisSettings.SectionName));
 
+            // Configure Notification storage settings
+            services.Configure<NotificationSettings>(configuration.GetSection(NotificationSettings.MainSectionName));
+
             // Configure Abenla SMS settings (replacing SpeedSMS)
             services.Configure<AbenlaSmsSettings>(configuration.GetSection(AbenlaSmsSettings.SectionName));
-        services.Configure<PayOSSettings>(configuration.GetSection(PayOSSettings.SectionName));
+            services.Configure<PayOSSettings>(configuration.GetSection(PayOSSettings.SectionName));
 
             // Configure Firebase settings
             services.Configure<FirebaseSettings>(configuration.GetSection(FirebaseSettings.SectionName));
@@ -97,6 +101,9 @@ namespace Gigbuds_BE.Infrastructure.Extensions
             services.AddScoped<IVerificationCodeService, RedisVerificationCodeService>();
             services.AddScoped<IFileStorageService, FirebaseStorageService>();
 
+            // Add Firebase service
+            services.AddSingleton<IFirebaseService, FirebaseService>();
+
             // Add Google Maps service
             services.AddHttpClient<IGoogleMapsService, GoogleMapsService>();
 
@@ -109,6 +116,10 @@ namespace Gigbuds_BE.Infrastructure.Extensions
             services.AddSignalR();
             services.AddSingleton<IConnectionManager, ConnectionManager>();
             services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IPushNotificationService, PushNotificationService>();
+
+            // Add Notification storage service
+            services.AddScoped<INotificationStorageService, RedisNotificationStorageService>();
 
             // Add templating service
             services.AddScoped<ITemplatingService, TemplatingService>();

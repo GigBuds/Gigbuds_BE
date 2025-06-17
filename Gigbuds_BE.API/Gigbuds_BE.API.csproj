@@ -31,5 +31,4 @@
     <ProjectReference Include="..\Gigbuds_BE.Application\Gigbuds_BE.Application.csproj" />
     <ProjectReference Include="..\Gigbuds_BE.Infrastructure\Gigbuds_BE.Infrastructure.csproj" />
   </ItemGroup>
-
 </Project>

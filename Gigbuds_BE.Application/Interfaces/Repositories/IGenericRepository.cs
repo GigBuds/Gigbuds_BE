@@ -8,6 +8,7 @@ namespace Gigbuds_BE.Application.Interfaces.Repositories
         // GET
         Task<IReadOnlyList<T>> GetAllWithSpecificationAsync(ISpecification<T> specification, bool asNoTracking = true);
         Task<T?> GetBySpecificationAsync(ISpecification<T> specification, bool asNoTracking = true);
+        Task<int> CountAsync(ISpecification<T> specification);
 
         // GET support Projection with Automapper for better performance
         Task<TDto?> GetBySpecificationProjectedAsync<TDto>(ISpecification<T> specification, IConfigurationProvider mapperConfig);

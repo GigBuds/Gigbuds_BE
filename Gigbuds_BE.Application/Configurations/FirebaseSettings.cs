@@ -17,6 +17,8 @@ public class FirebaseSettings
     // Optional: Keep for local development if you prefer file-based approach
     public string? ServiceAccountKeyPath { get; set; }
 
+    public string? NotificationServiceAccountKeyPath { get; set;  }
+
     // Service Account JSON properties - add these
     // public ServiceAccount? ServiceAccount { get; set; }
 

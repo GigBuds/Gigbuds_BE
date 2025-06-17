@@ -22,6 +22,7 @@ var app = builder.Build();
 // ====================================
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
+app.UseHttpLogging();
 
 // Configure CORS
 app.UseCors("AllowAllOrigin");
@@ -55,7 +56,6 @@ var applicationDbContext = scope.ServiceProvider.GetRequiredService<GigbudsDbCon
 var identitySeeder = scope.ServiceProvider.GetRequiredService<IIdentitySeeder>();
 
 var ShouldReseedData = app.Configuration.GetValue<bool>("ClearAndReseedData");
-
 // Add after app.UseHttpsRedirection();
 
 app.MapGet("/api/cats", () =>

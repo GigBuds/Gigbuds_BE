@@ -24,9 +24,10 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Queries.GetAllJobPosts
         public async Task<PagedResultDto<JobPostDto>> Handle(GetAllJobPostsQuery request, CancellationToken cancellationToken)
         {
             var spec = new GetAllJobPostsSpecification(request.Params);
+            var jobPostsCount = await _unitOfWork.Repository<JobPost>().CountAsync(spec);
             var jobPosts = await _unitOfWork.Repository<JobPost>().GetAllWithSpecificationProjectedAsync<JobPostDto>(spec, _mapper.ConfigurationProvider);
 
-            return new PagedResultDto<JobPostDto>(jobPosts.Count, jobPosts);
+            return new PagedResultDto<JobPostDto>(jobPostsCount, jobPosts);
         }
     }
 }
