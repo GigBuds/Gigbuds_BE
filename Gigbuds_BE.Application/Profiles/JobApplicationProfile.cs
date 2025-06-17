@@ -41,6 +41,7 @@ public class JobApplicationProfile : Profile
             .ForMember(dest => dest.VacancyCount, opt => opt.MapFrom(src => src.JobPost.VacancyCount))
             .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.JobPost.Account.EmployerProfile.CompanyName))
             .ForMember(dest => dest.CompanyLogo, opt => opt.MapFrom(src => src.JobPost.Account.EmployerProfile.CompanyLogo))
-            .ForMember(dest => dest.JobSchedule, opt => opt.MapFrom(src => src.JobPost.JobPostSchedule));
+            .ForMember(dest => dest.JobSchedule, opt => opt.MapFrom(src => src.JobPost.JobPostSchedule))
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.JobPostId));
     }
 }
