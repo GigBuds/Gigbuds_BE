@@ -5,6 +5,7 @@ namespace Gigbuds_BE.Application.DTOs.Memberships;
 
 public class MembershipDetailResponseDto
 {
+    public int Id { get; set; }
     public string Title { get; set; }
     public MembershipType MembershipType { get; set; }
     public int Duration { get; set; }
