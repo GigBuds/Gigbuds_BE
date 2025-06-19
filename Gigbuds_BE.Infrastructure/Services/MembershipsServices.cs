@@ -17,6 +17,7 @@ using Gigbuds_BE.Application.DTOs.Memberships;
 using AutoMapper;
 using Gigbuds_BE.Domain.Entities.Transactions;
 using Gigbuds_BE.Application.Specifications.Transactions;
+using Gigbuds_BE.Infrastructure.Migrations;
 
 namespace Gigbuds_BE.Infrastructure.Services;
 
@@ -38,16 +39,26 @@ public class MembershipsServices : IMembershipsService
     public async Task<MembershipResponseDto> CreateMemberShipBenefitsAsync(int accountId, Membership membership)
     {
         await DisableCurrentMembershipAsync(accountId, membership.MembershipType);
+        var membershipSpec = new GetAccountMembershipByAccountIdAndMembershipIdSpecification(accountId, membership.Id);
 
-        var accountMembership = new AccountMembership
-        {
-            AccountId = accountId,
-            MembershipId = membership.Id,
-            StartDate = DateTime.UtcNow,
-            EndDate = DateTime.UtcNow.AddDays(membership.Duration),
-            Status = AccountMembershipStatus.Active
-        };
-         _unitOfWork.Repository<AccountMembership>().Insert(accountMembership);
+        var toRegisterMembership = await _unitOfWork.Repository<AccountMembership>().GetBySpecificationAsync(membershipSpec, false);
+        if(toRegisterMembership != null) {
+            toRegisterMembership.UpdatedAt = DateTime.UtcNow;
+            toRegisterMembership.StartDate = DateTime.UtcNow;
+            toRegisterMembership.EndDate = DateTime.UtcNow.AddDays(membership.Duration);
+            toRegisterMembership.Status = AccountMembershipStatus.Active;
+        } else {
+            toRegisterMembership = new AccountMembership
+            {
+                AccountId = accountId,
+                MembershipId = membership.Id,
+                StartDate = DateTime.UtcNow,
+                EndDate = DateTime.UtcNow.AddDays(membership.Duration),
+                Status = AccountMembershipStatus.Active
+            };
+             _unitOfWork.Repository<AccountMembership>().Insert(toRegisterMembership);
+        }
+        
         await _unitOfWork.CompleteAsync();
 
         if(membership.MembershipType == MembershipType.JobSeeker && membership.Title == ProjectConstant.MembershipLevel.Free_Tier_Job_Application_Title) {
@@ -86,7 +97,7 @@ public class MembershipsServices : IMembershipsService
         {
             await ActivatePremiumTierEmployerMembershipAsync(accountId, membership);
         }
-        return _mapper.Map<MembershipResponseDto>(accountMembership);
+        return _mapper.Map<MembershipResponseDto>(toRegisterMembership);
     }
 
     private async Task<bool> ActivatePremiumTierEmployerMembershipAsync(int accountId, Membership membership)
@@ -116,7 +127,7 @@ public class MembershipsServices : IMembershipsService
     private async Task<bool> DisableCurrentMembershipAsync(int accountId, MembershipType membershipType)
     {
         var spec = new GetAccountMembershipByAccountIdAndMembershipTypeSpecification(accountId, membershipType);
-        var accountMembership = await _unitOfWork.Repository<AccountMembership>().GetAllWithSpecificationAsync(spec);
+        var accountMembership = await _unitOfWork.Repository<AccountMembership>().GetAllWithSpecificationAsync(spec, false);
         
         if(accountMembership.Count == 0) {
             return false;
@@ -125,7 +136,7 @@ public class MembershipsServices : IMembershipsService
         foreach (var accountMembershipItem in accountMembership)
         {
             accountMembershipItem.Status = AccountMembershipStatus.Inactive;
-            _unitOfWork.Repository<AccountMembership>().Update(accountMembershipItem);
+            await CancelMembershipAsync(accountId, accountMembershipItem.MembershipId);
         }
 
         await _unitOfWork.CompleteAsync();
@@ -231,7 +242,7 @@ public class MembershipsServices : IMembershipsService
             _logger.LogInformation("Cron job revoke membership " + accountId + ":" + membershipId);
             await ActivateEmployerFreeTierMembershipAsync(accountId);
         }
-
+        await CancelMembershipAsync(accountId, membershipId);
         await _unitOfWork.CompleteAsync();
     }
 
@@ -314,6 +325,34 @@ public class MembershipsServices : IMembershipsService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error processing membership payment success for order code {OrderCode}", orderCode);
+            return false;
+        }
+    }
+
+    public async Task<bool> CancelMembershipAsync(int accountId, int membershipId)
+    {
+        try{
+            var scheduler = await _schedulerFactory.GetScheduler();
+            var jobKey = new JobKey($"MembershipExpiration_{accountId}_{membershipId}", "MembershipExpiration");
+
+
+            var jobExists = await scheduler.CheckExists(jobKey);
+            if (jobExists) {
+                var deleted =await scheduler.DeleteJob(jobKey);
+                if (deleted) {
+                    _logger.LogInformation("Membership expiration job deleted for user {UserId}, membership {MembershipId}", accountId, membershipId);
+                    return true;
+                } else {
+                    _logger.LogInformation("Membership expiration job not deleted for user {UserId}, membership {MembershipId}", accountId, membershipId);
+                    return false;
+                }
+            } else {
+                _logger.LogInformation("Membership expiration job not found for user {UserId}, membership {MembershipId}", accountId, membershipId);
+                return false;
+            }
+
+        } catch (Exception ex) {
+            _logger.LogError(ex, "Error canceling membership for user {UserId}, membership {MembershipId}", accountId, membershipId);
             return false;
         }
     }

@@ -10,4 +10,5 @@ public interface IMembershipsService
     Task RevokeMembershipAsync(int accountId, int membershipId);
     Task ScheduleMembershipExpirationAsync(int accountId, Membership membership);
     Task<bool> ProcessMembershipPaymentSuccessAsync(long orderCode);
+    Task<bool> CancelMembershipAsync(int accountId, int membershipId);
 }

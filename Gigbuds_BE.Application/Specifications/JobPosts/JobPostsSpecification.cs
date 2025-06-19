@@ -16,7 +16,6 @@ namespace Gigbuds_BE.Application.Specifications.JobPosts
     {
         public GetAllJobPostsSpecification(GetAllJobPostsQueryParams queryParams)
             : base(j => j.IsEnabled
-                && j.JobPostStatus == JobPostStatus.Open
                 && (string.IsNullOrEmpty(queryParams.SearchTerm)
                     || j.JobTitle.ToLower().Contains(queryParams.SearchTerm.ToLower())
                     || j.JobDescription.ToLower().Contains(queryParams.SearchTerm.ToLower())
