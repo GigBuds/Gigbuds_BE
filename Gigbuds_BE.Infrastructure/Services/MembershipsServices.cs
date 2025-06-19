@@ -229,7 +229,12 @@ public class MembershipsServices : IMembershipsService
 
         if (deleteAccountMembership != null)
         {
-            _unitOfWork.Repository<AccountMembership>().Delete(deleteAccountMembership);
+            if(deleteAccountMembership.Membership.Title == ProjectConstant.MembershipLevel.Free_Tier_Job_Application_Title) {
+                deleteAccountMembership.Status = AccountMembershipStatus.Inactive;
+                _unitOfWork.Repository<AccountMembership>().Update(deleteAccountMembership);
+            } else {
+                _unitOfWork.Repository<AccountMembership>().Delete(deleteAccountMembership);
+            }
         }
 
         if (deleteAccountMembership.Membership.MembershipType.ToString() == MembershipType.JobSeeker.ToString())
