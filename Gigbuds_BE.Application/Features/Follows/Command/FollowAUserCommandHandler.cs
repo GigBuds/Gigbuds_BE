@@ -17,6 +17,8 @@ public class FollowAUserCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler
         {
             unitOfWork.Repository<Follower>().Insert(follower);
             await unitOfWork.CompleteAsync();
+
+            // TODO: Follow user notification
             return true;
         }
         catch (Exception ex)

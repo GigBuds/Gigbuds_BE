@@ -25,7 +25,6 @@ namespace Gigbuds_BE.Infrastructure.Services.SignalR
             List<Task> tasks = new List<Task>();
             foreach (var deviceToken in userDeviceTokens)
             {
-
                 try
                 {
                     var message = new Message

@@ -1,7 +1,6 @@
 using Gigbuds_BE.Domain.Entities.Jobs;
-using Gigbuds_BE.Application.Specifications;
-using Gigbuds_BE.Application.Features.JobPosts.Queries;
-using Gigbuds_BE.Application.DTOs.ApplicationUsers;
+using Quartz.Util;
+
 
 namespace Gigbuds_BE.Application.Specifications.JobPosts
 {
@@ -16,15 +15,25 @@ namespace Gigbuds_BE.Application.Specifications.JobPosts
     {
         public GetAllJobPostsSpecification(GetAllJobPostsQueryParams queryParams)
             : base(j => j.IsEnabled
-                && (string.IsNullOrEmpty(queryParams.SearchTerm)
-                    || j.JobTitle.ToLower().Contains(queryParams.SearchTerm.ToLower())
-                    || j.JobDescription.ToLower().Contains(queryParams.SearchTerm.ToLower())
-                    || j.JobRequirement.ToLower().Contains(queryParams.SearchTerm.ToLower())
-                    || j.JobLocation.ToLower().Contains(queryParams.SearchTerm.ToLower()))
+                && (string.IsNullOrEmpty(queryParams.Search)
+                    || j.JobTitle.ToLower().Contains(queryParams.Search.ToLower())
+                    || j.JobDescription.ToLower().Contains(queryParams.Search.ToLower())
+                    || j.JobRequirement.ToLower().Contains(queryParams.Search.ToLower())
+                    || j.JobLocation.ToLower().Contains(queryParams.Search.ToLower()))
+                && (string.IsNullOrEmpty(queryParams.Status) || queryParams.Status.Equals("all") || Enum.Parse<JobPostStatus>(queryParams.Status).Equals(j.JobPostStatus))
                 && (queryParams.EmployerId == null || j.AccountId == queryParams.EmployerId))
         {
             AddInclude(x => x.JobPosition);
             AddPaging(queryParams.PageSize * (queryParams.PageIndex - 1), queryParams.PageSize);
+
+            switch (queryParams.SortBy)
+            {
+                case "createdAt":
+                    if (queryParams.SortOrder.Equals("asc"))
+                        AddOrderBy(a => a.CreatedAt);
+                    else AddOrderByDesc(a => a.CreatedAt);
+                        break;
+            }
         }
     }
 

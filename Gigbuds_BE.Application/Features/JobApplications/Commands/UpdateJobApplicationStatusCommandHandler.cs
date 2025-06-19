@@ -20,6 +20,8 @@ public class UpdateJobApplicationStatusCommandHandler(IUnitOfWork unitOfWork) : 
         jobApplication.UpdatedAt = DateTime.UtcNow;
         unitOfWork.Repository<JobApplication>().Update(jobApplication);
         await unitOfWork.CompleteAsync();
+
+        // TODO: add notification accept, remove, rejected
         return true;
     }
 }

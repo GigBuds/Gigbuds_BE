@@ -1,4 +1,7 @@
-﻿using Gigbuds_BE.Application.Interfaces.Services.NotificationServices;
+﻿using Gigbuds_BE.Application.DTOs.Notifications;
+using Gigbuds_BE.Application.Features.Notifications.Queries.GetStoredNotifications;
+using Gigbuds_BE.Application.Interfaces.Services.NotificationServices;
+using MediatR;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Gigbuds_BE.Infrastructure.Services.SignalR
@@ -6,9 +9,11 @@ namespace Gigbuds_BE.Infrastructure.Services.SignalR
     public class NotificationHub : Hub<INotificationForUser>
     {
         private readonly IConnectionManager _connectionManager;
-        public NotificationHub(IConnectionManager connectionManager)
+        private readonly IMediator _mediator;
+        public NotificationHub(IConnectionManager connectionManager, IMediator mediator)
         {
             _connectionManager = connectionManager;
+            _mediator = mediator;
         }
 
         // ==============================
@@ -26,6 +31,11 @@ namespace Gigbuds_BE.Infrastructure.Services.SignalR
             await base.OnDisconnectedAsync(exception);
         }
 
+        public async Task<List<NotificationDto>> GetStoredNotifications(string deviceId)
+        {
+            var result = await _mediator.Send(new GetStoredNotificationQuery { DeviceId = deviceId });
+            return result;
+        }
         public async Task AddToGroup(string groupName)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);

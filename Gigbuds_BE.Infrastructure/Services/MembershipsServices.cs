@@ -244,6 +244,7 @@ public class MembershipsServices : IMembershipsService
         }
         await CancelMembershipAsync(accountId, membershipId);
         await _unitOfWork.CompleteAsync();
+        // TODO: RevokeMembership notification
     }
 
     private async Task ActivateEmployerFreeTierMembershipAsync(int accountId)
