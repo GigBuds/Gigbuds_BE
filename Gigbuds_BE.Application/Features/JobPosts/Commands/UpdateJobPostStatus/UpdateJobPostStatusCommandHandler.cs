@@ -21,10 +21,11 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.UpdateJobPostStatus
         public async Task<int> Handle(UpdateJobPostStatusCommand request, CancellationToken cancellationToken)
         {
             var jobPost = await _unitOfWork.Repository<JobPost>()
-                .GetBySpecificationAsync(new JobPostByIdSpecification(request.JobPostId))
+                .GetBySpecificationAsync(new JobPostByIdSpecification(request.JobPostId), asNoTracking: false)
                 ?? throw new NotFoundException("Job post not found");
 
             jobPost.JobPostStatus = Enum.Parse<JobPostStatus>(request.Status);
+
             _unitOfWork.Repository<JobPost>().Update(jobPost);
 
             try

@@ -23,6 +23,7 @@ namespace Gigbuds_BE.Application.DTOs
         public required DateTime StartDate { get; set; }
         public required DateTime EndDate { get; set; }
         public required JobScheduleDto JobSchedule { get; set; }
+        public required String Status { get; set; }
         public required string JobPositionName { get; set; }
         public required int JobPositionId { get; set; }
     }

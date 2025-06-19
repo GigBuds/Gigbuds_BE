@@ -22,7 +22,6 @@ public class MembershipExpirationJob : IJob
         try{
             _logger.LogInformation("Revoking membership for User {UserId}, Membership {MembershipId}", accountId, membershipId);
             await _membershipsService.RevokeMembershipAsync(accountId, membershipId);
-
         }catch(Exception ex){
 
             _logger.LogError(ex, "Failed to revoke membership for User {UserId}, Membership {MembershipId}", accountId, membershipId);

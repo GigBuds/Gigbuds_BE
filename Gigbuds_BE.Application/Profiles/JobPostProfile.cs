@@ -44,8 +44,9 @@ namespace Gigbuds_BE.Application.Profiles
                 .ForMember(dest => dest.CompanyLogo, opt => opt.MapFrom(src => src.Account.EmployerProfile.CompanyLogo))
                 .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Account.EmployerProfile.CompanyName))
                 .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.JobPostStatus.ToString()))
                 .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate));
-                
+
             //Projection
             CreateProjection<JobPost, SearchJobPostDto>()
                 .ForMember(dest => dest.JobPostId, opt => opt.MapFrom(src => src.Id))

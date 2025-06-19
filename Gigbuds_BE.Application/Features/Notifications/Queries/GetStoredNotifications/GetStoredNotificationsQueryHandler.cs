@@ -21,12 +21,17 @@ namespace Gigbuds_BE.Application.Features.Notifications.Queries.GetStoredNotific
         public async Task<List<NotificationDto>> Handle(GetStoredNotificationQuery request, CancellationToken cancellationToken)
         {
             var device = await _unitOfWork.Repository<DevicePushNotifications>().GetBySpecificationAsync(new GetDeviceByDeviceIdSpecification(request.DeviceId));
-            var storedNotifications = await _notificationStorageService.GetNotificationsAsync(device!.AccountId.ToString());
-            if (storedNotifications.Count == 0)
+            if (device != null)
             {
-                return [];
+                var storedNotifications = await _notificationStorageService.GetNotificationsAsync(device!.AccountId.ToString());
+                if (storedNotifications.Count == 0)
+                {
+                    return [];
+                }
+                await _notificationStorageService.ClearAllNotificationsAsync(device!.AccountId.ToString());
+                return storedNotifications.OrderByDescending(n => n.Timestamp).ToList();
             }
-            return storedNotifications.OrderByDescending(n => n.Timestamp).ToList();
+            return [];
         }
     }
 }

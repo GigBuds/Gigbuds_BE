@@ -1,4 +1,5 @@
 using Gigbuds_BE.Application.DTOs;
+using Gigbuds_BE.Application.Specifications.JobPosts;
 using MediatR;
 
 namespace Gigbuds_BE.Application.Features.JobPosts.Queries.GetAllJobPosts

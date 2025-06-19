@@ -50,6 +50,8 @@ namespace Gigbuds_BE.Infrastructure.Services.SignalR
 
                 try
                 {
+                    HubClientExtensions.SetNotificationTypeAndTitleForJobSeeker(
+                        nameof(INotificationForJobSeekers.NotifyNewJobPostMatching), notification);
                     await _notificationStorageService.SaveNotificationAsync(jobSeekerId, notification);
                 }
                 catch (Exception ex)
@@ -84,6 +86,8 @@ namespace Gigbuds_BE.Infrastructure.Services.SignalR
 
                 try
                 {
+                    HubClientExtensions.SetNotificationTypeAndTitleForJobSeeker(
+                        nameof(INotificationForJobSeekers.NotifyNewJobPostMatching), notification);
                     await _notificationStorageService.SaveNotificationAsync(employerId, notification);
                 }
                 catch (Exception ex)

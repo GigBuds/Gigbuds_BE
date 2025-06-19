@@ -115,18 +115,9 @@ namespace Gigbuds_BE.API.Extensions
             {
                 options.AddPolicy("AllowFrontend", policy =>
                 {
-                    policy.WithOrigins("http://localhost:3000",
-                                        "https://localhost:3000",
-                                        "http://localhost:3001",
-                                        "https://localhost:3001",
-                                        "http://localhost:7290",
-                                        "http://localhost:8081"
-                                        //"http://172.16.16.7:3000",
-                                        //"https://172.16.16.7:3000"
-                                        )
+                    policy.AllowAnyOrigin()
                         .AllowAnyHeader()
                         .AllowAnyMethod()
-                        .AllowCredentials()
                         .WithExposedHeaders("Location");
                 });
 
