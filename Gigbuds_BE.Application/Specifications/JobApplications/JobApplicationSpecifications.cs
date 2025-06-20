@@ -9,6 +9,7 @@ public class GetJobSpecificationById : BaseSpecification<JobApplication>
     public GetJobSpecificationById(int id)
         : base(x => x.Id == id)
     {
+        AddInclude(x => x.JobPost);
     }
 
     public GetJobSpecificationById(int JobPostId, int AccountId)
