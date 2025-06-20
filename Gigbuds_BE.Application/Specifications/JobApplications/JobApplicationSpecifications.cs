@@ -28,6 +28,14 @@ public class GetJobApplicationsByJobPostSpecification : BaseSpecification<JobApp
         AddInclude(x => x.Account.SkillTags);
     }
 }
+public class GetJobApplicationsByJobPostIdSpecification : BaseSpecification<JobApplication>
+{
+    public GetJobApplicationsByJobPostIdSpecification(int jobPostId)
+        : base(x => x.JobPostId == jobPostId)
+    {
+
+    }
+}
 
 public class GetJobApplicationsByAccountIdSpecification : BaseSpecification<JobApplication>
 {

@@ -1,7 +1,6 @@
 ﻿using Gigbuds_BE.Application.DTOs.Notifications;
 using Gigbuds_BE.Application.Features.Embedding.JobPostEmbedding;
 using Gigbuds_BE.Application.Features.Notifications.Commands.CreateNewNotification;
-using Gigbuds_BE.Application.Features.Templates.Queries;
 using Gigbuds_BE.Application.Interfaces.Repositories;
 using Gigbuds_BE.Application.Interfaces.Services;
 using Gigbuds_BE.Application.Interfaces.Services.NotificationServices;
@@ -58,13 +57,11 @@ namespace Gigbuds_BE.Application.Features.Notifications
 
             async Task<string> RetrieveTemplate()
             {
-                var template = await _mediator.Send(new GetTemplateByTypeQuery { TemplateType = ContentType.NewJobPostMatching }, cancellationToken);
-
                 var employerCompany = await _unitOfWork.Repository<EmployerProfile>().GetBySpecificationAsync(
                     new GetEmployerProfleByAccountIdSpecification(request.EmployerId)
                 );
 
-                return _templatingService.ParseTemplate(template, new NewJobPostMatchingTemplateModel
+                return await _templatingService.ParseTemplate(ContentType.NewJobPostMatching, new NewJobPostMatchingTemplateModel
                 {
                     JobTitle = request.JobTitle,
                     JobCompany = employerCompany!.CompanyName,
@@ -98,8 +95,8 @@ namespace Gigbuds_BE.Application.Features.Notifications
 
                     tasks.Add(_notificationService.NotifyOneJobSeeker(
                         typeof(INotificationForJobSeekers).GetMethod(nameof(INotificationForJobSeekers.NotifyNewJobPostMatching))!,
+                        userDevices.Select(a => a.DeviceToken!)!.ToList(),
                         jobSeeker.Item1.ToString(),
-                        userDevices.Select(d => d.DeviceToken).ToList(),
                         notificationDto
                     ));
                 }

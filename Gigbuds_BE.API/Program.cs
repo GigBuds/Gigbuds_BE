@@ -11,9 +11,10 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
-builder.AddPresentation(builder.Configuration);
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplications(builder.Configuration);
+builder.AddPresentation(builder.Configuration);
+
 
 var app = builder.Build();
 

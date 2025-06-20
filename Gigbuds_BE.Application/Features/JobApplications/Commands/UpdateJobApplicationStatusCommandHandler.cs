@@ -1,12 +1,22 @@
-using System;
+using System.Reflection;
+using Gigbuds_BE.Application.DTOs.Notifications;
+using Gigbuds_BE.Application.Features.Notifications.Commands.CreateNewNotification;
 using Gigbuds_BE.Application.Interfaces.Repositories;
+using Gigbuds_BE.Application.Interfaces.Services.NotificationServices;
+using Gigbuds_BE.Application.Interfaces.Services;
 using Gigbuds_BE.Application.Specifications.JobApplications;
 using Gigbuds_BE.Domain.Entities.Jobs;
+using Gigbuds_BE.Domain.Entities.Notifications;
 using MediatR;
 
 namespace Gigbuds_BE.Application.Features.JobApplications.Commands;
 
-public class UpdateJobApplicationStatusCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<UpdateJobApplicationStatusCommand, bool>
+public class UpdateJobApplicationStatusCommandHandler(
+    IUnitOfWork unitOfWork,
+    INotificationService notificationService,
+    IMediator mediator,
+    ITemplatingService templatingService
+    ) : IRequestHandler<UpdateJobApplicationStatusCommand, bool>
 {
     public async Task<bool> Handle(UpdateJobApplicationStatusCommand request, CancellationToken cancellationToken)
     {
@@ -21,7 +31,86 @@ public class UpdateJobApplicationStatusCommandHandler(IUnitOfWork unitOfWork) : 
         unitOfWork.Repository<JobApplication>().Update(jobApplication);
         await unitOfWork.CompleteAsync();
 
-        // TODO: add notification accept, remove, rejected
+        switch (request.Status)
+        {
+            case JobApplicationStatus.Approved:
+                {
+                    var template = await templatingService.ParseTemplate(ContentType.JobApplicationAccepted, new JobApplicationAcceptedTemplateModel
+                    {
+                        JobName = jobApplication.JobPost!.JobTitle,
+                    });
+                    var notificationDto = await mediator.Send(new CreateNewNotificationCommand
+                    {
+                        UserId = jobApplication.AccountId,
+                        Message = template,
+                        ContentType = ContentType.JobApplicationAccepted,
+                        JobPostId = jobApplication.JobPostId,
+                        CreatedAt = DateTime.UtcNow,
+                        AdditionalPayload = new Dictionary<string, string> {
+                            { "jobApplicationId", jobApplication.Id.ToString() },
+                            { "userId", jobApplication.AccountId.ToString() },
+                        }
+                    }, cancellationToken);
+                    //await notificationService.NotifyOneJobSeeker(
+                    //    typeof(INotificationForJobSeekers).GetMethod(nameof(INotificationForJobSeekers.NotifyJobApplicationAccepted))!,
+                    //    jobApplication.AccountId.ToString(),
+                    //    notificationDto
+                    //);
+                }
+                break;
+            case JobApplicationStatus.Rejected:
+                {
+                    var template = await templatingService.ParseTemplate(ContentType.JobApplicationRejected, new JobApplicationRejectedTemplateModel
+                    {
+                        JobName = jobApplication.JobPost!.JobTitle,
+                    });
+                    var notificationDto = await mediator.Send(new CreateNewNotificationCommand
+                    {
+                        UserId = jobApplication.AccountId,
+                        Message = template,
+                        ContentType = ContentType.JobApplicationRejected,
+                        JobPostId = jobApplication.JobPostId,
+                        CreatedAt = DateTime.UtcNow,
+                        AdditionalPayload = new Dictionary<string, string> {
+                            { "jobApplicationId", jobApplication.Id.ToString() },
+                            { "userId", jobApplication.AccountId.ToString() },
+                        }
+                    }, cancellationToken);
+                    //await notificationService.NotifyOneJobSeeker(
+                    //    typeof(INotificationForJobSeekers).GetMethod(nameof(INotificationForJobSeekers.NotifyJobApplicationRejected))!,
+                    //    jobApplication.AccountId.ToString(),
+                    //    notificationDto
+                    //);
+                }
+                break;
+            case JobApplicationStatus.Removed:
+                {
+                    var template = await templatingService.ParseTemplate(ContentType.JobApplicationRemovedFromApproved, new JobApplicationRemovedTemplateModel
+                    {
+                        JobName = jobApplication.JobPost!.JobTitle,
+                    });
+                    var notificationDto = await mediator.Send(new CreateNewNotificationCommand
+                    {
+                        UserId = jobApplication.AccountId,
+                        Message = template,
+                        ContentType = ContentType.JobApplicationRemovedFromApproved,
+                        JobPostId = jobApplication.JobPostId,
+                        CreatedAt = DateTime.UtcNow,
+                        AdditionalPayload = new Dictionary<string, string> {
+                            { "jobApplicationId", jobApplication.Id.ToString() },
+                            { "userId", jobApplication.AccountId.ToString() },
+                        }
+                    }, cancellationToken);
+                    //await notificationService.NotifyOneJobSeeker(
+                    //    typeof(INotificationForJobSeekers).GetMethod(nameof(INotificationForJobSeekers.NotifyJobApplicationAccepted))!,
+                    //    jobApplication.AccountId.ToString(),
+                    //    notificationDto
+                    //);
+                }
+                break;
+            default:
+                break;
+        }
         return true;
     }
 }

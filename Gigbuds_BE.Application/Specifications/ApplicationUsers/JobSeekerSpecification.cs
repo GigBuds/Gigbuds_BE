@@ -1,4 +1,6 @@
 using Gigbuds_BE.Domain.Entities.Identity;
+using Gigbuds_BE.Domain.Entities.Jobs;
+using System.Linq.Expressions;
 
 namespace Gigbuds_BE.Application.Specifications.ApplicationUsers
 {
@@ -24,4 +26,5 @@ namespace Gigbuds_BE.Application.Specifications.ApplicationUsers
             AddInclude(x => x.Followers);
         }
     }
+
 }
