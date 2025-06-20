@@ -49,7 +49,8 @@ namespace Gigbuds_BE.Application.Specifications.JobPosts
         (!jobPostSearchParams.JobTimeFrom.HasValue || x.CreatedAt >= jobPostSearchParams.JobTimeFrom.Value) &&
         (!jobPostSearchParams.JobTimeTo.HasValue || x.ExpireTime <= jobPostSearchParams.JobTimeTo.Value) &&
         (!jobPostSearchParams.SalaryUnit.HasValue || x.SalaryUnit == jobPostSearchParams.SalaryUnit.Value) &&
-        (jobPostSearchParams.DistrictCodeList.Count() == 0 || jobPostSearchParams.DistrictCodeList.Contains(x.DistrictCode)))
+        (jobPostSearchParams.DistrictCodeList.Count() == 0 || jobPostSearchParams.DistrictCodeList.Contains(x.DistrictCode))
+        && (x.JobPostStatus == JobPostStatus.Open))
         {
             AddInclude(x => x.Account);
             AddInclude(x => x.JobPosition);

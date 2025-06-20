@@ -1,6 +1,7 @@
 using AutoMapper;
 using Gigbuds_BE.Application.DTOs;
 using Gigbuds_BE.Application.Interfaces.Repositories;
+using Gigbuds_BE.Application.Specifications.JobApplications;
 using Gigbuds_BE.Application.Specifications.JobPosts;
 using Gigbuds_BE.Domain.Entities.Jobs;
 using MediatR;
