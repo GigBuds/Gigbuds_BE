@@ -4,6 +4,7 @@ using Gigbuds_BE.Application.Interfaces.Services;
 using Gigbuds_BE.Application.Interfaces.Services.NotificationServices;
 using Gigbuds_BE.Application.Specifications.JobApplications;
 using Gigbuds_BE.Application.Specifications.JobPosts;
+using Gigbuds_BE.Application.Specifications.Notifications;
 using Gigbuds_BE.Domain.Entities.Identity;
 using Gigbuds_BE.Domain.Entities.Jobs;
 using Gigbuds_BE.Domain.Entities.Notifications;
@@ -69,11 +70,15 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.UpdateJobPostStatus
                         return Task.Run(async () =>
                         {
                             _logger.LogInformation("Notifying job seeker {JobSeekerId} about job post {JobPostId}", applicant.AccountId, jobPost.Id);
-                            //await _notificationService.NotifyOneUser(
-                            //    typeof(INotificationForJobSeekers).GetMethod(nameof(INotificationForJobSeekers.NotifyJobCompleted))!,
-                            //    applicant.AccountId.ToString(),
-                            //    notificationDto
-                            //);
+                            var userDevices = await _unitOfWork.Repository<DevicePushNotifications>()
+                                .GetAllWithSpecificationAsync(new GetDevicesByUserSpecification(applicant.AccountId));
+
+                            await _notificationService.NotifyOneUser(
+                                typeof(INotificationForJobSeekers).GetMethod(nameof(INotificationForJobSeekers.NotifyJobCompleted))!,
+                                userDevices.Select(a => a.DeviceToken!)!.ToList(),
+                                applicant.AccountId.ToString(),
+                                notificationDto
+                            );
                         });
                     });
 

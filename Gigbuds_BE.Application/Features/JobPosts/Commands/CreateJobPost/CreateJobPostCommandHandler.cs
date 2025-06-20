@@ -12,6 +12,7 @@ using Gigbuds_BE.Domain.Entities.Accounts;
 using Gigbuds_BE.Domain.Entities.Notifications;
 using Gigbuds_BE.Application.Features.Notifications.Commands.CreateNewNotification;
 using Gigbuds_BE.Application.Interfaces.Services.NotificationServices;
+using Gigbuds_BE.Application.Specifications.Notifications;
 
 namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
 {
@@ -73,33 +74,39 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
             {
                 await _unitOfWork.CompleteAsync();
                 // Notify followers about the new job post
-                //var followers = await _unitOfWork.Repository<Follower>().GetAllWithSpecificationAsync(new GetFollowerByUserIdSpecification(command.AccountId));
-                //var employer = await _applicationUserService.GetByIdAsync(command.AccountId);
-                //var template = await _templatingService.ParseTemplate(ContentType.NewPostFromFollowedEmployer, new NewPostFromFollowedEmployerTemplateModel
-                //{
-                //    EmployerUserName = employer!.UserName!,
-                //    JobName = newJobPost.JobTitle
-                //});
-                //var tasks = followers.Select(async follower =>
-                //{
-                //    var notificationDto = await _mediator.Send(new CreateNewNotificationCommand
-                //    {
-                //        UserId = follower.FollowerAccountId,
-                //        Message = template,
-                //        ContentType = ContentType.NewPostFromFollowedEmployer,
-                //        CreatedAt = DateTime.UtcNow,
-                //        AdditionalPayload = new Dictionary<string, string>
-                //        {
-                //            { "jobPostId", newJobPost.Id.ToString() }
-                //        }
-                //    });
-                //    return _notificationService.NotifyOneUser(
-                //        typeof(INotificationForJobSeekers).GetMethod(nameof(INotificationForJobSeekers.NotifyNewPostFromFollowedEmployer))!,
-                //        follower.FollowerAccountId.ToString(),
-                //        notificationDto
-                //    );
-                //});
-                //await Task.WhenAll(tasks);
+                var followers = await _unitOfWork.Repository<Follower>().GetAllWithSpecificationAsync(new GetFollowerByUserIdSpecification(command.AccountId));
+                var employer = await _applicationUserService.GetByIdAsync(command.AccountId);
+                var template = await _templatingService.ParseTemplate(ContentType.NewPostFromFollowedEmployer, new NewPostFromFollowedEmployerTemplateModel
+                {
+                    EmployerUserName = employer!.UserName!,
+                    JobName = newJobPost.JobTitle
+                });
+                var tasks = followers.Select(async follower =>
+                {
+                    var notificationDto = await _mediator.Send(new CreateNewNotificationCommand
+                    {
+                        UserId = follower.FollowerAccountId,
+                        Message = template,
+                        ContentType = ContentType.NewPostFromFollowedEmployer,
+                        CreatedAt = DateTime.UtcNow,
+                        AdditionalPayload = new Dictionary<string, string>
+                        {
+                            { "jobPostId", newJobPost.Id.ToString() }
+                        }
+                    });
+
+                    return Task.Run(async () => {
+                        var userDevices = await _unitOfWork.Repository<DevicePushNotifications>()
+                            .GetAllWithSpecificationAsync(new GetDevicesByUserSpecification(follower.FollowerAccountId));
+                        await _notificationService.NotifyOneUser(
+                            typeof(INotificationForJobSeekers).GetMethod(nameof(INotificationForJobSeekers.NotifyNewPostFromFollowedEmployer))!,
+                            userDevices.Select(a => a.DeviceToken!)!.ToList(),
+                            follower.FollowerAccountId.ToString(),
+                            notificationDto);
+                        }
+                    ); 
+                });
+                await Task.WhenAll(tasks);
 
                 _logger.LogInformation("New job post created with id: {Id}", newJobPost.Id);
 

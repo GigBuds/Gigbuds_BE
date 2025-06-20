@@ -4,6 +4,7 @@ using Gigbuds_BE.Application.Interfaces.Repositories;
 using Gigbuds_BE.Application.Interfaces.Services;
 using Gigbuds_BE.Application.Interfaces.Services.NotificationServices;
 using Gigbuds_BE.Application.Specifications.Memberships;
+using Gigbuds_BE.Application.Specifications.Notifications;
 using Gigbuds_BE.Domain.Entities.Memberships;
 using Gigbuds_BE.Domain.Entities.Notifications;
 using MediatR;
@@ -54,11 +55,14 @@ public class MembershipExpirationJob : IJob
                 }
             });
 
-            //await _notificationService.NotifyOneUser(
-            //    typeof(INotificationForUser).GetMethod(nameof(INotificationForUser.NotifyMembershipExpired))!,
-            //    accountId.ToString(),
-            //    notificationDto
-            //);
+            var userDevices = await _unitOfWork.Repository<DevicePushNotifications>()
+                    .GetAllWithSpecificationAsync(new GetDevicesByUserSpecification(accountId));
+            await _notificationService.NotifyOneUser(
+                typeof(INotificationForUser).GetMethod(nameof(INotificationForUser.NotifyMembershipExpired))!,
+                userDevices.Select(a => a.DeviceToken!)!.ToList(),
+                accountId.ToString(),
+                notificationDto
+            );
         }
         catch (Exception ex)
         {

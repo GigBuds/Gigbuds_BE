@@ -120,27 +120,13 @@ namespace Gigbuds_BE.Infrastructure.Services.SignalR
 
         public async Task NotifyOneEmployer(MethodInfo method, string employerId, NotificationDto notification)
         {
-            var deviceTokens = await GetUserDeviceTokensAsync(employerId);
-
             if (IsClientConnected(employerId))
             {
                 await _hubContext.Clients.User(employerId).NotifyEmployer(method.Name, notification);
             }
             else
             {
-                _logger.LogInformation("Client {EmployerId} is not connected, sending push notification", employerId);
-                if (deviceTokens.Count > 0)
-                {
-                    try
-                    {
-                        await _pushNotificationService.SendPushNotificationAsync(deviceTokens, "GigBuds", notification.Content, notification.AdditionalPayload);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Error sending push notification to user {EmployerId}", employerId);
-                    }
-                }
-
+                _logger.LogInformation("Client {EmployerId} is not connected, storing notification", employerId);
                 try
                 {
                     HubClientExtensions.SetNotificationTypeAndTitleForEmployer(
@@ -151,7 +137,6 @@ namespace Gigbuds_BE.Infrastructure.Services.SignalR
                 {
                     _logger.LogError(ex, "Error saving notification to database for user {EmployerId}", employerId);
                 }
-                _logger.LogInformation("No device token found for user {EmployerId}, storing notification", employerId);
             }
         }
 
