@@ -67,11 +67,12 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.UpdateJobPostStatus
                             CreatedAt = DateTime.UtcNow,
                         });
 
+                        var userDevices = await _unitOfWork.Repository<DevicePushNotifications>()
+                            .GetAllWithSpecificationAsync(new GetDevicesByUserSpecification(applicant.AccountId));
+
                         return Task.Run(async () =>
                         {
                             _logger.LogInformation("Notifying job seeker {JobSeekerId} about job post {JobPostId}", applicant.AccountId, jobPost.Id);
-                            var userDevices = await _unitOfWork.Repository<DevicePushNotifications>()
-                                .GetAllWithSpecificationAsync(new GetDevicesByUserSpecification(applicant.AccountId));
 
                             await _notificationService.NotifyOneUser(
                                 typeof(INotificationForJobSeekers).GetMethod(nameof(INotificationForJobSeekers.NotifyJobCompleted))!,

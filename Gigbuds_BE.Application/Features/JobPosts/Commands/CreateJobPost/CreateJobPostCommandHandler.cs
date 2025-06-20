@@ -93,11 +93,12 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
                         {
                             { "jobPostId", newJobPost.Id.ToString() }
                         }
-                    });
+                    }); 
+                    var userDevices = await _unitOfWork.Repository<DevicePushNotifications>()
+                            .GetAllWithSpecificationAsync(new GetDevicesByUserSpecification(follower.FollowerAccountId));
 
                     return Task.Run(async () => {
-                        var userDevices = await _unitOfWork.Repository<DevicePushNotifications>()
-                            .GetAllWithSpecificationAsync(new GetDevicesByUserSpecification(follower.FollowerAccountId));
+                        
                         await _notificationService.NotifyOneUser(
                             typeof(INotificationForJobSeekers).GetMethod(nameof(INotificationForJobSeekers.NotifyNewPostFromFollowedEmployer))!,
                             userDevices.Select(a => a.DeviceToken!)!.ToList(),

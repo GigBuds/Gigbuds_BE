@@ -8,6 +8,7 @@ using Gigbuds_BE.Application.Specifications.JobApplications;
 using Gigbuds_BE.Domain.Entities.Jobs;
 using Gigbuds_BE.Domain.Entities.Notifications;
 using MediatR;
+using Gigbuds_BE.Application.Specifications.Notifications;
 
 namespace Gigbuds_BE.Application.Features.JobApplications.Commands;
 
@@ -58,11 +59,14 @@ public class UpdateJobApplicationStatusCommandHandler(
                             { "userId", jobApplication.AccountId.ToString() },
                         }
                     }, cancellationToken);
-                    //await notificationService.NotifyOneJobSeeker(
-                    //    typeof(INotificationForJobSeekers).GetMethod(nameof(INotificationForJobSeekers.NotifyJobApplicationAccepted))!,
-                    //    jobApplication.AccountId.ToString(),
-                    //    notificationDto
-                    //);
+                    var userDevices = await unitOfWork.Repository<DevicePushNotifications>()
+                        .GetAllWithSpecificationAsync(new GetDevicesByUserSpecification(jobApplication.AccountId));
+                    await notificationService.NotifyOneJobSeeker(
+                        typeof(INotificationForJobSeekers).GetMethod(nameof(INotificationForJobSeekers.NotifyJobApplicationAccepted))!,
+                        userDevices.Select(a => a.DeviceToken!)!.ToList(),
+                        jobApplication.AccountId.ToString(),
+                        notificationDto
+                    );
                 }
                 break;
             case JobApplicationStatus.Rejected:
@@ -83,11 +87,14 @@ public class UpdateJobApplicationStatusCommandHandler(
                             { "userId", jobApplication.AccountId.ToString() },
                         }
                     }, cancellationToken);
-                    //await notificationService.NotifyOneJobSeeker(
-                    //    typeof(INotificationForJobSeekers).GetMethod(nameof(INotificationForJobSeekers.NotifyJobApplicationRejected))!,
-                    //    jobApplication.AccountId.ToString(),
-                    //    notificationDto
-                    //);
+                    var userDevices = await unitOfWork.Repository<DevicePushNotifications>()
+                        .GetAllWithSpecificationAsync(new GetDevicesByUserSpecification(jobApplication.AccountId));
+                    await notificationService.NotifyOneJobSeeker(
+                        typeof(INotificationForJobSeekers).GetMethod(nameof(INotificationForJobSeekers.NotifyJobApplicationRejected))!,
+                        userDevices.Select(a => a.DeviceToken!)!.ToList(),
+                        jobApplication.AccountId.ToString(),
+                        notificationDto
+                    );
                 }
                 break;
             case JobApplicationStatus.Removed:
@@ -108,11 +115,15 @@ public class UpdateJobApplicationStatusCommandHandler(
                             { "userId", jobApplication.AccountId.ToString() },
                         }
                     }, cancellationToken);
-                    //await notificationService.NotifyOneJobSeeker(
-                    //    typeof(INotificationForJobSeekers).GetMethod(nameof(INotificationForJobSeekers.NotifyJobApplicationAccepted))!,
-                    //    jobApplication.AccountId.ToString(),
-                    //    notificationDto
-                    //);
+
+                    var userDevices = await unitOfWork.Repository<DevicePushNotifications>()
+                        .GetAllWithSpecificationAsync(new GetDevicesByUserSpecification(jobApplication.AccountId));
+                    await notificationService.NotifyOneJobSeeker(
+                        typeof(INotificationForJobSeekers).GetMethod(nameof(INotificationForJobSeekers.NotifyJobApplicationAccepted))!,
+                        userDevices.Select(a => a.DeviceToken!)!.ToList(),
+                        jobApplication.AccountId.ToString(),
+                        notificationDto
+                    );
                 }
                 break;
             default:
