@@ -52,3 +52,10 @@ public class GetJobSeekerMyJobSpecification : BaseSpecification<JobApplication>
         AddInclude(j => j.JobPost.JobPosition);
     }
 }
+
+public class GetAllJobApplicationForCountSpecification : BaseSpecification<JobApplication>
+{
+    public GetAllJobApplicationForCountSpecification(int jobPostId) : base(j => j.JobPostId == jobPostId)
+    {
+    }
+}
