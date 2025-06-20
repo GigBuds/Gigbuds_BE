@@ -117,7 +117,7 @@ namespace Gigbuds_BE.API.Controllers
             return ResultWithPagination(jobPosts.Data, jobPosts.Count, requestDto.PageIndex, requestDto.PageSize);
         }
 
-        [HttpPost("update-status")]
+        [HttpPut("update-status")]
         public async Task<IActionResult> UpdateJobApplicationStatus(UpdateJobApplicationStatusCommand command)
         {
             if(!Enum.IsDefined(typeof(JobApplicationStatus), command.Status)) {

@@ -66,6 +66,11 @@ namespace Gigbuds_BE.Application.Features.JobApplications.Commands
                     throw new InvalidOperationException("This job post is no longer accepting applications");
                 }
 
+                if(jobPost.VacancyCount == 0)
+                {
+                    throw new InvalidOperationException("This job post has reach the maximum number of applicants");
+                }
+
                 string? cvUrl = null;
 
                 // Upload CV file if provided

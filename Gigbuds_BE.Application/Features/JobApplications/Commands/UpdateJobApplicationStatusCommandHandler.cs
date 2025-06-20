@@ -11,14 +11,21 @@ public class UpdateJobApplicationStatusCommandHandler(IUnitOfWork unitOfWork) : 
     public async Task<bool> Handle(UpdateJobApplicationStatusCommand request, CancellationToken cancellationToken)
     {
         var spec = new GetJobSpecificationById(request.JobApplicationId);
-        var jobApplication = await unitOfWork.Repository<JobApplication>().GetBySpecificationAsync(spec);
+        var jobApplication = await unitOfWork.Repository<JobApplication>().GetBySpecificationAsync(spec,false);
         if (jobApplication == null)
         {
             return false;
         }
         jobApplication.ApplicationStatus = request.Status;
+        if(request.Status == JobApplicationStatus.Approved)
+        {
+            jobApplication.JobPost.VacancyCount--;
+        }
+        if(request.Status == JobApplicationStatus.Removed)
+        {
+            jobApplication.JobPost.VacancyCount++;
+        }
         jobApplication.UpdatedAt = DateTime.UtcNow;
-        unitOfWork.Repository<JobApplication>().Update(jobApplication);
         await unitOfWork.CompleteAsync();
 
         // TODO: add notification accept, remove, rejected
