@@ -2,6 +2,7 @@
 using Gigbuds_BE.Application.DTOs.ApplicationUsers;
 using Gigbuds_BE.Application.Features.Accounts.JobSeekers.Commands.EditJobSeeker;
 using Gigbuds_BE.Application.Features.Accounts.JobSeekers.Queries.GetJobSeekerDetail;
+using Gigbuds_BE.Application.Features.Accounts.JobSeekers.Queries.GetJobSeekerLocations;
 using Gigbuds_BE.Domain.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -73,6 +74,46 @@ namespace Gigbuds_BE.API.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { error = "An error occurred while updating job seeker information", details = ex.Message });
+            }
+        }
+
+        [HttpGet("location/{id}")]
+        public async Task<IActionResult> GetLocation(int id)
+        {
+            try
+            {
+                var query = new GetLocationQuery { JobSeekerId = id };
+                var result = await _mediator.Send(query);
+                return Ok(new {
+                    success = true,
+                    data = result,
+                    error = new {
+                        message = "",
+                        code = ""
+                    }
+                });
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(new {
+                    success = false,
+                    data = "",
+                    error = new {
+                        message = ex.Message,
+                        code = "NOT_FOUND"
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new {
+                    success = false,
+                    data = "",
+                    error = new {
+                        message = ex.Message,
+                        code = "INTERNAL_SERVER_ERROR"
+                    }
+                });
             }
         }
     }
