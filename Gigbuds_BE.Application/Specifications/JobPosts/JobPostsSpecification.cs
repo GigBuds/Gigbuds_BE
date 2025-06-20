@@ -25,7 +25,7 @@ namespace Gigbuds_BE.Application.Specifications.JobPosts
         {
             AddInclude(x => x.JobPosition);
             AddPaging(queryParams.PageSize * (queryParams.PageIndex - 1), queryParams.PageSize);
-
+            AddInclude(x => x.JobApplications);
             switch (queryParams.SortBy)
             {
                 case "createdAt":
