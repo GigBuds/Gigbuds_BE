@@ -53,11 +53,12 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.UpdateJobPostStatus
                 {
                     var applicants = await _unitOfWork.Repository<JobApplication>().GetAllWithSpecificationAsync(new GetJobApplicationsByJobPostIdSpecification(request.JobPostId));
 
-                    var template = await _templatingService.ParseTemplate(ContentType.JobApplicationAccepted, new JobApplicationAcceptedTemplateModel()
+                    var template = await _templatingService.ParseTemplate(ContentType.JobCompleted, new JobApplicationAcceptedTemplateModel()
                     {
                         JobName = jobPost.JobTitle,
                     });
-                    var tasks = applicants.Select(async applicant =>
+                    var tasks = new List<Task>();
+                    foreach (var applicant in applicants)
                     {
                         var notificationDto = await _mediator.Send(new CreateNewNotificationCommand
                         {
@@ -70,19 +71,18 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.UpdateJobPostStatus
                         var userDevices = await _unitOfWork.Repository<DevicePushNotifications>()
                             .GetAllWithSpecificationAsync(new GetDevicesByUserSpecification(applicant.AccountId));
 
-                        return Task.Run(async () =>
+                        tasks.Add(Task.Run(async () =>
                         {
                             _logger.LogInformation("Notifying job seeker {JobSeekerId} about job post {JobPostId}", applicant.AccountId, jobPost.Id);
 
-                            await _notificationService.NotifyOneUser(
+                            await _notificationService.NotifyOneJobSeeker(
                                 typeof(INotificationForJobSeekers).GetMethod(nameof(INotificationForJobSeekers.NotifyJobCompleted))!,
                                 userDevices.Select(a => a.DeviceToken!)!.ToList(),
                                 applicant.AccountId.ToString(),
                                 notificationDto
                             );
-                        });
-                    });
-
+                        }, cancellationToken));
+                    }
                     await Task.WhenAll(tasks);
                 }
                 return jobPost.Id;

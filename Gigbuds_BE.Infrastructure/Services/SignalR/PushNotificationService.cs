@@ -45,7 +45,7 @@ namespace Gigbuds_BE.Infrastructure.Services.SignalR
                             await firebaseApp.SendAsync(message);
                         } catch (Exception ex)
                         {
-                            _logger.LogError("[FCM] Failed to send push notification to token: {DeviceToken", deviceToken);
+                            _logger.LogError("[FCM] Failed to send push notification to token: {DeviceToken}, {Exception}", deviceToken, ex);
                         }
                     }
                 ));
