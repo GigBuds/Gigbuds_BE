@@ -15,6 +15,8 @@ internal class ConversationMemberConfiguration : IEntityTypeConfiguration<Conver
         // Configure composite primary key
         builder.HasKey(cm => new { cm.ConversationId, cm.AccountId });
 
+        builder.Ignore(cm => cm.Id);
+        
         // Properties
         builder.Property(cm => cm.ConversationId)
             .IsRequired();
