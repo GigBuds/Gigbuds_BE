@@ -24,6 +24,12 @@ public class UpdateJobApplicationStatusCommandHandler(IUnitOfWork unitOfWork) : 
         if(request.Status == JobApplicationStatus.Removed)
         {
             jobApplication.JobPost.VacancyCount++;
+            unitOfWork.Repository<JobHistory>().Insert(new JobHistory{
+                JobPostId = jobApplication.JobPostId,
+                StartDate = jobApplication.UpdatedAt,
+                EndDate = DateTime.UtcNow,
+                AccountId = jobApplication.AccountId,
+            });
         }
         jobApplication.UpdatedAt = DateTime.UtcNow;
         await unitOfWork.CompleteAsync();
