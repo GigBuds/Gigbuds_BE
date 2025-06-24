@@ -4,7 +4,7 @@ using Gigbuds_BE.Domain.Entities.Identity;
 
 namespace Gigbuds_BE.Domain.Entities.Chats;
 
-public class ConversationMember
+public class ConversationMember : BaseEntity
 {
     public int ConversationId { get; set; }
     public int AccountId { get; set; }
