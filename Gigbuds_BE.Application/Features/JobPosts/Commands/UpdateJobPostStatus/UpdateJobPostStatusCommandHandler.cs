@@ -23,11 +23,28 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.UpdateJobPostStatus
             var jobPost = await _unitOfWork.Repository<JobPost>()
                 .GetBySpecificationAsync(new JobPostByIdSpecification(request.JobPostId), asNoTracking: false)
                 ?? throw new NotFoundException("Job post not found");
+            var jobApplications = jobPost.JobApplications.ToList();
 
             jobPost.JobPostStatus = Enum.Parse<JobPostStatus>(request.Status);
+            jobPost.UpdatedAt = DateTime.UtcNow;
 
-            _unitOfWork.Repository<JobPost>().Update(jobPost);
-
+            if (jobPost.JobPostStatus == JobPostStatus.Finished) {
+                foreach (var jobApplication in jobApplications) {
+                    if (jobApplication.ApplicationStatus == JobApplicationStatus.Approved) {
+                            _unitOfWork.Repository<JobHistory>().Insert(new JobHistory{
+                            JobPostId = jobPost.Id,
+                            StartDate = jobApplication.UpdatedAt,
+                            EndDate = DateTime.UtcNow,
+                            AccountId = jobApplication.AccountId
+                        });
+                    }
+                    if(jobApplication.ApplicationStatus == JobApplicationStatus.Pending) {
+                        jobApplication.ApplicationStatus = JobApplicationStatus.Rejected;
+                        jobApplication.UpdatedAt = DateTime.UtcNow;
+                    }
+                }
+            }
+            
             try
             {
                 await _unitOfWork.CompleteAsync();
