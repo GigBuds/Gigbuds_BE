@@ -8,6 +8,7 @@ namespace Gigbuds_BE.Application.Specifications.JobPosts
     {
         public JobPostByIdSpecification(int jobPostId) : base(j => j.Id == jobPostId)
         {
+            AddInclude(x => x.JobApplications);
         }
     }
 

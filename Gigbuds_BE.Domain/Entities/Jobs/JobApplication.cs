@@ -8,6 +8,7 @@ public class JobApplication : BaseEntity
     public int AccountId { get; set; }
     public string CvUrl { get; set; }
     public int PriorityLevel { get; set; }
+    public bool IsFeedback { get; set; }
     public JobApplicationStatus ApplicationStatus { get; set; }
 
     // Navigation properties
