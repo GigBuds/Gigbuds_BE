@@ -46,7 +46,7 @@ internal class FeedbackConfiguration : IEntityTypeConfiguration<Feedback>
             .OnDelete(DeleteBehavior.Restrict);
             
         builder.HasOne(f => f.Employer)
-            .WithMany()
+            .WithMany(e => e.EmployerFeedbacks)
             .HasForeignKey(f => f.EmployerId)
             .OnDelete(DeleteBehavior.Restrict);
             

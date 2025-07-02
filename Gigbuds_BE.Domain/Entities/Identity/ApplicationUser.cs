@@ -34,6 +34,7 @@ namespace Gigbuds_BE.Domain.Entities.Identity
         public virtual ICollection<Notification> Notifications { get; set; }
         public virtual ICollection<TransactionRecord> TransactionRecords { get; set; }
         public virtual ICollection<Feedback> Feedbacks { get; set; }
+        public virtual ICollection<Feedback> EmployerFeedbacks { get; set; }
         public virtual ICollection<AccountMembership> AccountMemberships { get; set; }
         public virtual JobSeekerSchedule JobSeekerSchedule { get; set; }
         public virtual ICollection<JobPost> JobPosts { get; set; }

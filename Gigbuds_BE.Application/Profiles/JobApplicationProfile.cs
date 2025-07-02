@@ -23,7 +23,12 @@ public class JobApplicationProfile : Profile
             .ForMember(dest => dest.CvUrl, opt => opt.MapFrom(src => src.CvUrl))
             .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.Account.FirstName))
             .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.Account.LastName))
-            .ForMember(dest => dest.SkillTags, opt => opt.MapFrom(src => src.Account.SkillTags));
+            .ForMember(dest => dest.SkillTags, opt => opt.MapFrom(src => src.Account.SkillTags))
+            .ForMember(dest => dest.IsFeedback, opt => opt.MapFrom(src => src.IsFeedback))
+            .ForMember(dest => dest.JobHistoryId, opt => opt.MapFrom(src => 
+                src.JobPost.JobHistories.FirstOrDefault(j => j.AccountId == src.AccountId && j.JobPostId == src.JobPostId) != null 
+                ? src.JobPost.JobHistories.FirstOrDefault(j => j.AccountId == src.AccountId && j.JobPostId == src.JobPostId).Id 
+                : 0));
 
 
         CreateProjection<JobApplication, JobPostDto>()

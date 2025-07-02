@@ -30,6 +30,10 @@ internal class ConversationMemberConfiguration : IEntityTypeConfiguration<Conver
         builder.Property(cm => cm.LeaveDate)
             .IsRequired(false);
 
+        builder.Property(cm => cm.IsAdmin)
+            .IsRequired()
+            .HasDefaultValue(false);
+
         // Relationships with Conversation
         builder.HasOne(cm => cm.Conversation)
             .WithMany(c => c.ConversationMembers)

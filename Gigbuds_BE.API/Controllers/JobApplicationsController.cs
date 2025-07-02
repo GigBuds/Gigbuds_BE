@@ -36,7 +36,7 @@ namespace Gigbuds_BE.API.Controllers
         [ProducesResponseType(typeof(JobApplicationResponseDto), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(409)]
-        public async Task<IActionResult> ApplyJob(JobApplicationDto jobApplicationDto)
+        public async Task<IActionResult> ApplyJob([FromForm] JobApplicationDto jobApplicationDto)
         {
             try
             {
