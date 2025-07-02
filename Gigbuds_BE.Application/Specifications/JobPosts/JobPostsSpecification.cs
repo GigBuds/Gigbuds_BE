@@ -89,6 +89,16 @@ namespace Gigbuds_BE.Application.Specifications.JobPosts
     {
         public GetJobPostByEmployerIdSpecification(int employerId) : base(j => j.AccountId == employerId)
         {
+            AddInclude(x => x.Account);
+            AddInclude(x => x.JobPosition);
+            AddInclude(x => x.JobPostSchedule.JobShifts);
+        }
+    }
+
+    public class GetNumOfAvailablePostByEmployerIdSpecification : BaseSpecification<JobPost>
+    {
+        public GetNumOfAvailablePostByEmployerIdSpecification(int employerId) : base(j => j.AccountId == employerId)
+        {
         }
     }
 

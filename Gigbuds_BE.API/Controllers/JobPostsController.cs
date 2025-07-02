@@ -16,6 +16,7 @@ using Gigbuds_BE.Application.Features.JobPosts.Queries.GetJobRecommendations;
 using Gigbuds_BE.Application.Features.JobPosts.Queries.GetAllJobPosts;
 using Gigbuds_BE.Application.Features.JobPosts.Queries.GetJobSeekerMyJob;
 using Gigbuds_BE.Application.DTOs.ApplicationUsers;
+using Gigbuds_BE.Application.Features.JobPosts.Queries.GetJobPostByEmployerId;
 
 namespace Gigbuds_BE.API.Controllers
 {
@@ -188,6 +189,13 @@ namespace Gigbuds_BE.API.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
+        }
+
+        [HttpGet("employer/{employerId}")]
+        public async Task<ActionResult<List<JobPostDto>>> GetJobPostByEmployerId(int employerId)
+        {
+            var jobPosts = await mediator.Send(new GetJobPostByEmployerIdQuery(employerId));
+            return Ok(jobPosts);
         }
 
     }

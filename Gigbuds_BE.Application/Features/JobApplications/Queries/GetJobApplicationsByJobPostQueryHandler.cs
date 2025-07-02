@@ -16,7 +16,7 @@ public class GetJobApplicationsByJobPostQueryHandler(IUnitOfWork unitOfWork, IMa
 {
     public async Task<List<JobApplicationForJobPostDto>> Handle(GetJobApplicationsByJobPostQuery request, CancellationToken cancellationToken)
     {
-    var spec = new GetJobApplicationsByJobPostSpecification(request.JobPostId);
+        var spec = new GetJobApplicationsByJobPostSpecification(request.JobPostId);
 
         var jobApplications = await unitOfWork.Repository<JobApplication>().GetAllWithSpecificationProjectedAsync<JobApplicationForJobPostDto>(spec, _mapper.ConfigurationProvider);
 

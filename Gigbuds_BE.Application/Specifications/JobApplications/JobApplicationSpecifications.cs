@@ -27,6 +27,7 @@ public class GetJobApplicationsByJobPostSpecification : BaseSpecification<JobApp
         AddInclude(x => x.Account);
         AddInclude(x => x.JobPost.JobPosition);
         AddInclude(x => x.Account.SkillTags);
+        AddInclude(x => x.JobPost.JobHistories);
     }
 }
 

@@ -1,4 +1,5 @@
-﻿using Gigbuds_BE.Domain.Entities.Identity;
+﻿using Gigbuds_BE.Domain.Entities.Feedbacks;
+using Gigbuds_BE.Domain.Entities.Identity;
 
 namespace Gigbuds_BE.Application.Specifications.ApplicationUsers
 {
@@ -26,6 +27,16 @@ namespace Gigbuds_BE.Application.Specifications.ApplicationUsers
         public JobSeekerByAccountIdSpecification(int accountId) : base(x => x.Id == accountId)
         {
             AddInclude(x => x.JobSeekerSchedule.JobShifts);
+        }
+    }
+
+    public class GetEmployerProfileByIdSpecification : BaseSpecification<ApplicationUser>
+    {
+        public GetEmployerProfileByIdSpecification(int id) : base(x => x.Id == id)
+        {
+            AddInclude(x => x.EmployerProfile);
+            AddInclude(x => x.EmployerFeedbacks.Where(f => f.FeedbackType == FeedbackType.JobSeekerToEmployer));
+            AddInclude(x => x.Followers.Where(f => f.FollowedAccountId == id));
         }
     }
 }

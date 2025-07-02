@@ -12,6 +12,8 @@ public class JobApplicationForJobPostDto
     public string JobTitle { get; set; } = string.Empty;
     public string? CvUrl { get; set; }
     public string ApplicationStatus { get; set; } = string.Empty;
+    public int JobHistoryId { get; set; }
+    public bool IsFeedback { get; set; }
     public DateTime AppliedAt { get; set; }
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
