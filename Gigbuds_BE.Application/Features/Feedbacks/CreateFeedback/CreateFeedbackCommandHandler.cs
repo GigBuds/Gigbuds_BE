@@ -22,7 +22,8 @@ public class CreateFeedbackCommandHandler(IUnitOfWork unitOfWork) : IRequestHand
             throw new NotFoundException("Job history not found");
         }
 
-        var isFeedbackAvailable = await CheckFeedbackAvailable(request.CreateFeedbackDto.JobSeekerId, request.CreateFeedbackDto.EmployerId, request.CreateFeedbackDto.FeedbackType);
+        var isFeedbackAvailable = await CheckFeedbackAvailable(request.CreateFeedbackDto.JobSeekerId, request.CreateFeedbackDto.EmployerId, 
+            request.CreateFeedbackDto.FeedbackType, request.CreateFeedbackDto.JobHistoryId);
 
         if(!isFeedbackAvailable) {
             throw new Exception("Feedback already exists");
@@ -47,14 +48,16 @@ public class CreateFeedbackCommandHandler(IUnitOfWork unitOfWork) : IRequestHand
             }
             jobApplication.UpdatedAt = DateTime.UtcNow;
             jobApplication.IsFeedback = true;
+        } else {
+            jobHistory.IsJobSeekerFeedback = true;
         }
         await unitOfWork.CompleteAsync();
         return request.CreateFeedbackDto;
     }
 
-    private async Task<bool> CheckFeedbackAvailable(int jobSeekerId, int employerId, FeedbackType feedbackType)
+    private async Task<bool> CheckFeedbackAvailable(int jobSeekerId, int employerId, FeedbackType feedbackType, int jobHistoryId)
     {
-        var spec = new GetFeedbackForCheckingSpecification(jobSeekerId, employerId, feedbackType);
+        var spec = new GetFeedbackForCheckingSpecification(jobSeekerId, employerId, feedbackType, jobHistoryId);
         var feedback = await unitOfWork.Repository<Feedback>().GetBySpecificationAsync(spec);
         if(feedback != null) {
             return false;

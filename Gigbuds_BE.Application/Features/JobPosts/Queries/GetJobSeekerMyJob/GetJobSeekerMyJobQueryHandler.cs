@@ -14,7 +14,6 @@ public class GetJobSeekerMyJobQueryHandler(IUnitOfWork unitOfWork, IMapper mappe
     {
     var query = new GetJobSeekerMyJobSpecification(request.RequestDto);
         var jobPosts = await unitOfWork.Repository<JobApplication>().GetAllWithSpecificationProjectedAsync<JobPostDto>(query, mapper.ConfigurationProvider);
-
         return new PagedResultDto<JobPostDto>(jobPosts.Count, jobPosts);
     }
 }

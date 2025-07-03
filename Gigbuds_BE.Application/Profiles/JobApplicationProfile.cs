@@ -4,6 +4,7 @@ using Gigbuds_BE.Application.DTOs;
 using Gigbuds_BE.Application.DTOs.JobApplicationDto;
 using Gigbuds_BE.Application.DTOs.JobApplications;
 using Gigbuds_BE.Domain.Entities.Jobs;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Gigbuds_BE.Application.Profiles;
 
@@ -33,6 +34,7 @@ public class JobApplicationProfile : Profile
 
         CreateProjection<JobApplication, JobPostDto>()
             .ForMember(dest => dest.JobPositionId, opt => opt.MapFrom(src => src.JobPost.JobPositionId))
+            .ForMember(dest => dest.AccountId, opt => opt.MapFrom(src => src.JobPost.AccountId))
             .ForMember(dest => dest.JobPositionName, opt => opt.MapFrom(src => src.JobPost.JobPosition.JobPositionName))
             .ForMember(dest => dest.JobTitle, opt => opt.MapFrom(src => src.JobPost.JobTitle))
             .ForMember(dest => dest.JobDescription, opt => opt.MapFrom(src => src.JobPost.JobDescription))
@@ -47,6 +49,13 @@ public class JobApplicationProfile : Profile
             .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.JobPost.Account.EmployerProfile.CompanyName))
             .ForMember(dest => dest.CompanyLogo, opt => opt.MapFrom(src => src.JobPost.Account.EmployerProfile.CompanyLogo))
             .ForMember(dest => dest.JobSchedule, opt => opt.MapFrom(src => src.JobPost.JobPostSchedule))
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.JobPostId));
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.JobPostId))
+            .ForMember(dest => dest.JobHistoryId, opt => opt.MapFrom(src => src.JobPost.JobHistories.FirstOrDefault(j => j.AccountId == src.AccountId && j.JobPostId == src.JobPostId) != null 
+                ? src.JobPost.JobHistories.FirstOrDefault(j => j.AccountId == src.AccountId && j.JobPostId == src.JobPostId).Id 
+                : 0))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.JobPost.JobPostStatus))
+            .ForMember(dest => dest.IsJobSeekerFeedback, opt => opt.MapFrom(src => src.JobPost.JobHistories.FirstOrDefault(j => j.AccountId == src.AccountId && j.JobPostId == src.JobPostId) != null 
+                ? src.JobPost.JobHistories.FirstOrDefault(j => j.AccountId == src.AccountId && j.JobPostId == src.JobPostId).IsJobSeekerFeedback 
+                : false));
     }
 }

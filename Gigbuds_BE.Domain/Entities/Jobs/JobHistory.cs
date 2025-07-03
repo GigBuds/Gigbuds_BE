@@ -10,6 +10,7 @@ public class JobHistory : BaseEntity
     public int JobPostId { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime? EndDate { get; set; }
+    public bool IsJobSeekerFeedback { get; set; }
     // Navigation properties
     public virtual ApplicationUser Account { get; set; }
     public virtual JobPost JobPost { get; set; }

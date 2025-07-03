@@ -24,7 +24,14 @@ internal class JobHistoryConfiguration : IEntityTypeConfiguration<JobHistory>
             
         builder.Property(jh => jh.EndDate)
             .IsRequired(false);
-            
+
+        builder.Property(jh => jh.IsJobSeekerFeedback)
+            .IsRequired()
+            .HasDefaultValue(false);
+
+        builder.HasIndex(jh => new {jh.AccountId, jh.JobPostId})
+            .IsUnique()
+            .HasDatabaseName("IX_JobHistory_AccountId_JobPostId");
         // Relationships
         builder.HasOne(jh => jh.Account)
             .WithMany(a => a.JobHistories)
