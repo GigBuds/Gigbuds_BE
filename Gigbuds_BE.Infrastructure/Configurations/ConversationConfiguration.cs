@@ -12,10 +12,6 @@ internal class ConversationConfiguration : IEntityTypeConfiguration<Conversation
         // Table name
         builder.ToTable("Conversations", "public");
 
-        // Properties
-        builder.Property(c => c.ConversationName)
-            .HasMaxLength(200)
-            .IsRequired(false);
 
     }
 } 

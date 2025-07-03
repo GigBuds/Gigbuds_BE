@@ -13,8 +13,8 @@ public class FeedbackProfiles : Profile
             .ForMember(dest => dest.AccountName, opt => opt.MapFrom(src => src.Account.FirstName + " " + src.Account.LastName))
             .ForMember(dest => dest.AccountAvatar, opt => opt.MapFrom(src => src.Account.AvatarUrl))
             .ForMember(dest => dest.EmployerName, opt => opt.MapFrom(src => src.Employer.EmployerProfile.CompanyName))
-            .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Account.EmployerProfile.CompanyName))
-            .ForMember(dest => dest.CompanyLogo, opt => opt.MapFrom(src => src.Account.EmployerProfile.CompanyLogo))
+            .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Employer.EmployerProfile.CompanyName))
+            .ForMember(dest => dest.CompanyLogo, opt => opt.MapFrom(src => src.Employer.EmployerProfile.CompanyLogo))
             .ForMember(dest => dest.JobTitle, opt => opt.MapFrom(src => src.JobHistory.JobPost.JobTitle));
 
     }

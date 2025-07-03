@@ -44,10 +44,11 @@ public class GetJobSeekerMyJobSpecification : BaseSpecification<JobApplication>
     public GetJobSeekerMyJobSpecification(JobSeekerMyJobRequestDto requestDto) : base(j => j.AccountId == requestDto.JobSeekerId
         && ((requestDto.MyJobType == MyJobType.AppliedJob && j.ApplicationStatus == JobApplicationStatus.Pending)
         || (requestDto.MyJobType == MyJobType.AcceptedJob && j.ApplicationStatus == JobApplicationStatus.Approved)
-        || (requestDto.MyJobType == MyJobType.JobHistory && (j.ApplicationStatus == JobApplicationStatus.Removed || j.JobPost.JobPostStatus == JobPostStatus.Finished))
+        || (requestDto.MyJobType == MyJobType.JobHistory && (j.ApplicationStatus == JobApplicationStatus.Removed || (j.JobPost.JobPostStatus == JobPostStatus.Finished && j.ApplicationStatus == JobApplicationStatus.Approved)))
         ))
     {
         AddInclude(j => j.JobPost);
+        AddInclude(j => j.JobPost.JobHistories.Where(jh => jh.AccountId == requestDto.JobSeekerId));
         AddInclude(j => j.JobPost.JobPosition);
         AddInclude(j => j.Account.EmployerProfile);
         AddInclude(j => j.JobPost.JobPosition);
