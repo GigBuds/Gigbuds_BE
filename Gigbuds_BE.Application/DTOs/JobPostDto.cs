@@ -27,5 +27,7 @@ namespace Gigbuds_BE.Application.DTOs
         public required int TotalApplicants { get; set; }
         public required string JobPositionName { get; set; }
         public required int JobPositionId { get; set; }
+        public required int JobHistoryId { get; set; }
+        public required bool IsJobSeekerFeedback { get; set; }
     }
 }

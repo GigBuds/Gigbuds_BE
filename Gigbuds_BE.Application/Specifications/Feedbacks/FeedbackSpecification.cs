@@ -5,7 +5,11 @@ namespace Gigbuds_BE.Application.Specifications.Feedbacks;
 
 public class GetFeedbackForCheckingSpecification : BaseSpecification<Feedback>
 {   
-    public GetFeedbackForCheckingSpecification(int jobSeekerId, int employerId, FeedbackType feedbackType) : base(x => x.AccountId == jobSeekerId && x.EmployerId == employerId && x.FeedbackType == feedbackType) {
+    public GetFeedbackForCheckingSpecification(int jobSeekerId, int employerId, FeedbackType feedbackType, int jobHistoryId) :
+        base(x => x.AccountId == jobSeekerId 
+        && x.EmployerId == employerId 
+        && x.FeedbackType == feedbackType
+        && x.JobHistoryId == jobHistoryId) {
     }
 }
 
@@ -20,7 +24,7 @@ public class GetAllFeedbacksSpecification : BaseSpecification<Feedback>
 
 public class GetFeedbackByAccountIdSpecification : BaseSpecification<Feedback>
 {
-    public GetFeedbackByAccountIdSpecification(int accountId, FeedbackType feedbackType) : base(x => x.AccountId == accountId && x.FeedbackType == feedbackType) {
+    public GetFeedbackByAccountIdSpecification(int accountId, FeedbackType feedbackType) : base(x => (x.AccountId == accountId || x.EmployerId == accountId) && x.FeedbackType == feedbackType) {
         AddInclude(x => x.Account);
         AddInclude(x => x.Employer.EmployerProfile);
     }
