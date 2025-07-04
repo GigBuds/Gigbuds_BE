@@ -9,12 +9,12 @@ using MediatR;
 
 namespace Gigbuds_BE.Application.Features.JobPosts.Queries.GetJobPostByEmployerId;
 
-public class GetJobPostByEmployerIdQueryHandler(IUnitOfWork unitOfWork, IMapper mapper) : IRequestHandler<GetJobPostByEmployerIdQuery, List<JobPostDto>>
+public class GetJobPostByEmployerIdQueryHandler(IUnitOfWork unitOfWork, IMapper mapper) : IRequestHandler<GetJobPostByEmployerIdQuery, PagedResultDto<JobPostDto>>
 {
-public async Task<List<JobPostDto>> Handle(GetJobPostByEmployerIdQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResultDto<JobPostDto>> Handle(GetJobPostByEmployerIdQuery request, CancellationToken cancellationToken)
     {
-        var spec = new GetJobPostByEmployerIdSpecification(request.EmployerId);
+        var spec = new GetJobPostByEmployerIdSpecification(request.EmployerId, request.QueryParams);
         var jobPosts = await unitOfWork.Repository<JobPost>().GetAllWithSpecificationProjectedAsync<JobPostDto>(spec, mapper.ConfigurationProvider);
-        return jobPosts.ToList();
+        return new PagedResultDto<JobPostDto>(jobPosts.Count, jobPosts);
     }
 }
