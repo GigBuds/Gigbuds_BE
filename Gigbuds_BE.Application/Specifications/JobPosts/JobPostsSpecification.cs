@@ -93,7 +93,18 @@ namespace Gigbuds_BE.Application.Specifications.JobPosts
             AddInclude(x => x.JobPosition);
             AddInclude(x => x.JobPostSchedule.JobShifts);
         }
+
+        public GetJobPostByEmployerIdSpecification(int employerId, GetJobPostByEmployerQueryParams queryParams) : base(j => j.AccountId == employerId)
+        {
+            AddInclude(x => x.Account);
+            AddInclude(x => x.JobPosition);
+            AddInclude(x => x.JobPostSchedule.JobShifts);
+            AddOrderByDesc(x => x.CreatedAt);
+            AddPaging(queryParams.PageSize * (queryParams.PageIndex - 1), queryParams.PageSize);
+        }
     }
+
+    
 
     public class GetNumOfAvailablePostByEmployerIdSpecification : BaseSpecification<JobPost>
     {

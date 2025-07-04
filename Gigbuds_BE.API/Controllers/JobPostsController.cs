@@ -192,10 +192,14 @@ namespace Gigbuds_BE.API.Controllers
         }
 
         [HttpGet("employer/{employerId}")]
-        public async Task<ActionResult<List<JobPostDto>>> GetJobPostByEmployerId(int employerId)
+        public async Task<ActionResult<PagedResultDto<JobPostDto>>> GetJobPostByEmployerId(int employerId, [FromQuery] GetJobPostByEmployerQueryParams queryParams)
         {
-            var jobPosts = await mediator.Send(new GetJobPostByEmployerIdQuery(employerId));
-            return Ok(jobPosts);
+            var result = await mediator.Send(new GetJobPostByEmployerIdQuery(employerId, queryParams));
+            return ResultWithPagination(
+                result.Data,
+                result.Count,
+                queryParams.PageIndex,
+                queryParams.PageSize);
         }
 
     }
