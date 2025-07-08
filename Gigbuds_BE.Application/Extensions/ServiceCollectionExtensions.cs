@@ -13,9 +13,10 @@ namespace Gigbuds_BE.Application.Extensions
             // Add AutoMapper
             services.AddAutoMapper(applicationAssembly);
 
-            
-            services.AddMediatR(cfg => {
-        // Register all handlers from the Application assembly
+
+            services.AddMediatR(cfg =>
+            {
+                // Register all handlers from the Application assembly
                 cfg.RegisterServicesFromAssembly(applicationAssembly);
             });
         }

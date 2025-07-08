@@ -87,7 +87,7 @@ namespace Gigbuds_BE.API.Extensions
                         var path = context.HttpContext.Request.Path;
 
                         // If the request is for our hub
-                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hub/notifications"))
+                        if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/hub/notifications") || path.StartsWithSegments("/hub/messaging")))
                         {
                             context.Token = accessToken;
                             Console.WriteLine($"[JWT] Token extracted for SignalR: {accessToken.ToString().Substring(0, Math.Min(20, accessToken.ToString().Length))}...");

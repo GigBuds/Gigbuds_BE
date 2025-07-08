@@ -12,6 +12,7 @@ using Gigbuds_BE.Domain.Entities.Transactions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Gigbuds_BE.Infrastructure.Persistence
 {
@@ -61,6 +62,7 @@ namespace Gigbuds_BE.Infrastructure.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
             base.OnModelCreating(modelBuilder);
 
             // Apply all configurations in the assembly
@@ -76,6 +78,8 @@ namespace Gigbuds_BE.Infrastructure.Persistence
         /// <param name="modelBuilder"></param>
         private static void ApplyBaseEntityToDerivedClass(ModelBuilder modelBuilder)
         {
+            var converter = new UtcToLocalDateTimeConverter();
+
             modelBuilder.Model.GetEntityTypes()
                 .Where(entityType =>
                     (typeof(BaseEntity).IsAssignableFrom(entityType.ClrType)
@@ -88,6 +92,16 @@ namespace Gigbuds_BE.Infrastructure.Persistence
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .UseIdentityColumn();
+
+                    var properties = entityType.ClrType.GetProperties()
+                        .Where(p => p.PropertyType == typeof(DateTime) || p.PropertyType == typeof(DateTime?));
+
+                    foreach (var property in properties)
+                    {
+                        modelBuilder.Entity(entityType.ClrType)
+                            .Property(property.Name)
+                            .HasConversion(converter);
+                    }
                 });
         }
     }

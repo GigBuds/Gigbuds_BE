@@ -21,13 +21,15 @@ namespace Gigbuds_BE.Infrastructure.Services.SignalR
         // ==============================
         public override async Task OnConnectedAsync()
         {
-            _connectionManager.AddConnection(Context.UserIdentifier, Context.ConnectionId);
+            ArgumentException.ThrowIfNullOrEmpty(Context.UserIdentifier);
+            await _connectionManager.AddConnectionAsync(Context.UserIdentifier, Context.ConnectionId);
             await base.OnConnectedAsync();
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
-            _connectionManager.RemoveConnection(Context.UserIdentifier);
+            ArgumentException.ThrowIfNullOrEmpty(Context.UserIdentifier);
+            await _connectionManager.RemoveConnectionAsync(Context.UserIdentifier);
             await base.OnDisconnectedAsync(exception);
         }
 

@@ -106,7 +106,7 @@ namespace Gigbuds_BE.Infrastructure.Services
                 queryVector.ToArray(),
                 limit: (ulong)resultLimits,
                 payloadSelector: payloadSelector,
-                scoreThreshold: 0.6f);
+                scoreThreshold: 0f);
 
             return results.Select(point =>
             {

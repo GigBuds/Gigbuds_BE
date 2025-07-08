@@ -17,6 +17,10 @@ using Gigbuds_BE.Infrastructure.Seeder;
 using Gigbuds_BE.Infrastructure.Services.SignalR;
 using Gigbuds_BE.Application.Interfaces.Services.NotificationServices;
 using Gigbuds_BE.Infrastructure.Services.Firebase;
+using Gigbuds_BE.Infrastructure.Services.Messaging;
+using Redis.OM;
+using Gigbuds_BE.Application.Interfaces.Services.MessagingServices;
+using Gigbuds_BE.Infrastructure.Repositories;
 
 namespace Gigbuds_BE.Infrastructure.Extensions
 {
@@ -24,8 +28,6 @@ namespace Gigbuds_BE.Infrastructure.Extensions
     {
         public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-
-
             // Add sql server
             services.AddDbContextPool<GigbudsDbContext>(options =>
                 options
@@ -50,6 +52,9 @@ namespace Gigbuds_BE.Infrastructure.Extensions
 
             // Configure Notification storage settings
             services.Configure<NotificationSettings>(configuration.GetSection(NotificationSettings.MainSectionName));
+
+            // Configure messaging settings
+            services.Configure<MessagingSettings>(configuration.GetSection(MessagingSettings.SectionName));
 
             // Configure Abenla SMS settings (replacing SpeedSMS)
             services.Configure<AbenlaSmsSettings>(configuration.GetSection(AbenlaSmsSettings.SectionName));
@@ -87,6 +92,7 @@ namespace Gigbuds_BE.Infrastructure.Extensions
 
             // Add UOW
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
             // Add ApplicationUser service
             services.AddScoped(typeof(UserManager<>));
@@ -114,12 +120,24 @@ namespace Gigbuds_BE.Infrastructure.Extensions
 
             // Add SignalR service
             services.AddSignalR();
-            services.AddSingleton<IConnectionManager, ConnectionManager>();
+            services.AddSingleton<IConnectionManager, NotificationConnectionManager>();
+            services.AddSingleton<IMessagingConnectionManagerService, MessagingConnectionManagerService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IPushNotificationService, PushNotificationService>();
 
             // Add Notification storage service
             services.AddScoped<INotificationStorageService, RedisNotificationStorageService>();
+
+            // Add Messaging cache service
+            services.AddScoped<IMessagingCacheService, MessagingCacheService>();
+            services.AddScoped<IMessagingService, MessagingService>();
+            services.AddScoped<MessagesRepository>();
+            services.AddScoped<ConversationMetadataRepository>();
+
+            // Add IndexCreationService
+            services.AddHostedService<IndexCreationService>();
+            services.AddSingleton(new RedisConnectionProvider(configuration.GetSection("Messaging:Storage:ConnectionString").Value!));
+
 
             // Add templating service
             services.AddScoped<ITemplatingService, TemplatingService>();

@@ -39,6 +39,10 @@ public enum ContentType
     NewJobPostMatching,
     ProfileViewedByEmployer,
     #endregion
+
+    #region Messaging notifications
+    NewMessageReceived,
+    #endregion
 }
 
 public record NewJobPostMatchingTemplateModel()

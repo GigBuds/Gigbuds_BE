@@ -50,6 +50,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapHub<NotificationHub>("/hub/notifications");
+app.MapHub<MessagingHub>("/hub/messaging");
 
 using var scope = app.Services.CreateScope();
 var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();

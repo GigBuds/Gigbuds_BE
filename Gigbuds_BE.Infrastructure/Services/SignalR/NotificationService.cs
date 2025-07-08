@@ -8,6 +8,7 @@ using Gigbuds_BE.Infrastructure.Extensions;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Gigbuds_BE.Infrastructure.Services.SignalR
 {
@@ -39,7 +40,7 @@ namespace Gigbuds_BE.Infrastructure.Services.SignalR
 
         public async Task NotifyOneUser(MethodInfo method, List<string> deviceTokens, string userId, NotificationDto notification)
         {
-            if (IsClientConnected(userId))
+            if (await IsClientConnected(userId))
             {
                 await _hubContext.Clients.User(userId).NotifyUser(method.Name, notification);
                 _logger.LogInformation("Notification sent to connected user {UserId}", userId);
@@ -84,7 +85,7 @@ namespace Gigbuds_BE.Infrastructure.Services.SignalR
         }
         public async Task NotifyOneJobSeeker(MethodInfo method, List<string> deviceTokens, string jobSeekerId, NotificationDto notification)
         {
-            if (IsClientConnected(jobSeekerId))
+            if (await IsClientConnected(jobSeekerId))
             {
                 await _hubContext.Clients.User(jobSeekerId).NotifyJobSeeker(method.Name, notification);
             }
@@ -120,7 +121,7 @@ namespace Gigbuds_BE.Infrastructure.Services.SignalR
 
         public async Task NotifyOneEmployer(MethodInfo method, string employerId, NotificationDto notification)
         {
-            if (IsClientConnected(employerId))
+            if (await IsClientConnected(employerId))
             {
                 await _hubContext.Clients.User(employerId).NotifyEmployer(method.Name, notification);
             }
@@ -157,17 +158,9 @@ namespace Gigbuds_BE.Infrastructure.Services.SignalR
         }
 
 
-        public bool IsClientConnected(string userId)
+        public async Task<bool> IsClientConnected(string userId)
         {
-            return _connectionManager.GetConnectionId(userId) != null;
+            return (await _connectionManager.GetConnectionAsync(userId)) != null;
         }
-
-        private async Task<List<string>> GetUserDeviceTokensAsync(string userId)
-        {
-            var userDevices = await _unitOfWork.Repository<DevicePushNotifications>()
-    .GetAllWithSpecificationAsync(new GetDevicesByUserSpecification(int.Parse(userId)));
-            return userDevices.Select(ud => ud.DeviceToken).ToList();
-        }
-
     }
 }

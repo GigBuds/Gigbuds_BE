@@ -158,6 +158,9 @@ namespace Gigbuds_BE.Infrastructure.Extensions
                 case nameof(INotificationForUser.NotifyMembershipExpired):
                     await clients.NotifyMembershipExpired(notification);
                     break;
+                case nameof(INotificationForUser.NotifyNewMessageReceived):
+                    await clients.NotifyNewMessageReceived(notification);
+                    break;
                 default:
                     throw new NotImplementedException($"Notification method {methodName} not implemented for user.");
             }

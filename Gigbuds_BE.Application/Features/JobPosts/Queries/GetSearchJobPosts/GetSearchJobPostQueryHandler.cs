@@ -22,6 +22,7 @@ public class GetSearchJobPostQueryHandler : IRequestHandler<GetSearchJobPostQuer
     {
         var spec = new GetSearchJobPostsSpecification(request.JobPostSearchParams);
         var jobPosts = await _unitOfWork.Repository<JobPost>().GetAllWithSpecificationProjectedAsync<SearchJobPostDto>(spec, _mapper.ConfigurationProvider);
-        return new PagedResultDto<SearchJobPostDto>(jobPosts.Count, jobPosts);
+        var count = await _unitOfWork.Repository<JobPost>().CountAsync(spec);
+        return new PagedResultDto<SearchJobPostDto>(count, jobPosts);
     }
 }

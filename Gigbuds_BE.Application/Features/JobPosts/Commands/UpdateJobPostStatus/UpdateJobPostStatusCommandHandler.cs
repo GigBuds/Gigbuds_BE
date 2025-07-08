@@ -83,7 +83,7 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.UpdateJobPostStatus
                             Message = template,
                             ContentType = ContentType.JobApplicationAccepted,
                             CreatedAt = DateTime.UtcNow,
-                        });
+                        }, cancellationToken);
 
                         var userDevices = await _unitOfWork.Repository<DevicePushNotifications>()
                             .GetAllWithSpecificationAsync(new GetDevicesByUserSpecification(applicant.AccountId));
