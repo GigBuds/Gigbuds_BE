@@ -11,8 +11,6 @@ internal class ConversationConfiguration : IEntityTypeConfiguration<Conversation
     {
         // Table name
         builder.ToTable("Conversations", "public");
-
-        // Configure other properties (Id is handled globally in GigbudsDbContext)
         builder.Property(c => c.NameOne)
             .HasMaxLength(255);
 
@@ -33,5 +31,6 @@ internal class ConversationConfiguration : IEntityTypeConfiguration<Conversation
 
         builder.Property(c => c.CreatorId)
             .HasMaxLength(50);
+
     }
-}
+} 
