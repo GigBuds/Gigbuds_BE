@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Gigbuds_BE.Application.DTOs.ApplicationUsers;
+using Gigbuds_BE.Application.Features.Accounts;
 using Gigbuds_BE.Application.Features.Accounts.JobSeekers.Commands.EditJobSeeker;
 using Gigbuds_BE.Application.Features.Accounts.JobSeekers.Queries.GetJobSeekerDetail;
 using Gigbuds_BE.Application.Features.Accounts.JobSeekers.Queries.GetJobSeekerLocations;
+using Gigbuds_BE.Application.Features.Memberships.Queries;
 using Gigbuds_BE.Domain.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -116,5 +118,6 @@ namespace Gigbuds_BE.API.Controllers
                 });
             }
         }
+
     }
 }
