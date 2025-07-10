@@ -17,8 +17,8 @@ public class AccountsController(IMediator _mediator) : _BaseApiController
     }
 
     [HttpPut("banned/{id}")]
-    public async Task<IActionResult> BanAccount(int id) {
-        var command = new BanAccountCommand(id);
+    public async Task<IActionResult> BanAccount(int id, bool isEnabled) {
+        var command = new BanAccountCommand(id, isEnabled);
         var result = await _mediator.Send(command);
         return Ok(result);
     }
