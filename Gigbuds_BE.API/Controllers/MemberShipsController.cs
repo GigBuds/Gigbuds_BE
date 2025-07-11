@@ -109,9 +109,17 @@ namespace Gigbuds_BE.API.Controllers
 
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateMembership(int id, [FromBody] UpdateMembershipCommand command) {
-            command.Id = id;
-            var result = await _mediator.Send(command);
-            return Ok(result);
+            try{
+                command.Id = id;
+                var result = await _mediator.Send(command);
+                return Ok(new {
+                    success = true,
+                    data = result,
+                    message = "Membership updated successfully"
+                });
+            } catch (Exception ex) {
+                return BadRequest(new {success = false, error = ex.Message });
+            }
         }
     }
 }
