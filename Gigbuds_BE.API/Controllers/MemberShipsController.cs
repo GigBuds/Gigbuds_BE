@@ -1,5 +1,6 @@
 using Gigbuds_BE.Application.Features.Memberships.Commands;
 using Gigbuds_BE.Application.Features.Memberships.Commands.CreateMembershipPayment;
+using Gigbuds_BE.Application.Features.Memberships.Commands.UpdateMembershipEntity;
 using Gigbuds_BE.Application.Features.Memberships.Queries;
 using Gigbuds_BE.Application.Interfaces.Services;
 using MediatR;
@@ -103,6 +104,13 @@ namespace Gigbuds_BE.API.Controllers
         public async Task<IActionResult> GetAllMembershipByAccountId(int accountId) {
             var query = new GetAllMembershipByAccountIdQuery(accountId);
             var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        [HttpPut("update/{id}")]
+        public async Task<IActionResult> UpdateMembership(int id, [FromBody] UpdateMembershipCommand command) {
+            command.Id = id;
+            var result = await _mediator.Send(command);
             return Ok(result);
         }
     }
