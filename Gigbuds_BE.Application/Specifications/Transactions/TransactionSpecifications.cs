@@ -11,4 +11,14 @@ public class TransactionByReferenceCodeSpecification : BaseSpecification<Transac
         AddInclude(t => t.Membership);
         AddInclude(t => t.Account);
     }
+    
 } 
+
+public class TransactionRecordSpecification : BaseSpecification<TransactionRecord>
+{
+    public TransactionRecordSpecification() 
+        : base(t => t.IsEnabled == true)
+    {
+        AddInclude(t => t.Membership);
+    }
+}
