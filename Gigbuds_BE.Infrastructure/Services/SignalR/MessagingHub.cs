@@ -97,35 +97,6 @@ namespace Gigbuds_BE.Infrastructure.Services.SignalR
                 .RemovedFromConversationAsync(groupSystemMessageDto, int.Parse(Context.UserIdentifier));
         }
 
-        public async Task CreateAndJoinConversation(CreateConversationCommand command)
-        {
-            ArgumentException.ThrowIfNullOrEmpty(Context.UserIdentifier);
-
-            // Get the current date and time in UTC, make sure the persistent and cache storage are in sync
-            DateTime now = DateTime.UtcNow;
-
-            var createdConversationId = await _mediator.Send(command);
-            foreach (var member in command.Members)
-            {
-                _logger.LogInformation("Adding user {UserId} to conversation {ConversationId}", member.Key, createdConversationId);
-            }
-
-            var newConversationMetadata = new ConversationMetaDataDto
-            {
-                Id = createdConversationId.ToString(),
-                Members = command.Members.Select(m => new ConversationMemberDto { UserId = m.Key, UserName = m.Value }).ToArray(),
-                CreatorId = command.Members.First().Key,
-                NameOne = command.ConversationNameOne,
-                NameTwo = command.ConversationNameTwo,
-                AvatarOne = command.AvatarOne,
-                AvatarTwo = command.AvatarTwo,
-                LastMessageSenderName = command.ConversationNameOne,
-                LastMessage = string.Empty,
-                Timestamp = now,
-            };
-            await _messagingCacheService.UpsertConversationAsync(newConversationMetadata);
-        }
-
         public async Task<ChatHistoryDto?> SendMessage(MessageDto message)
         {
             ArgumentException.ThrowIfNullOrEmpty(Context.UserIdentifier);
@@ -133,13 +104,14 @@ namespace Gigbuds_BE.Infrastructure.Services.SignalR
             // Get the current date and time in UTC, make sure the persistent and cache storage are in sync
             DateTime now = DateTime.UtcNow;
 
-            message.MessageId = await _mediator.Send(new CreateMessageCommand
+            message.MessageId = (await _mediator.Send(new CreateMessageCommand
             {
                 Content = message.Content,
                 ConversationId = message.ConversationId,
                 SenderId = message.SenderId,
+                SenderName = message.SenderName,
                 SentDate = now
-            });
+            })).ToString();
 
             var newMessage = new ChatHistoryDto
             {
@@ -203,7 +175,7 @@ namespace Gigbuds_BE.Infrastructure.Services.SignalR
                 _logger.LogInformation("User {UserId} stopped typing in conversation {ConversationId}", typerName, conversationId);
             }
             await Clients.Group(conversationId.ToString())
-                .ReceiveTypingIndicatorAsync(isTyping, typerName);
+                .ReceiveTypingIndicatorAsync(isTyping, typerName, conversationId);
         }
 
         // When user leaves or switches to another conversation
@@ -222,6 +194,24 @@ namespace Gigbuds_BE.Infrastructure.Services.SignalR
             _logger.LogInformation("User {UserId} checked out of conversation {ConversationId}", Context.UserIdentifier, conversationId);
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, conversationId.ToString());
             _logger.LogInformation("User {UserId} removed from SignalR group for conversation {ConversationId}", Context.UserIdentifier, conversationId);
+        }
+
+        public async Task EditMessage(string messageId, int conversationId, string newContent)
+        {
+            ArgumentException.ThrowIfNullOrEmpty(Context.UserIdentifier);
+            _logger.LogInformation("User {UserId} edited message {MessageId} in conversation {ConversationId}", Context.UserIdentifier, messageId, conversationId);
+            await _messagingCacheService.EditMessageAsync(messageId, conversationId, newContent);
+            await Clients.Group(conversationId.ToString())
+                .MessageEditedAsync(messageId, conversationId, newContent);
+        }
+
+        public async Task DeleteMessage(string messageId, int conversationId)
+        {
+            ArgumentException.ThrowIfNullOrEmpty(Context.UserIdentifier);
+            _logger.LogInformation("User {UserId} deleted message {MessageId} in conversation {ConversationId}", Context.UserIdentifier, messageId, conversationId);
+            await _messagingCacheService.DeleteMessageAsync(messageId, conversationId);
+            await Clients.Group(conversationId.ToString())
+                .MessageDeletedAsync(messageId, conversationId);
         }
     }
 }

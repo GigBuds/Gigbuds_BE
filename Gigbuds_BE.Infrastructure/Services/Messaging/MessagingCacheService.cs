@@ -106,7 +106,7 @@ namespace Gigbuds_BE.Infrastructure.Services.Messaging
 
             var (success, isNew) = await _messagesRepositories.UpsertMessageAsync(messages);
 
-            if (!isNew)
+            if (isNew) // if new message, update the latest message in conversation metadata
             {
                 _logger.LogInformation("Updating latest message in conversation metadata for ConversationId: {ConversationId}", messages.ConversationId);
 
@@ -116,6 +116,7 @@ namespace Gigbuds_BE.Infrastructure.Services.Messaging
                     conversation.LastMessage = messages.Content;
                     conversation.LastMessageSenderName = messages.SenderName;
                     conversation.Timestamp = messages.Timestamp;
+                    conversation.LastMessageId = messages.MessageId;
                     await _conversationMetadataRepository.UpsertConversationMetadataAsync(conversation);
 
                     _logger.LogInformation("Updated conversation metadata for ConversationId: {ConversationId} with latest message", messages.ConversationId);
@@ -129,6 +130,41 @@ namespace Gigbuds_BE.Infrastructure.Services.Messaging
             _logger.LogInformation("Upsert message result for ConversationId: {ConversationId}: Success={Success}, IsNew={IsNew}", messages.ConversationId, success, isNew);
 
             return success;
+        }
+        public async Task<bool> EditMessageAsync(string messageId, int conversationId, string newContent)
+        {
+            _logger.LogInformation("Editing message for MessageId: {MessageId}, ConversationId: {ConversationId}, NewContent: {NewContent}", messageId, conversationId, newContent);
+            var message = await _messagesRepositories.GetMessageByIdAsync(messageId);
+            if (message != null)
+            {
+                message.Content = newContent;
+                await _messagesRepositories.UpsertMessageAsync(message);
+                var conversation = await _conversationMetadataRepository.GetConversationMetadataByIdAsync(conversationId);
+                if (conversation != null && conversation.LastMessageId == messageId)
+                {
+                    conversation.LastMessage = newContent;
+                    await _conversationMetadataRepository.UpsertConversationMetadataAsync(conversation);
+                }
+                return true;
+            }
+            return false;
+        }
+        public async Task<bool> DeleteMessageAsync(string messageId, int conversationId)
+        {
+            _logger.LogInformation("Deleting message for MessageId: {MessageId}, ConversationId: {ConversationId}", messageId, conversationId);
+            var message = await _messagesRepositories.GetMessageByIdAsync(messageId);
+            if (message != null)
+            {
+                await _messagesRepositories.DeleteMessageAsync(messageId);
+                var conversation = await _conversationMetadataRepository.GetConversationMetadataByIdAsync(conversationId);
+                if (conversation != null && conversation.LastMessageId == messageId)
+                {
+                    conversation.LastMessage = "Tin nhắn đã bị xóa";
+                    await _conversationMetadataRepository.UpsertConversationMetadataAsync(conversation);
+                }
+                return true;
+            }
+            return false;
         }
     }
 }

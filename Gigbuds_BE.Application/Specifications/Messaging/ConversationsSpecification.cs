@@ -24,7 +24,8 @@ namespace Gigbuds_BE.Application.Specifications.Messaging
     {
         public GetConversationByIdSpecification(int conversationId) : base(x => x.Id == conversationId)
         {
-            AddInclude(x => x.ConversationMembers);
+            // weird af bug, adding this line will cause error c0.Id does not exist; c0 here is the conversation member
+            // AddInclude(x => x.ConversationMembers);
         }
     }
 }

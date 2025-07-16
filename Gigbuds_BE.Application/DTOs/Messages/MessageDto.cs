@@ -6,7 +6,7 @@ namespace Gigbuds_BE.Application.DTOs.Messages
     {
         public required string Content { get; set; }
         public DateTime? SendDate { get; set; }
-        public int MessageId { get; set; }
+        public string MessageId { get; set; }
         public int ConversationId { get; set; } = -1;
         public required int SenderId { get; set; }
         public required string SenderName { get; set; }
@@ -19,7 +19,7 @@ namespace Gigbuds_BE.Application.DTOs.Messages
     {
         [RedisIdField]
         [Indexed]
-        public required string MessageId { get; set; }
+        public required string MessageId { get; set; } // use string since redis OM does not support int as Id
 
         [Indexed]
         public int ConversationId { get; set; }
@@ -32,6 +32,7 @@ namespace Gigbuds_BE.Application.DTOs.Messages
         public required string SenderAvatar { get; set; }
 
         public string[] ReadByNames { get; set; } = [];
+        public bool IsDeleted { get; set; }
 
         [Indexed(Sortable = true)]
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;

@@ -107,6 +107,7 @@ namespace Gigbuds_BE.Infrastructure.Services.Messaging
                 {
                     _logger.LogWarning("User {UserId} is not connected, sending notification to user", message.SenderId);
 
+                    // send notification to user
                     var createNotificationCommand = new CreateNewNotificationCommand
                     {
                         UserId = message.SenderId,
@@ -150,17 +151,6 @@ namespace Gigbuds_BE.Infrastructure.Services.Messaging
             await clientProxy.ReceiveMessageAsync(conversation, message);
             return true;
         }
-
-        public Task SendTypingIndicatorAsync(int conversationId, int userId, bool isTyping)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task UpdateUserOnlineStatusAsync(int userId, bool isOnline)
-        {
-            throw new NotImplementedException();
-        }
-
         private async Task<bool> IsClientConnectedAsync(int userId)
         {
             var isConnected = await _connectionManager.GetConnectionAsync(userId.ToString());

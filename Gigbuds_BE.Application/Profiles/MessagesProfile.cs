@@ -20,7 +20,9 @@ namespace Gigbuds_BE.Application.Profiles
                 .ForMember(dest => dest.SenderName, opt => opt.MapFrom(src => src.Account.FirstName))
                 .ForMember(dest => dest.SenderAvatar, opt => opt.MapFrom(src => src.Account.AvatarUrl))
                 .ForMember(dest => dest.SenderId, opt => opt.MapFrom(src => src.AccountId))
+                .ForMember(dest => dest.IsDeleted, opt => opt.MapFrom(src => src.IsEnabled))
                 .ForMember(dest => dest.Timestamp, opt => opt.MapFrom(src => src.UpdatedAt));
+
 
             CreateMap<Conversation, ConversationMetaDataDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id.ToString()))

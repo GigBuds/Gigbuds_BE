@@ -1,10 +1,14 @@
-﻿using Gigbuds_BE.Application.Features.Messaging.Queries;
+﻿using Gigbuds_BE.Application.DTOs.Messages;
+using Gigbuds_BE.Application.Features.Messaging.Commands.CreateConversation;
+using Gigbuds_BE.Application.Features.Messaging.Commands.CreateMessage;
+using Gigbuds_BE.Application.Features.Messaging.Commands.DeleteMessage;
+using Gigbuds_BE.Application.Features.Messaging.Commands.UpdateMessage;
+using Gigbuds_BE.Application.Features.Messaging.Queries;
 using Gigbuds_BE.Application.Features.Messaging.Queries.GetConversations;
 using Gigbuds_BE.Application.Features.Messaging.Queries.GetMessages;
+using Gigbuds_BE.Application.Interfaces.Services.MessagingServices;
 using Gigbuds_BE.Application.Specifications.Messaging;
 using Gigbuds_BE.Infrastructure.Services.SignalR;
-using Gigbuds_BE.Application.Interfaces.Services.MessagingServices;
-using Gigbuds_BE.Application.DTOs.Messages;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -30,6 +34,14 @@ namespace Gigbuds_BE.API.Controllers
             return Ok(result);
         }
 
+        [HttpPost("conversation-metadata")]
+        public async Task<IActionResult> CreateConversation([FromBody] CreateConversationCommand command)
+        {
+            var result = await _mediator.Send(command);
+
+            return Ok(result);
+        }
+
         [HttpGet("conversation-messages")]
         public async Task<IActionResult> GetConversationMessages([FromQuery] MessagesQueryParams queryParams)
         {
@@ -38,39 +50,26 @@ namespace Gigbuds_BE.API.Controllers
             return Ok(result);
         }
 
-        [HttpPost("send-typing-indicator")]
-        public async Task<IActionResult> SendTypingIndicator([FromBody] TypingIndicatorRequest request)
+        [HttpPut("conversation-messages")]
+        public async Task<IActionResult> UpdateConversationMessage([FromBody] ChatHistoryDto message)
         {
-            await _hubContext.Clients.Group(request.ConversationId.ToString())
-                .ReceiveTypingIndicatorAsync(request.IsTyping, request.TyperName);
+            await _mediator.Send(new UpdateMessageCommand
+            {
+                UpdatedEntity = message,
+            });
 
-            return Ok(new { Message = "Typing indicator sent successfully" });
+            return Ok();
         }
 
-        [HttpPost("broadcast-to-conversation")]
-        public async Task<IActionResult> BroadcastToConversation([FromBody] BroadcastRequest request)
+        [HttpDelete("conversation-messages/{messageId}")]
+        public async Task<IActionResult> DeleteConversationMessage([FromRoute] int messageId)
         {
-            await _hubContext.Clients.User(request.UserId.ToString())
-                .ReceiveMessageAsync(request.Conversation, request.Message);
+            var result = await _mediator.Send(new DeleteMessageCommand
+            {
+                MessageId = messageId,
+            });
 
-
-            return Ok(new { Message = "Message broadcasted successfully" });
+            return Ok(result);
         }
-    }
-
-    public class TypingIndicatorRequest
-    {
-        public string TyperName { get; set; }
-        public int ConversationId { get; set; }
-        public bool IsTyping { get; set; }
-    }
-
-    public class BroadcastRequest
-    {
-        public int UserId { get; set; }
-        public ConversationMetaDataDto Conversation { get; set; }
-        public ChatHistoryDto Message { get; set; }
-        // public string MethodName { get; set; } = string.Empty;
-        // public object Data { get; set; } = new();
     }
 }

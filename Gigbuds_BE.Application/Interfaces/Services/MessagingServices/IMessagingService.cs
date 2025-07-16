@@ -9,11 +9,6 @@ namespace Gigbuds_BE.Application.Interfaces.Services.MessagingServices
     {
         Task<bool> SendMessageToConversationAsync(int conversationId, int receiverId, ChatHistoryDto message, IMessagingClient clientProxy);
 
-        /// <summary>
-        /// Send a typing indicator to a conversation
-        /// </summary>
-        Task SendTypingIndicatorAsync(int conversationId, int userId, bool isTyping);
-
         // === Conversation Management ===
         /// <summary>
         /// Create a new conversation and add initial members
@@ -77,10 +72,5 @@ namespace Gigbuds_BE.Application.Interfaces.Services.MessagingServices
         /// Handle user disconnection - clean up conversation groups
         /// </summary>
         Task HandleUserDisconnectedAsync(string connectionId, int userId);
-
-        /// <summary>
-        /// Update user's online status in their conversations
-        /// </summary>
-        Task UpdateUserOnlineStatusAsync(int userId, bool isOnline);
     }
 }

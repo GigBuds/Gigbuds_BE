@@ -12,5 +12,7 @@ namespace Gigbuds_BE.Application.Interfaces.Services.MessagingServices
         public Task<bool> UpsertMessagesAsync(ChatHistoryDto messages);
         public Task<List<ConversationMetaDataDto>> RetrieveConversationsFromServerAsync(ConversationQueryParams queryParams);
         public Task<List<ChatHistoryDto>> RetrieveMessagesFromServerAsync(MessagesQueryParams queryParams);
+        public Task<bool> EditMessageAsync(string messageId, int conversationId, string newContent);
+        public Task<bool> DeleteMessageAsync(string messageId, int conversationId);
     }
 }

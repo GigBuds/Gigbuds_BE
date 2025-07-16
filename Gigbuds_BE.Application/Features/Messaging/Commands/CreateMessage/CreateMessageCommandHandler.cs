@@ -19,7 +19,7 @@ namespace Gigbuds_BE.Application.Features.Messaging.Commands.CreateMessage
         {
             // TODO: uncomment 
             var specification = new GetConversationByIdSpecification(request.ConversationId);
-            var updatedConversation = await unitOfWork.Repository<Conversation>().GetBySpecificationAsync(specification);
+            var updatedConversation = await unitOfWork.Repository<Conversation>().GetBySpecificationAsync(specification, false);
             var newMessage = new Message
             {
                 ConversationId = request.ConversationId,
@@ -31,6 +31,8 @@ namespace Gigbuds_BE.Application.Features.Messaging.Commands.CreateMessage
             newMessage = unitOfWork.Repository<Message>().Insert(newMessage);
 
             updatedConversation!.UpdatedAt = DateTime.UtcNow;
+            updatedConversation!.LastMessage = request.Content;
+            updatedConversation!.LastMessageSenderName = request.SenderName;
             unitOfWork.Repository<Conversation>().Update(updatedConversation);
 
             try

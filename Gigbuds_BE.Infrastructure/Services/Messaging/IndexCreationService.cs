@@ -28,6 +28,26 @@ namespace Gigbuds_BE.Infrastructure.Services.Messaging
         /// <param name="cancellationToken">A token to signal cancellation.</param>
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            try
+            {
+                // Force drop and recreate indexes to handle schema changes
+                await _provider.Connection.DropIndexAsync(typeof(ConversationMetaDataDto));
+            }
+            catch (Exception)
+            {
+                // Index might not exist, ignore the error
+            }
+
+            try
+            {
+                await _provider.Connection.DropIndexAsync(typeof(ChatHistoryDto));
+            }
+            catch (Exception)
+            {
+                // Index might not exist, ignore the error
+            }
+
+            // Create the indexes with the new schema
             await _provider.Connection.CreateIndexAsync(typeof(ConversationMetaDataDto));
             await _provider.Connection.CreateIndexAsync(typeof(ChatHistoryDto));
         }

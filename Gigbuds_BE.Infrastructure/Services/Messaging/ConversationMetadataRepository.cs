@@ -18,6 +18,24 @@ namespace Gigbuds_BE.Infrastructure.Services.Messaging
             _conversationMetaDataCollection = (RedisCollection<ConversationMetaDataDto>)provider.RedisCollection<ConversationMetaDataDto>();
         }
 
+        public async Task<string> GetLatestMessage(int conversationId)
+        {
+            _logger.LogInformation("Getting latest message for ConversationId: {ConversationId}", conversationId);
+            try
+            {
+                var conversation = await _conversationMetaDataCollection.Where(c => c.Id == conversationId.ToString()).FirstOrDefaultAsync();
+                if (conversation != null)
+                {
+                    return conversation.LastMessageId;
+                }
+                return string.Empty;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting latest message for ConversationId: {ConversationId}", conversationId);
+                return string.Empty;
+            }
+        }
         public async Task<bool> UpsertConversationMetadataAsync(List<ConversationMetaDataDto> conversationMetaData)
         {
             _logger.LogInformation("Upserting conversation metadata for {Count} conversations", conversationMetaData.Count);

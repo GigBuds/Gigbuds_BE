@@ -1,6 +1,7 @@
 ﻿using Castle.Core.Logging;
 using Gigbuds_BE.Application.DTOs.Messages;
 using Google.Protobuf.WellKnownTypes;
+using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Redis.OM;
@@ -12,11 +13,13 @@ namespace Gigbuds_BE.Infrastructure.Services.Messaging
     {
         private readonly ILogger<MessagesRepository> _logger;
         private readonly RedisCollection<ChatHistoryDto> _chatHistoryCollection;
+        private readonly ConversationMetadataRepository _conversationMetadataRepository;
 
-        public MessagesRepository(RedisConnectionProvider provider, ILogger<MessagesRepository> logger)
+        public MessagesRepository(RedisConnectionProvider provider, ILogger<MessagesRepository> logger, ConversationMetadataRepository conversationMetadataRepository)
         {
             _chatHistoryCollection = (RedisCollection<ChatHistoryDto>)provider.RedisCollection<ChatHistoryDto>();
             _logger = logger;
+            _conversationMetadataRepository = conversationMetadataRepository;
         }
 
         public async Task<bool> UpsertMessagesAsync(List<ChatHistoryDto> messages)
@@ -37,7 +40,7 @@ namespace Gigbuds_BE.Infrastructure.Services.Messaging
                 return false;
             }
         }
-        public async Task<(bool success, bool isNew)> UpsertMessageAsync(ChatHistoryDto message)
+        public async Task<(bool success, bool isNewOrEdited)> UpsertMessageAsync(ChatHistoryDto message)
         {
             try
             {
@@ -62,7 +65,7 @@ namespace Gigbuds_BE.Infrastructure.Services.Messaging
             }
         }
 
-        public async Task<List<ChatHistoryDto>> GetMessagesByConversationIdAsync(int conversationId, int pageIndex, int pageSize = 5, string? searchTerm = null)
+        public async Task<List<ChatHistoryDto>> GetMessagesByConversationIdAsync(int conversationId, int pageIndex, int pageSize = 10, string? searchTerm = null)
         {
             try
             {
@@ -89,6 +92,11 @@ namespace Gigbuds_BE.Infrastructure.Services.Messaging
             }
         }
 
+        public async Task<ChatHistoryDto?> GetMessageByIdAsync(string messageId)
+        {
+            return await _chatHistoryCollection.Where(m => m.MessageId == messageId).FirstOrDefaultAsync();
+        }
+
         public async Task<List<ChatHistoryDto>> GetMessagesAsync(string searchText, int pageIndex, int pageSize = 5)
         {
             try
@@ -104,15 +112,16 @@ namespace Gigbuds_BE.Infrastructure.Services.Messaging
             }
         }
 
-        public async Task<bool> DeleteMessageAsync(int messageId)
+        public async Task<bool> DeleteMessageAsync(string messageId)
         {
             try
             {
-                var idString = messageId.ToString();
-                var message = await _chatHistoryCollection.Where(m => m.MessageId == idString).FirstOrDefaultAsync();
+                var message = await _chatHistoryCollection.Where(m => m.MessageId == messageId).FirstOrDefaultAsync();
                 if (message != null)
                 {
-                    await _chatHistoryCollection.DeleteAsync(message);
+                    message.IsDeleted = true;
+                    message.Timestamp = DateTime.UtcNow;
+                    await _chatHistoryCollection.UpdateAsync(message);
                     return true;
                 }
                 return false;

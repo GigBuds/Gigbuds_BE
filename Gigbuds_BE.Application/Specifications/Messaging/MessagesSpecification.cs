@@ -15,4 +15,13 @@ namespace Gigbuds_BE.Application.Specifications.Messaging
             AddOrderByDesc(x => x.SendDate); // order from oldest to newest since client renders from top to bottom
         }
     }
+
+    public class GetMessageByIdSpecification : BaseSpecification<Message>
+    {
+        public GetMessageByIdSpecification(int messageId)
+            : base(x => x.Id == messageId)
+        {
+
+        }
+    }
 }

@@ -8,10 +8,12 @@ namespace Gigbuds_BE.Application.Interfaces.Services.MessagingServices
     /// </summary>
     public interface IMessagingClient
     {
+        Task MessageEditedAsync(string messageId, int conversationId, string newContent);
+        Task MessageDeletedAsync(string messageId, int conversationId);
         /// <summary>
         /// Send a typing indicator to a conversation
         /// </summary>
-        Task ReceiveTypingIndicatorAsync(bool isTyping, string typerName);
+        Task ReceiveTypingIndicatorAsync(bool isTyping, string typerName, int conversationId);
 
         /// <summary>
         /// Send a message read status to a conversation

@@ -64,12 +64,12 @@ namespace Gigbuds_BE.Infrastructure.Persistence
         {
 
             base.OnModelCreating(modelBuilder);
+            // Apply base entity to all entities
+            ApplyBaseEntityToDerivedClass(modelBuilder);
 
             // Apply all configurations in the assembly
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(GigbudsDbContext).Assembly);
 
-            // Apply base entity to all entities
-            ApplyBaseEntityToDerivedClass(modelBuilder);
         }
 
         /// <summary>

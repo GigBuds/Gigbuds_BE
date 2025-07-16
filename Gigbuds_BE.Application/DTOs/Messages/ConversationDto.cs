@@ -25,7 +25,7 @@ namespace Gigbuds_BE.Application.DTOs.Messages
     {
         [RedisIdField]
         [Indexed]
-        public required string Id { get; set; }
+        public required string Id { get; set; } //use string since redis OM does not support int as Id
         public int CreatorId { get; set; }
 
         [Searchable]
@@ -36,10 +36,10 @@ namespace Gigbuds_BE.Application.DTOs.Messages
         public required string AvatarTwo { get; set; }
         public required string LastMessage { get; set; }
         public required string LastMessageSenderName { get; set; }
+        public required string LastMessageId { get; set; } = string.Empty;
 
         [Indexed(Sortable = true)]
         public DateTime Timestamp { get; set; } = DateTime.Now;
-
         public bool IsOnline { get; set; } = false;
 
         [Indexed(CascadeDepth = 1)]
