@@ -39,4 +39,12 @@ namespace Gigbuds_BE.Application.Specifications.ApplicationUsers
             AddInclude(x => x.Followers.Where(f => f.FollowedAccountId == id));
         }
     }
+
+    public class GetAllAccountSpec : BaseSpecification<ApplicationUser>
+    {
+        public GetAllAccountSpec() : base(x => x.IsEnabled)
+        {
+            AddInclude(x => x.EmployerProfile);
+        }
+    }
 }

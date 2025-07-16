@@ -78,7 +78,7 @@ public class PayOSService : IPaymentService
 
             var paymentData = new PaymentData(
                 orderCode: orderCode,
-                amount: 2000,
+                amount: (int)membership.Price,
                 description: $"{membership.Title}",
                 items: items,
                 cancelUrl: request.IsMobile ? _settings.MobileCancelUrl : _settings.CancelUrl,
