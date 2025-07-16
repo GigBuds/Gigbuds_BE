@@ -91,7 +91,6 @@ namespace Gigbuds_BE.API.Controllers
             await _hubContext.Clients.User(id.ToString()).NotifyNewFollower(notificationDto);
             return Ok(new { message = "Notification sent to all job seekers." });
         }
-
         public class NewJobPostNotificationDto
         {
             public NotificationDto Notification { get; set; }

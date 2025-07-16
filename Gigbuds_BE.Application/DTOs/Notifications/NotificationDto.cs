@@ -7,7 +7,7 @@ namespace Gigbuds_BE.Application.DTOs.Notifications
         public int Id { get; set; }
         public string Content { get; set; }
         public DateTime Timestamp { get; set; }
-        public bool IsRead { get; set; } = false;
+        public bool IsRead { get; set; } = false; // whether the notification has been read by the user
         public Dictionary<string, string>? AdditionalPayload { get; set; } = null;
 
         public string Type { get; set; }

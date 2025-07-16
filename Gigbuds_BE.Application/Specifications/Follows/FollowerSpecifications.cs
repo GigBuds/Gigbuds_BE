@@ -19,3 +19,10 @@ public class GetAllFollowersSpec : BaseSpecification<Follower>
         AddInclude(f => f.FollowerAccount);
     }
 }
+public class GetFollowerByUserIdSpecification : BaseSpecification<Follower>
+{
+    public GetFollowerByUserIdSpecification(int followedUserId)
+        : base(f => f.FollowedAccountId == followedUserId)
+    {
+    }
+}

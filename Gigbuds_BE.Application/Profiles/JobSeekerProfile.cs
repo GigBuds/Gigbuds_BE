@@ -55,6 +55,11 @@ namespace Gigbuds_BE.Application.Profiles
 
             // Map EditJobSeekerDto to EditJobSeekerCommand
             CreateMap<EditJobSeekerDto, EditJobSeekerCommand>();
+
+            CreateMap<ApplicationUser, GetJobSeekerByNameDto>()
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FirstName + " " + src.LastName))
+                .ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => src.AvatarUrl ?? string.Empty));
         }
     }
 }

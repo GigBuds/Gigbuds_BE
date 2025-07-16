@@ -89,7 +89,7 @@ namespace Gigbuds_BE.Infrastructure.Repositories
             if (asNoTracking)
             {
                 query = query.AsNoTracking();
-            }
+            }   
             return await SpecificationQueryBuilder<T>.BuildQuery(query, specification).FirstOrDefaultAsync();
         }
 

@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using Gigbuds_BE.Application.DTOs.ApplicationUsers;
-using Gigbuds_BE.Application.Features.Accounts;
+using Gigbuds_BE.Application.DTOs.Paging;
 using Gigbuds_BE.Application.Features.Accounts.JobSeekers.Commands.EditJobSeeker;
+using Gigbuds_BE.Application.Features.Accounts.JobSeekers.Queries.GetJobSeekerById;
+using Gigbuds_BE.Application.Features.Accounts.JobSeekers.Queries.GetJobSeekerByName;
 using Gigbuds_BE.Application.Features.Accounts.JobSeekers.Queries.GetJobSeekerDetail;
 using Gigbuds_BE.Application.Features.Accounts.JobSeekers.Queries.GetJobSeekerLocations;
-using Gigbuds_BE.Application.Features.Memberships.Queries;
+using Gigbuds_BE.Application.Specifications.ApplicationUsers;
 using Gigbuds_BE.Domain.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -22,6 +24,20 @@ namespace Gigbuds_BE.API.Controllers
         {
             _mediator = mediator;
             _mapper = mapper;
+        }
+
+        [HttpGet("names")] 
+        public async Task<ActionResult<PagedResultDto<JobSeekerDto>>> GetJobSeekers([FromQuery] JobSeekerGetByNameQueryParams jobSeekerGetByNameQueryParams)
+        {
+            try
+            {
+                var result = await _mediator.Send(new GetJobSeekerByNameQuery(jobSeekerGetByNameQueryParams));
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "An error occurred while retrieving job seekers", details = ex.Message });
+            }
         }
 
         /// <summary>

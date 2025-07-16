@@ -25,13 +25,15 @@
 	  </PackageReference>
 	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+	  <PackageReference Include="NRediSearch" Version="2.2.79" />
 	  <PackageReference Include="OpenAI" Version="2.1.0" />
 	  <PackageReference Include="Qdrant.Client" Version="1.14.0" />
 	  <PackageReference Include="Quartz" Version="3.14.0" />
 	  <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.14.0" />
 	  <PackageReference Include="Quartz.Extensions.Hosting" Version="3.14.0" />
 	  <PackageReference Include="Quartz.Serialization.SystemTextJson" Version="3.14.0" />
-	  <PackageReference Include="StackExchange.Redis" Version="2.8.37" />
+	  <PackageReference Include="Redis.OM" Version="1.0.1" />
+	  <PackageReference Include="StackExchange.Redis" Version="2.8.41" />
 	  <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.2" />
 	  <PackageReference Include="FirebaseAdmin" Version="3.2.0" />
 	  

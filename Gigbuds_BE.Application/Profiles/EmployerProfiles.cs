@@ -30,5 +30,10 @@ public class EmployerProfileProfiles : Profile
             .ForMember(dest => dest.AverageRating, opt => opt.MapFrom(src => src.EmployerFeedbacks.Count > 0 ? src.EmployerFeedbacks.Average(f => f.Rating) : 0))
             .ForMember(dest => dest.NumOfFollowers, opt => opt.MapFrom(src => src.Followers.Count))
             .ForMember(dest => dest.CompanyDescription, opt => opt.MapFrom(src => src.EmployerProfile.CompanyDescription));
+
+        CreateMap<ApplicationUser, GetEmployerByNameDto>()
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FirstName + " " + src.LastName))
+            .ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => src.AvatarUrl));
     }
 }

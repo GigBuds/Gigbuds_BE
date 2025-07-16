@@ -1,0 +1,143 @@
+services:
+  reverse-proxy:
+    image: traefik:v3.4
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      - "--entrypoints.web.http.redirections.entrypoint.permanent=true" # redirect http to https
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=${EMAIL}"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    networks:
+      - gignet
+    volumes:
+      - ./letsencrypt:/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock
+  api:
+    image: rutkre/gigbuds:v1.0.3
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8001
+    expose:
+      - "8001"
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api.rule=Host(`${DOMAIN_NAME}`)"
+      - "traefik.http.routers.api.entrypoints=websecure"
+      - "traefik.http.routers.api.tls=true"
+      - "traefik.http.routers.api.tls.certresolver=myresolver"
+      - "traefik.http.services.api.loadbalancer.server.port=8001"
+      - "traefik.http.routers.api.priority=50"
+    volumes:
+      - /home/velour/deploy/gigbuds/credentials/firebase-service-storage.json:/app/firebase-service-storage.json
+      - /home/velour/deploy/gigbuds/credentials/firebase-service-notification.json:/app/firebase-service-notification.json
+      - /home/velour/deploy/gigbuds/appsettings.json:/app/appsettings.json
+    networks:
+      - gignet
+  db:
+    image: postgres:17
+    container_name: gigbuds-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - gigdata:/var/lib/postgresql/data
+    # ports:
+    # keep these for the host machine to access the service, just in case
+    # - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    labels:
+      - "traefik.enable=false"
+    networks:
+      - gignet
+  cache:
+    image: redis/redis-stack-server:7.4.0-v6
+    container_name: gigbuds-cache
+    restart: unless-stopped
+    environment:
+      - REDIS_ARGS=--requirepass ${REDIS_PASSWORD}
+    expose:
+      - "6379"
+    # ports:
+    #   - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    labels:
+      - "traefik.enable=false"
+    networks:
+      - gignet
+  redis-insight:
+    image: redis/redisinsight:2.70
+    container_name: gigbuds-redis-insight
+    restart: unless-stopped
+    expose:
+      - "5540"
+    ports:
+      - "5540:5540"
+    labels:
+      - "traefik.enable=false"
+      # - "traefik.http.services.redis-insight.loadbalancer.server.port=5540"
+      # - "traefik.http.routers.redis-insight.rule=PathPrefix(`/redis-insight`)"
+      # - "traefik.http.routers.redis-insight.entrypoints=web"
+      # - "traefik.http.routers.redis-insight.middlewares=redis-insight-stripprefix"
+      # - "traefik.http.middlewares.redis-insight-stripprefix.stripprefix.prefixes=/redis-insight"
+      # - "traefik.http.routers.redis-insight.priority=150" # higher priority for redis insight
+    networks:
+      - gignet
+    depends_on:
+      - cache
+  pgadmin:
+    image: dpage/pgadmin4:9.5.0
+    # image: dpage/pgadmin4:latest
+    container_name: gigbuds-pgadmin
+    restart: unless-stopped
+    expose:
+      - "7920"
+    ports:
+      - "7920:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+    labels:
+      - "traefik.enable=false"
+      # - "traefik.http.routers.pgadmin.rule=PathPrefix(`/admin`)"
+      # - "traefik.http.routers.pgadmin.entrypoints=web"
+      # - "traefik.http.services.pgadmin.loadbalancer.server.port=80"
+      # - "traefik.http.routers.pgadmin.middlewares=admin-stripprefix"
+      # - "traefik.http.middlewares.admin-stripprefix.stripprefix.prefixes=/admin"
+      # - "traefik.http.routers.pgadmin.priority=120" # priority for pgadmin
+    networks:
+      - gignet
+    depends_on:
+      - db
+volumes:
+  gigdata:
+  letsencrypt:
+
+networks:
+  gignet:

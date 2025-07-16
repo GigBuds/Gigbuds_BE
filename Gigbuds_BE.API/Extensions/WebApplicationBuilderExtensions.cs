@@ -1,6 +1,7 @@
 ﻿using Asp.Versioning;
 using Gigbuds_BE.API.Helpers;
 using Gigbuds_BE.API.Middlewares;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpLogging;
@@ -58,13 +59,13 @@ namespace Gigbuds_BE.API.Extensions
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
 
-            // Add Authentication
             builder.Services.AddAuthentication(options =>
             {
+                // Force JWT Bearer as the default scheme, overriding Identity API endpoints
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options =>
+            }).AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
@@ -86,10 +87,27 @@ namespace Gigbuds_BE.API.Extensions
                         var path = context.HttpContext.Request.Path;
 
                         // If the request is for our hub
-                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hub/notifications"))
+                        if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/hub/notifications") || path.StartsWithSegments("/hub/messaging")))
                         {
                             context.Token = accessToken;
+                            Console.WriteLine($"[JWT] Token extracted for SignalR: {accessToken.ToString().Substring(0, Math.Min(20, accessToken.ToString().Length))}...");
                         }
+                        return Task.CompletedTask;
+                    },
+                    OnTokenValidated = context =>
+                    {
+                        Console.WriteLine($"[JWT] Token validated successfully for user: {context.Principal?.Identity?.Name}");
+                        return Task.CompletedTask;
+                    },
+                    OnAuthenticationFailed = context =>
+                    {
+                        Console.WriteLine($"[JWT] Authentication failed: {context.Exception?.Message}");
+                        Console.WriteLine($"[JWT] Token: {context.Request.Headers.Authorization.FirstOrDefault()}");
+                        return Task.CompletedTask;
+                    },
+                    OnChallenge = context =>
+                    {
+                        Console.WriteLine($"[JWT] Authentication challenged: {context.Error} - {context.ErrorDescription}");
                         return Task.CompletedTask;
                     }
                 };

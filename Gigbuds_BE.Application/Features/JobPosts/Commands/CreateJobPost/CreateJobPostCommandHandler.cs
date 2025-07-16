@@ -7,6 +7,12 @@ using Gigbuds_BE.Application.Interfaces.Services;
 using Gigbuds_BE.Domain.Entities.Identity;
 using static Gigbuds_BE.Application.Commons.Constants.ProjectConstant;
 using Gigbuds_BE.Application.Features.Notifications;
+using Gigbuds_BE.Application.Specifications.Follows;
+using Gigbuds_BE.Domain.Entities.Accounts;
+using Gigbuds_BE.Domain.Entities.Notifications;
+using Gigbuds_BE.Application.Features.Notifications.Commands.CreateNewNotification;
+using Gigbuds_BE.Application.Interfaces.Services.NotificationServices;
+using Gigbuds_BE.Application.Specifications.Notifications;
 
 namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
 {
@@ -16,17 +22,23 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
         private readonly IMediator _mediator;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IApplicationUserService<ApplicationUser> _applicationUserService;
+        private readonly ITemplatingService _templatingService;
+        private readonly INotificationService _notificationService;
 
         public CreateJobPostCommandHandler(
             ILogger<CreateJobPostCommandHandler> logger,
             IMediator mediator,
             IUnitOfWork unitOfWork,
-            IApplicationUserService<ApplicationUser> applicationUserService)
+            IApplicationUserService<ApplicationUser> applicationUserService,
+            ITemplatingService templatingService,
+            INotificationService notificationService)
         {
             _logger = logger;
             _mediator = mediator;
             _unitOfWork = unitOfWork;
             _applicationUserService = applicationUserService;
+            _templatingService = templatingService;
+            _notificationService = notificationService;
         }
 
         public async Task<int> Handle(CreateJobPostCommand command, CancellationToken cancellationToken)
@@ -61,11 +73,48 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
             try
             {
                 await _unitOfWork.CompleteAsync();
+                // Notify followers about the new job post
+                var followers = await _unitOfWork.Repository<Follower>().GetAllWithSpecificationAsync(new GetFollowerByUserIdSpecification(command.AccountId));
+                var employer = await _applicationUserService.GetByIdAsync(command.AccountId);
+                var template = await _templatingService.ParseTemplate(ContentType.NewPostFromFollowedEmployer, new NewPostFromFollowedEmployerTemplateModel
+                {
+                    EmployerUserName = employer!.UserName!,
+                    JobName = newJobPost.JobTitle
+                });
+                var tasks = followers.Select(async follower =>
+                {
+                    var notificationDto = await _mediator.Send(new CreateNewNotificationCommand
+                    {
+                        UserId = follower.FollowerAccountId,
+                        Message = template,
+                        ContentType = ContentType.NewPostFromFollowedEmployer,
+                        CreatedAt = DateTime.UtcNow,
+                        AdditionalPayload = new Dictionary<string, string>
+                        {
+                            { "jobPostId", newJobPost.Id.ToString() }
+                        }
+                    }); 
+                    var userDevices = await _unitOfWork.Repository<DevicePushNotifications>()
+                            .GetAllWithSpecificationAsync(new GetDevicesByUserSpecification(follower.FollowerAccountId));
+
+                    return Task.Run(async () => {
+                        
+                        await _notificationService.NotifyOneUser(
+                            typeof(INotificationForJobSeekers).GetMethod(nameof(INotificationForJobSeekers.NotifyNewPostFromFollowedEmployer))!,
+                            userDevices.Select(a => a.DeviceToken!)!.ToList(),
+                            follower.FollowerAccountId.ToString(),
+                            notificationDto);
+                        }
+                    ); 
+                });
+                await Task.WhenAll(tasks);
+
                 _logger.LogInformation("New job post created with id: {Id}", newJobPost.Id);
 
                 command.ScheduleCommand.JobPostId = newJobPost.Id;
                 await _mediator.Publish(command.ScheduleCommand, cancellationToken);
 
+                // Notify job seekers about the new job post
                 await _mediator.Publish(new NotifyJobSeekersRequest
                 {
                     JobPostId = newJobPost.Id,
@@ -82,6 +131,8 @@ namespace Gigbuds_BE.Application.Features.JobPosts.Commands.CreateJobPost
                     DistrictCode = newJobPost.DistrictCode,
                     ProvinceCode = newJobPost.ProvinceCode
                 }, cancellationToken);
+
+
                 return newJobPost.Id;
             }
             catch (Exception ex)

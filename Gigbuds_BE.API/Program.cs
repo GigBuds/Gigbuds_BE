@@ -11,9 +11,10 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
-builder.AddPresentation(builder.Configuration);
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplications(builder.Configuration);
+builder.AddPresentation(builder.Configuration);
+
 
 var app = builder.Build();
 
@@ -49,6 +50,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapHub<NotificationHub>("/hub/notifications");
+app.MapHub<MessagingHub>("/hub/messaging");
 
 using var scope = app.Services.CreateScope();
 var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
