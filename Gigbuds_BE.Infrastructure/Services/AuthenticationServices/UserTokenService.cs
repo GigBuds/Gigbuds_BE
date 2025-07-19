@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Gigbuds_BE.Application.Commons.Constants;
 using Gigbuds_BE.Application.Interfaces.Services.AuthenticationServices;
 using Gigbuds_BE.Domain.Entities.Identity;
 using Gigbuds_BE.Domain.Entities.Memberships;
@@ -57,7 +58,6 @@ public class UserTokenService(
 
         var audiences = jwtSettings.GetSection("Audience").Get<string[]>() ?? [];
 
-
         var claimsList = new List<Claim>()
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
@@ -67,7 +67,7 @@ public class UserTokenService(
                 new Claim(JwtRegisteredClaimNames.Name, user.FirstName!),
                 new Claim(JwtRegisteredClaimNames.FamilyName, user.LastName!),
                 new Claim(JwtRegisteredClaimNames.Gender, user.IsMale.ToString()!),
-                new Claim("senderAvatar", user.AvatarUrl!),
+                new Claim("senderAvatar", user.AvatarUrl ?? ProjectConstant.defaultAvatar),
                 new Claim("role", string.Join(",", roles)),
                 new Claim("aud", audiences[0].ToString()),
                 new Claim("aud", audiences[1].ToString()),
