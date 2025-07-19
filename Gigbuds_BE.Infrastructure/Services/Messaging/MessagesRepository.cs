@@ -12,7 +12,9 @@ namespace Gigbuds_BE.Infrastructure.Services.Messaging
     internal class MessagesRepository
     {
         private readonly ILogger<MessagesRepository> _logger;
+
         private readonly RedisCollection<ChatHistoryDto> _chatHistoryCollection;
+
         private readonly ConversationMetadataRepository _conversationMetadataRepository;
 
         public MessagesRepository(RedisConnectionProvider provider, ILogger<MessagesRepository> logger, ConversationMetadataRepository conversationMetadataRepository)
@@ -40,20 +42,21 @@ namespace Gigbuds_BE.Infrastructure.Services.Messaging
                 return false;
             }
         }
+
         public async Task<(bool success, bool isNewOrEdited)> UpsertMessageAsync(ChatHistoryDto message)
         {
             try
             {
+                message.SenderAvatar ??= "https://pngtree.com/so/photo-placeholder";
+
                 var existingMessage = await _chatHistoryCollection.Where(m => m.MessageId == message.MessageId).FirstOrDefaultAsync();
                 if (existingMessage != null)
                 {
-                    message.SenderAvatar ??= "https://pngtree.com/so/photo-placeholder";
                     await _chatHistoryCollection.UpdateAsync(message);
                     return (true, false);
                 }
                 else
                 {
-                    message.SenderAvatar ??= "https://pngtree.com/so/photo-placeholder";
                     await _chatHistoryCollection.InsertAsync(message);
                     return (true, true);
                 }

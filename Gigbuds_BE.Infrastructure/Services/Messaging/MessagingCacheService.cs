@@ -85,6 +85,11 @@ namespace Gigbuds_BE.Infrastructure.Services.Messaging
             var messages = (await _unitOfWork.Repository<Message>()
                 .GetAllWithSpecificationProjectedAsync<ChatHistoryDto>(specification, _mapper.ConfigurationProvider)).ToList();
 
+            foreach (var m in messages)
+            {
+                m.IsDeleted = !m.IsDeleted;
+            }
+
             await _messagesRepositories.UpsertMessagesAsync(messages);
             return messages;
         }
