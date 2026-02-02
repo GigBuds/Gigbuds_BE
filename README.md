@@ -8,7 +8,6 @@
 ![SignalR](https://img.shields.io/badge/SignalR-Realtime-512BD4?style=flat&logo=signalr)
 ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat&logo=docker)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-4169E1?style=flat&logo=postgresql)
-
 ## 🌟 Overview
 
 GigBuds is a next-generation platform designed to streamline the gig economy. Unlike traditional job boards, GigBuds leverages **Vector Embeddings (AI)** to semantically match job seekers with opportunities, ensuring high-quality connections. The system features a robust, **real-time chat** for instant negotiation, secure payments via **PayOS**, and a highly scalable backend architecture.
@@ -120,4 +119,7 @@ The solution includes comprehensive unit and integration tests (located in `test
 *   **EXE201 Team** - FPT University
 
 ---
-*Built with ❤️ for the Gig Economy.*
+## Other repositories
+
+*   [GigBuds_FE](https://github.com/GigBuds/Gigbuds_FE)
+*   [GigBuds_Mobile](https://github.com/GigBuds/Gigbuds_Mobile)
